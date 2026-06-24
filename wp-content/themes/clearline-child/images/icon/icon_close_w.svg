@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="_レイヤー_1" data-name="レイヤー_1" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 396.7 396.7">
+  <!-- Generator: Adobe Illustrator 30.0.0, SVG Export Plug-In . SVG Version: 2.1.1 Build 123)  -->
+  <defs>
+    <style>
+      .st0 {
+        fill: none;
+        stroke: #fff;
+        stroke-linecap: round;
+        stroke-miterlimit: 10;
+        stroke-width: 70px;
+      }
+    </style>
+  </defs>
+  <g id="_レイヤー_2" data-name="レイヤー_2">
+    <g id="_2">
+      <line class="st0" x1="361.7" y1="35" x2="35" y2="361.7"/>
+      <line class="st0" x1="35" y1="35" x2="361.7" y2="361.7"/>
+    </g>
+  </g>
+</svg>
