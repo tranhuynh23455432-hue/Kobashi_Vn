@@ -10411,10 +10411,10 @@ footer - フッター内のクラス
 .c-footer__img {
   width: 100vw;
   height: 160px;
-  background-image: url(../clearline-child/images/element/img_footer_bg.webp);
+  background-image: url(../clearline-child/images/element/n%C3%AAn%20kobashi%20vn.png);
   background-repeat: no-repeat;
-  background-position: bottom center;
-  background-size: 125%;
+  background-position: center center;
+  background-size: cover;
   position: relative;
 }
 @media screen and (min-width: 992px) {
@@ -10435,26 +10435,6 @@ footer - フッター内のクラス
   .c-footer__img::before {
     height: 360px;
     background-position: center 80%;
-  }
-}
-.c-footer__img::after {
-  content: "";
-  width: 160px;
-  height: 160px;
-  background-image: url(../clearline-child/images/element/img_footer_logo.svg);
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: contain;
-  position: absolute;
-  top: calc(50% - 80px);
-  left: calc(50% - 80px);
-}
-@media screen and (min-width: 992px) {
-  .c-footer__img::after {
-    width: 220px;
-    height: 220px;
-    top: calc(50% - 110px);
-    left: calc(50% - 110px);
   }
 }
 .c-footer-in {
