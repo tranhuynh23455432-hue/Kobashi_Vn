@@ -10449,16 +10449,11 @@ footer - フッター内のクラス
   -moz-flex-direction: column;
   -ms-flex-direction: column;
   flex-direction: column;
+  padding: 30px 24px;
 }
 @media screen and (min-width: 992px) {
   .c-footer-in {
     justify-content: center;
-    -webkit-box-direction: normal;
-    -webkit-box-orient: horizontal;
-    -webkit-flex-direction: row;
-    -moz-flex-direction: row;
-    -ms-flex-direction: row;
-    flex-direction: row;
     padding: 40px 0;
     text-align: center;
     width: 100%;
@@ -10469,7 +10464,7 @@ footer - フッター内のクラス
 }
 @media screen and (min-width: 992px) {
   .c-footer-primary {
-    margin: 0;
+    margin: 0 0 2em;
   }
 }
 .c-footer-primary__in {
@@ -10518,6 +10513,7 @@ footer - フッター内のクラス
 }
 @media screen and (min-width: 992px) {
   .c-footer-primary-in {
+    text-align: center;
     font-size: 16px;
     line-height: 1.8em;
   }
