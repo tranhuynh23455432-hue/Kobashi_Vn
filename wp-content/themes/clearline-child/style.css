@@ -10886,6 +10886,89 @@ header - ヘッダー内のクラス
     font-size: 15px;
   }
 }
+.c-header-fb {
+  background-color: #4c4948;
+  width: 58px;
+  height: 62px;
+  margin-right: 2px;
+  position: relative;
+}
+@media screen and (min-width: 992px) {
+  .c-header-fb {
+    display: none;
+  }
+}
+.c-header-fb:before {
+  background-image: url(./images/common/img_logo_fb.svg) !important;
+  display: block;
+  background-position: center right;
+  background-repeat: no-repeat;
+  content: "";
+  height: 30px;
+  width: 30px;
+  background-size: contain;
+  position: absolute;
+  top: 8px;
+  left: 14px;
+}
+.c-header-fb::after {
+  content: "Facebook";
+  color: #FFF;
+  position: absolute;
+  bottom: 10px;
+  font-size: 8px;
+  width: 100%;
+  text-align: center;
+}
+.c-header-fbpc {
+  text-decoration: none;
+  margin-right: 2px;
+  position: relative;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  padding: 0 20px;
+  border-left: solid #FFF 2px;
+}
+@media screen and (max-width: 991px) {
+  .c-header-fbpc {
+    display: none;
+  }
+}
+@media (min-width: 992px) and (max-width: 1135px) {
+  .c-header-fbpc {
+    padding: 0 0;
+  }
+}
+.c-header-fbpc:before {
+  background-image: url(./images/common/img_logo_fb.svg) !important;
+  display: block;
+  background-position: center right;
+  background-repeat: no-repeat;
+  content: "";
+  height: 50px;
+  width: 50px;
+  background-size: contain;
+}
+.c-header-fbpc::after {
+  content: "Facebook";
+  display: inline-block;
+  color: #FFF;
+  font-size: 13px;
+  width: 6em;
+  text-align: center;
+}
+@media screen and (min-width: 1200px) {
+  .c-header-fbpc::after {
+    font-size: 15px;
+  }
+}
 .c-header-contact {
   background-color: #4c4948;
   width: 58px;
