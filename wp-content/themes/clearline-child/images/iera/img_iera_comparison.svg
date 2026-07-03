@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg id="_レイヤー_2" data-name="レイヤー 2" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 225.1701595 51.7001953">
+<svg id="_レイヤー_2" data-name="レイヤー 2" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 246 51.7001953">
   <defs>
     <style>
       .cls-1 {
@@ -29,7 +29,7 @@
           <circle class="cls-1" cx="2.78403" cy="31.4377547" r="1.7305851"/>
         </g>
         <g>
-          <text x="145" y="49" font-family="Arial, sans-serif" font-weight="700" font-size="18" fill="#776c66" textLength="78" lengthAdjust="spacingAndGlyphs">và Cấp đông chậm</text>
+          <text x="145" y="49" font-family="Arial, sans-serif" font-weight="700" font-size="18" fill="#776c66" textLength="99" lengthAdjust="spacingAndGlyphs">và Cấp đông thường</text>
           <text x="78" y="43" font-family="Arial, sans-serif" font-weight="700" font-size="12" fill="#776c66" textLength="56" lengthAdjust="spacingAndGlyphs">Minus 65</text>
         </g>
       </g>

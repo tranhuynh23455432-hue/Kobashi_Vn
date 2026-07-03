@@ -74,6 +74,70 @@ img:is([sizes=auto i],[sizes^="auto," i]){contain-intrinsic-size:3000px 1500px}
   /* Yêu cầu 5: vùng Gallery LUÔN ẨN cho tới khi bấm "Xem thành tích bàn giao" */
   #iera-gallery-section{ display:none; }
 </style>
+<style id="iera-facebook-link-css" type="text/css">
+  .p-iera-about-logo {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+  }
+  .p-iera-about-logo__image {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+  .p-iera-facebook-link {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    min-width: 300px;
+    padding: 18px 30px;
+    border: 1px solid #d8d3cf;
+    border-radius: 4px;
+    color: #1877f2;
+    background: #ffffff;
+    box-shadow: 0 6px 18px rgba(119, 108, 102, .12);
+    font-family: "Be Vietnam Pro", "Noto Sans", sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 1.3;
+    text-decoration: none;
+    transition: opacity .2s ease, transform .2s ease;
+  }
+  .p-iera-facebook-link::before {
+    content: "f";
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    color: #fff;
+    background: #1877f2;
+    font-family: Arial, sans-serif;
+    font-size: 27px;
+    font-weight: 700;
+  }
+  .p-iera-facebook-link:hover,
+  .p-iera-facebook-link:focus {
+    border-color: #1877f2;
+    opacity: .9;
+    transform: translateY(-2px);
+  }
+  @media screen and (max-width: 991px) {
+    .p-iera-about-logo {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 18px;
+    }
+    .p-iera-facebook-link {
+      min-width: 0;
+      width: 100%;
+      padding: 14px 18px;
+      font-size: 17px;
+    }
+  }
+</style>
 
 <!--==【　Google Analytics　】====================================-->
 <!-- Google tag (gtag.js) --> <script async src="https://www.googletagmanager.com/gtag/js?id=G-M8VLKVWWSK"></script> <script>   window.dataLayer = window.dataLayer || [];   function gtag(){dataLayer.push(arguments);}   gtag('js', new Date());   gtag('config', 'G-M8VLKVWWSK'); </script>
@@ -153,8 +217,13 @@ img:is([sizes=auto i],[sizes^="auto," i]){contain-intrinsic-size:3000px 1500px}
   <section class="">
     <div class="">
       <div class="p-iera-about">
-        <div class="p-iera-about-logo l-container l-container--wide"><img class="c-responsive-img js-inview-fadeIn"  src="../../wp-content/themes/clearline-child/images/iera/img_iera_logo.svg" alt="iERA　Âm 65 độ"></div>
-		  <div class="p-iera-about-wrap">
+        <div class="p-iera-about-logo l-container l-container--wide">
+          <a class="p-iera-about-logo__image js-inview-fadeIn" href="https://www.facebook.com/profile.php?id=61579217235868&amp;locale=vi_VN" target="_blank" rel="noopener noreferrer" aria-label="Mở Facebook iERA">
+            <img class="c-responsive-img" src="http://127.0.0.1:5500/wp-content/themes/clearline-child/images/iera/img_iera_logo.svg" alt="iERA -65">
+          </a>
+          <a class="p-iera-facebook-link js-inview-fadeIn" href="https://www.facebook.com/profile.php?id=61579217235868&amp;locale=vi_VN" target="_blank" rel="noopener noreferrer">Facebook iERA</a>
+        </div>
+        <div class="p-iera-about-wrap">
 			  <div class=" l-container l-container--wide">
         <div class="p-iera-about-point js-inview-fadeIn">
           <p class="p-iera-about-point__top">Máy cấp đông siêu tốc</p>
@@ -183,8 +252,8 @@ img:is([sizes=auto i],[sizes^="auto," i]){contain-intrinsic-size:3000px 1500px}
   <section class="">
     <div class="l-container l-container--wide">
       <div class="p-iera-comp">
-        <div class="p-iera-comp-logo p-iera-comp-logo--sp js-inview-fadeIn"><img class="c-responsive-img" src="../../wp-content/themes/clearline-child/images/iera/img_iera_comparison.svg" alt="So sánh giữa cấp đông chậm và iERA"></div>
-        <div class="p-iera-comp-logo p-iera-comp-logo--pc js-inview-fadeIn"><img class="c-responsive-img" src="../../wp-content/themes/clearline-child/images/iera/img_iera_comparison_pc.svg" alt="So sánh giữa cấp đông chậm và iERA"></div>
+        <div class="p-iera-comp-logo p-iera-comp-logo--sp js-inview-fadeIn"><img class="c-responsive-img" src="../../wp-content/themes/clearline-child/images/iera/img_iera_comparison.svg" alt="So sánh giữa cấp đông thường và iERA"></div>
+        <div class="p-iera-comp-logo p-iera-comp-logo--pc js-inview-fadeIn"><img class="c-responsive-img" src="../../wp-content/themes/clearline-child/images/iera/img_iera_comparison_pc.svg" alt="So sánh giữa cấp đông thường và iERA"></div>
         <ul class="p-iera-comp-list">
           <!-- case.1 -->
           <li class="p-iera-comp-item js-inview-fadeIn">
