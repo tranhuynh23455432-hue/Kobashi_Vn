@@ -11016,6 +11016,47 @@ header - ヘッダー内のクラス
   white-space: nowrap;
 }
 
+/* =========================================================
+Nút chuyển đổi ngôn ngữ (VI / 日本語)
+========================================================= */
+.c-header-lang {
+  background-color: #4c4948;
+  min-width: 44px;
+  height: 62px;
+  margin-right: 2px;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -moz-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  -moz-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -moz-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  text-decoration: none;
+  color: #FFF;
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.05em;
+  flex-shrink: 0;
+}
+.c-header-lang:hover {
+  opacity: 0.8;
+  color: #FFF;
+  text-decoration: none;
+}
+@media screen and (min-width: 1200px) {
+  .c-header-lang {
+    font-size: 15px;
+  }
+}
+
 .c-header-nav {
   display: none;
 }
