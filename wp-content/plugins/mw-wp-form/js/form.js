@@ -31,16 +31,19 @@ jQuery( function( $ ) {
 		file_delete.closest( '[data-mwform-file-delete="' + name + '"]' ).css( 'visibility', 'visible' );
 	} );
 
-	var mw_wp_form_button_no_click = true;
-	$( '.mw_wp_form input[type="submit"]' ).click( function() {
-		var formElement = $( this ).closest( 'form' )[0];
-		if ( formElement && formElement.checkValidity && !formElement.checkValidity() ) {
+	$( '.mw_wp_form form' ).on( 'submit', function( event ) {
+		var form = this;
+
+		if ( form.checkValidity && !form.checkValidity() ) {
 			return;
 		}
-		if ( mw_wp_form_button_no_click ) {
-			mw_wp_form_button_no_click = false;
-		} else {
-			$( this ).prop( 'disabled', true );
+
+		if ( form.dataset.submitting === 'true' ) {
+			event.preventDefault();
+			return;
 		}
+
+		form.dataset.submitting = 'true';
+		$( form ).find( ':submit' ).prop( 'disabled', true ).attr( 'aria-disabled', 'true' );
 	} );
 } );

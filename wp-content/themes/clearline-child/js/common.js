@@ -135,45 +135,46 @@ $("article.js-menu--list .js-menu--close, article.js-back_curtain").on("click", 
   });
 
 
-  //======================
-  //基本インビュー【js-inview】表示領域に入ったらinview
-  //======================
-
-  //fadeInUp
-  $('.js-inview-fadeInUp').on('inview', function (event, isInView) {
-    if (isInView) {
-      //表示領域に入った
-      $(this).addClass('animate__animated');
-      $(this).addClass('animate__fadeInUp');
-    }
+  const animationTargets = new Map();
+  [
+    ['.js-inview-fadeInUp', 'animate__fadeInUp'],
+    ['.js-inview-fadeIn', 'animate__fadeIn'],
+    ['.js-inview-fadeInLeft', 'animate__fadeInLeft'],
+    ['.js-inview-fadeInRight', 'animate__fadeInRight']
+  ].forEach(function ([selector, animationClass]) {
+    document.querySelectorAll(selector).forEach(function (element) {
+      if (!animationTargets.has(element)) {
+        animationTargets.set(element, []);
+      }
+      animationTargets.get(element).push(animationClass);
+    });
   });
 
-  //fadeIn
-  $('.js-inview-fadeIn').on('inview', function (event, isInView) {
-    if (isInView) {
-      //表示領域に入った
-      $(this).addClass('animate__animated');
-      $(this).addClass('animate__fadeIn');
-    }
-  });
+  function reveal(element) {
+    element.classList.add('animate__animated');
+    animationTargets.get(element).forEach(function (animationClass) {
+      element.classList.add(animationClass);
+    });
+  }
 
-  //fadeInLeft
-  $('.js-inview-fadeInLeft').on('inview', function (event, isInView) {
-    if (isInView) {
-      //表示領域に入った
-      $(this).addClass('animate__animated');
-      $(this).addClass('animate__fadeInLeft');
-    }
-  });
+  if ('IntersectionObserver' in window) {
+    const observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          reveal(entry.target);
+          observer.unobserve(entry.target);
+        }
+      });
+    });
 
-  //fadeInRight
-  $('.js-inview-fadeInRight').on('inview', function (event, isInView) {
-    if (isInView) {
-      //表示領域に入った
-      $(this).addClass('animate__animated');
-      $(this).addClass('animate__fadeInRight');
-    }
-  });
+    animationTargets.forEach(function (_animationClasses, element) {
+      observer.observe(element);
+    });
+  } else {
+    animationTargets.forEach(function (_animationClasses, element) {
+      reveal(element);
+    });
+  }
 
 
   //======================
