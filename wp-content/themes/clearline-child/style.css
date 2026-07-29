@@ -13398,6 +13398,246 @@ iera - イエラ事業
     font-size: 16px;
   }
 }
+
+/* iERA image collection: configurable 3D cylinder carousel */
+.p-iera-carousel {
+  --carousel-bg: #f7f8f7;
+  --carousel-accent: #56b9c9;
+  --carousel-ink: #776c66;
+  --carousel-card-width: 300px;
+  --carousel-card-gap: 22px;
+  --carousel-corner: 18px;
+  --carousel-perspective: 1400px;
+  --carousel-back-brightness: 0.36;
+  position: relative;
+  overflow: hidden;
+  padding: 48px 0 42px;
+  color: var(--carousel-ink);
+  background:
+    radial-gradient(circle at 50% 48%, rgba(113, 199, 213, 0.18), transparent 36%),
+    var(--carousel-bg);
+  border-top: 1px solid rgba(119, 108, 102, 0.18);
+}
+.p-iera-carousel::before,
+.p-iera-carousel::after {
+  position: absolute;
+  z-index: 0;
+  width: 280px;
+  height: 280px;
+  border: 1px solid rgba(113, 199, 213, 0.22);
+  border-radius: 50%;
+  content: "";
+  pointer-events: none;
+}
+.p-iera-carousel::before {
+  top: -180px;
+  left: -100px;
+}
+.p-iera-carousel::after {
+  right: -150px;
+  bottom: -190px;
+}
+.p-iera-carousel .l-container {
+  position: relative;
+  z-index: 1;
+}
+.p-iera-carousel__component {
+  width: 100%;
+}
+.p-iera-carousel__heading {
+  max-width: 760px;
+  margin: 0 auto 18px;
+  text-align: center;
+}
+.p-iera-carousel__eyebrow {
+  margin: 0 0 7px;
+  color: var(--carousel-accent);
+  font-family: "Be Vietnam Pro", "Noto Sans", sans-serif;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.2em;
+  line-height: 1.4;
+  text-transform: uppercase;
+}
+.p-iera-carousel__title {
+  margin: 0;
+  color: var(--carousel-ink);
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1.35;
+}
+.p-iera-carousel__lead {
+  max-width: 650px;
+  margin: 10px auto 0;
+  color: #8c817b;
+  font-size: 13px;
+  line-height: 1.7;
+}
+.p-iera-carousel__viewport {
+  position: relative;
+  width: 100%;
+  height: 350px;
+  margin: 0 auto;
+  overflow: hidden;
+  outline: none;
+  perspective: var(--carousel-perspective);
+  perspective-origin: 50% 48%;
+  cursor: grab;
+  touch-action: pan-y;
+  -webkit-user-select: none;
+  user-select: none;
+}
+.p-iera-carousel__viewport:active {
+  cursor: grabbing;
+}
+.p-iera-carousel__viewport:focus-visible {
+  border-radius: 14px;
+  box-shadow: inset 0 0 0 3px rgba(86, 185, 201, 0.58);
+}
+.p-iera-carousel__viewport::after {
+  position: absolute;
+  right: 15%;
+  bottom: 28px;
+  left: 15%;
+  height: 34px;
+  border-radius: 50%;
+  background: rgba(64, 58, 55, 0.16);
+  filter: blur(18px);
+  content: "";
+  pointer-events: none;
+}
+.p-iera-carousel__ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: var(--carousel-card-width);
+  height: var(--carousel-card-width);
+  margin: calc(var(--carousel-card-width) / -2) 0 0 calc(var(--carousel-card-width) / -2);
+  padding: 0;
+  list-style: none;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+.p-iera-carousel__card {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  transform: rotateY(var(--item-angle)) translateZ(var(--ring-radius));
+  transform-style: preserve-3d;
+}
+.p-iera-carousel__face {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border: 7px solid #fff;
+  border-radius: var(--carousel-corner);
+  background: #e9e8e6;
+  box-shadow: 0 20px 42px rgba(71, 63, 59, 0.22);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+.p-iera-carousel__face--front {
+  transform: rotateY(0deg) translateZ(1px);
+}
+.p-iera-carousel__face--back {
+  transform: rotateY(180deg) translateZ(1px);
+}
+.p-iera-carousel__face img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+}
+.p-iera-carousel__face--back img {
+  filter: brightness(var(--carousel-back-brightness)) saturate(0.7);
+  transform: scaleX(-1);
+}
+.p-iera-carousel__controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 2px;
+}
+.p-iera-carousel__controls button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  border: 1px solid rgba(119, 108, 102, 0.24);
+  color: var(--carousel-ink);
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 7px 18px rgba(119, 108, 102, 0.09);
+  font-family: "Be Vietnam Pro", "Noto Sans", sans-serif;
+  transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+  cursor: pointer;
+}
+.p-iera-carousel__controls button:hover,
+.p-iera-carousel__controls button:focus-visible {
+  border-color: var(--carousel-accent);
+  color: #fff;
+  background: var(--carousel-accent);
+  outline: none;
+  transform: translateY(-2px);
+}
+.p-iera-carousel__arrow {
+  width: 44px;
+  padding: 0 0 4px;
+  border-radius: 50%;
+  font-family: Arial, sans-serif !important;
+  font-size: 30px;
+  line-height: 1;
+}
+.p-iera-carousel__toggle {
+  min-width: 116px;
+  padding: 10px 18px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 700;
+}
+@media screen and (min-width: 768px) {
+  .p-iera-carousel {
+    --carousel-card-width: 320px;
+    padding: 64px 0 54px;
+  }
+  .p-iera-carousel__heading {
+    margin-bottom: 22px;
+  }
+  .p-iera-carousel__eyebrow {
+    font-size: 13px;
+  }
+  .p-iera-carousel__title {
+    font-size: 32px;
+  }
+  .p-iera-carousel__lead {
+    margin-top: 12px;
+    font-size: 16px;
+  }
+  .p-iera-carousel__viewport {
+    height: 430px;
+  }
+  .p-iera-carousel__controls {
+    margin-top: 4px;
+  }
+}
+@media screen and (max-width: 767px) {
+  .p-iera-carousel {
+    --carousel-card-width: 224px;
+    --carousel-card-gap: 14px;
+    --carousel-corner: 14px;
+  }
+  .p-iera-carousel__viewport::after {
+    right: 8%;
+    left: 8%;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .p-iera-carousel__controls button {
+    transition: none;
+  }
+}
+
 .p-iera-dl {
   background: #71c7d5;
   padding: 20px 0;
