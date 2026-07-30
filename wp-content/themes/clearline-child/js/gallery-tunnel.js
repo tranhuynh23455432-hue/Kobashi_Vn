@@ -248,7 +248,8 @@ function buildTunnel(root, THREE) {
     "gallery-tunnel--textures-ready",
     "gallery-tunnel--hovered",
     "gallery-tunnel--pressed",
-    "gallery-tunnel--interacted"
+    "gallery-tunnel--interacted",
+    "gallery-tunnel--in-view"
   ];
   const originalClassState = new Map();
   managedClassNames.forEach(function (className) {
@@ -361,6 +362,7 @@ function buildTunnel(root, THREE) {
 
   let alive = true;
   let visible = isInViewport(root);
+  root.classList.toggle("gallery-tunnel--in-view", visible);
   let contextLost = false;
   let firstTextureShown = false;
   const fadingMaterials = new Set();
@@ -834,10 +836,14 @@ function buildTunnel(root, THREE) {
   function resumeRendering() {
     if (!canRender()) return;
     if (resizePending) applyResize(false);
+    if (!reducedMotion && baseSpeed > 0 && Math.abs(currentVelocity) < 0.001) {
+      currentVelocity = normalVelocity();
+    }
     requestRender();
   }
 
   function updateVisibility(nextVisible) {
+    root.classList.toggle("gallery-tunnel--in-view", nextVisible);
     if (visible === nextVisible) {
       if (visible) resumeRendering();
       return;
@@ -921,11 +927,22 @@ function buildTunnel(root, THREE) {
       : null;
   if (intersectionObserver) {
     intersectionObserver.observe(root);
-  } else {
-    window.addEventListener("scroll", queueFallbackVisibilityCheck, {
-      passive: true
-    });
-    window.addEventListener("resize", queueFallbackVisibilityCheck);
+  }
+  window.addEventListener("scroll", queueFallbackVisibilityCheck, {
+    passive: true
+  });
+  window.addEventListener("resize", queueFallbackVisibilityCheck);
+  window.addEventListener("orientationchange", queueFallbackVisibilityCheck);
+  window.addEventListener("pageshow", queueFallbackVisibilityCheck);
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener(
+      "resize",
+      queueFallbackVisibilityCheck
+    );
+    window.visualViewport.addEventListener(
+      "scroll",
+      queueFallbackVisibilityCheck
+    );
   }
 
   const removeMotionListener = listenToMediaQuery(
@@ -981,9 +998,23 @@ function buildTunnel(root, THREE) {
       }
       if (intersectionObserver) {
         intersectionObserver.disconnect();
-      } else {
-        window.removeEventListener("scroll", queueFallbackVisibilityCheck);
-        window.removeEventListener("resize", queueFallbackVisibilityCheck);
+      }
+      window.removeEventListener("scroll", queueFallbackVisibilityCheck);
+      window.removeEventListener("resize", queueFallbackVisibilityCheck);
+      window.removeEventListener(
+        "orientationchange",
+        queueFallbackVisibilityCheck
+      );
+      window.removeEventListener("pageshow", queueFallbackVisibilityCheck);
+      if (window.visualViewport) {
+        window.visualViewport.removeEventListener(
+          "resize",
+          queueFallbackVisibilityCheck
+        );
+        window.visualViewport.removeEventListener(
+          "scroll",
+          queueFallbackVisibilityCheck
+        );
       }
 
       removeMotionListener();
@@ -1150,7 +1181,15 @@ function initGalleryTunnels() {
     startByRoot.set(root, start);
   });
 
-  if (typeof IntersectionObserver === "function") {
+  const eagerOnMobile =
+    mediaMatches("(max-width: 767px)") || mediaMatches("(pointer: coarse)");
+
+  if (eagerOnMobile) {
+    roots.forEach(function (root) {
+      const start = startByRoot.get(root);
+      if (start) start();
+    });
+  } else if (typeof IntersectionObserver === "function") {
     lazyObserver = new IntersectionObserver(
       function (entries) {
         entries.forEach(function (entry) {
