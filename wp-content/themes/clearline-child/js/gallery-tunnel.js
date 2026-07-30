@@ -1,5 +1,3 @@
-import * as THREE from "./vendor/three.module.min.js";
-
 const DEFAULT_IMAGE_NAMES = [
   "LINE_20260729_161507.jpg",
   "LINE_20260729_161603.jpg",
@@ -36,8 +34,9 @@ const DEFAULTS = {
 const TUNNEL_WIDTH = 4.4;
 const TUNNEL_HEIGHT = 2.8;
 const SEGMENT_DEPTH = 1.1;
-const SEGMENT_COUNT = 22;
+const DESKTOP_SEGMENT_COUNT = 22;
 const TEXTURE_FADE_SECONDS = 0.8;
+const LAZY_ROOT_MARGIN = "320px 0px";
 
 function clamp(value, min, max) {
   return Math.min(max, Math.max(min, value));
@@ -62,6 +61,96 @@ function shuffle(items) {
     result[next] = held;
   }
   return result;
+}
+
+function mediaMatches(query) {
+  return typeof window.matchMedia === "function" && window.matchMedia(query).matches;
+}
+
+function getDeviceProfile(config) {
+  const narrow = mediaMatches("(max-width: 767px)");
+  const coarse = mediaMatches("(pointer: coarse)");
+  const memory = Number(navigator.deviceMemory) || 0;
+  const cores = Number(navigator.hardwareConcurrency) || 0;
+  const connection =
+    navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+  const lowResource =
+    Boolean(connection && connection.saveData) ||
+    (memory > 0 && memory <= 4) ||
+    (cores > 0 && cores <= 4);
+
+  if (lowResource) {
+    return {
+      constrained: true,
+      grid: Math.min(config.grid, 3),
+      segmentCount: 12,
+      pixelRatio: 1,
+      antialias: false,
+      maxFps: 30,
+      textureLimit: Math.min(config.images.length, 4)
+    };
+  }
+
+  if (narrow && coarse) {
+    return {
+      constrained: true,
+      grid: Math.min(config.grid, 3),
+      segmentCount: 14,
+      pixelRatio: 1,
+      antialias: false,
+      maxFps: 30,
+      textureLimit: Math.min(config.images.length, 5)
+    };
+  }
+
+  if (narrow || coarse) {
+    return {
+      constrained: true,
+      grid: Math.min(config.grid, 3),
+      segmentCount: 16,
+      pixelRatio: 1.25,
+      antialias: false,
+      maxFps: 45,
+      textureLimit: Math.min(config.images.length, 6)
+    };
+  }
+
+  return {
+    constrained: false,
+    grid: config.grid,
+    segmentCount: DESKTOP_SEGMENT_COUNT,
+    pixelRatio: 1.75,
+    antialias: true,
+    maxFps: 60,
+    textureLimit: config.images.length
+  };
+}
+
+function listenToMediaQuery(query, handler) {
+  if (!query) return function () {};
+  if (typeof query.addEventListener === "function") {
+    query.addEventListener("change", handler);
+    return function () {
+      query.removeEventListener("change", handler);
+    };
+  }
+  if (typeof query.addListener === "function") {
+    query.addListener(handler);
+    return function () {
+      query.removeListener(handler);
+    };
+  }
+  return function () {};
+}
+
+function isInViewport(element) {
+  const rect = element.getBoundingClientRect();
+  return (
+    rect.bottom > 0 &&
+    rect.right > 0 &&
+    rect.top < window.innerHeight &&
+    rect.left < window.innerWidth
+  );
 }
 
 function getConfig(root) {
@@ -109,7 +198,7 @@ function getConfig(root) {
   };
 }
 
-function createLineGeometry(columns, rows) {
+function createLineGeometry(THREE, columns, rows) {
   const points = [];
   const halfWidth = TUNNEL_WIDTH / 2;
   const halfHeight = TUNNEL_HEIGHT / 2;
@@ -139,14 +228,50 @@ function createLineGeometry(columns, rows) {
   return geometry;
 }
 
-function buildTunnel(root) {
+function buildTunnel(root, THREE) {
   const config = getConfig(root);
-  const reducedMotion =
-    typeof window.matchMedia === "function" &&
-    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const profile = getDeviceProfile(config);
+  const motionQuery =
+    typeof window.matchMedia === "function"
+      ? window.matchMedia("(prefers-reduced-motion: reduce)")
+      : null;
+  const finePointerQuery =
+    typeof window.matchMedia === "function"
+      ? window.matchMedia("(hover: hover) and (pointer: fine)")
+      : null;
+  let reducedMotion = Boolean(motionQuery && motionQuery.matches);
+
+  const managedClassNames = [
+    "gallery-tunnel--active",
+    "gallery-tunnel--with-label",
+    "gallery-tunnel--ready",
+    "gallery-tunnel--textures-ready",
+    "gallery-tunnel--hovered",
+    "gallery-tunnel--pressed",
+    "gallery-tunnel--interacted"
+  ];
+  const originalClassState = new Map();
+  managedClassNames.forEach(function (className) {
+    originalClassState.set(className, root.classList.contains(className));
+  });
+
+  const managedAttributes = [
+    "tabindex",
+    "role",
+    "aria-label",
+    "aria-pressed",
+    "aria-disabled"
+  ];
+  const originalAttributes = new Map();
+  managedAttributes.forEach(function (name) {
+    originalAttributes.set(name, root.getAttribute(name));
+  });
+
   const canvas = document.createElement("canvas");
   const veil = document.createElement("div");
   const cursor = document.createElement("span");
+  const hasTouchHint = typeof root.dataset.touchHint === "string";
+  const touchHint = hasTouchHint ? document.createElement("span") : null;
 
   canvas.className = "gallery-tunnel__canvas";
   canvas.setAttribute("aria-hidden", "true");
@@ -160,45 +285,48 @@ function buildTunnel(root) {
   cursor.style.fontFamily = config.labelFontFamily;
   cursor.style.fontSize = config.labelFontSize + "px";
   cursor.style.fontWeight = String(config.labelFontWeight);
-
-  root.prepend(veil);
-  root.prepend(canvas);
-  if (config.label) root.append(cursor);
-
-  root.classList.add("gallery-tunnel--active");
-  root.classList.toggle("gallery-tunnel--with-label", config.label);
+  if (touchHint) {
+    touchHint.className = "gallery-tunnel__touch-hint";
+    touchHint.textContent = root.dataset.touchHint;
+    touchHint.setAttribute("aria-hidden", "true");
+  }
 
   let renderer;
   try {
     renderer = new THREE.WebGLRenderer({
       canvas: canvas,
-      antialias: true,
+      antialias: profile.antialias,
       alpha: false,
-      powerPreference: "high-performance"
+      powerPreference: profile.constrained ? "default" : "high-performance"
     });
   } catch (error) {
-    root.classList.remove("gallery-tunnel--active");
-    canvas.remove();
-    veil.remove();
-    cursor.remove();
     return null;
   }
 
-  root.tabIndex = 0;
+  root.prepend(veil);
+  root.prepend(canvas);
+  if (config.label) root.append(cursor);
+  if (touchHint) root.append(touchHint);
+
+  root.classList.add("gallery-tunnel--active");
+  root.classList.toggle("gallery-tunnel--with-label", config.label);
+  root.tabIndex = reducedMotion ? -1 : 0;
+  root.setAttribute("role", "button");
   root.setAttribute(
     "aria-label",
     root.dataset.tunnelAriaLabel ||
       "Gallery Tunnel. Nhấn giữ chuột hoặc phím cách để tăng tốc."
   );
+  root.setAttribute("aria-pressed", "false");
+  root.setAttribute("aria-disabled", reducedMotion ? "true" : "false");
 
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.75));
   renderer.outputColorSpace = THREE.SRGBColorSpace;
 
   const scene = new THREE.Scene();
   const backgroundColor = new THREE.Color(config.background);
   scene.background = backgroundColor;
 
-  const fogFar = SEGMENT_COUNT * SEGMENT_DEPTH * 0.94;
+  const fogFar = profile.segmentCount * SEGMENT_DEPTH * 0.94;
   const fogNear = Math.min(
     fogFar - 0.1,
     fogFar * (1 - clamp(config.fade, 0, 100) / 100)
@@ -208,8 +336,8 @@ function buildTunnel(root) {
   const camera = new THREE.PerspectiveCamera(48, 1, 0.06, fogFar + 4);
   camera.position.set(0, 0, 0);
 
-  const columns = config.grid;
-  const rows = config.grid;
+  const columns = profile.grid;
+  const rows = profile.grid;
   const halfWidth = TUNNEL_WIDTH / 2;
   const halfHeight = TUNNEL_HEIGHT / 2;
   const columnWidth = TUNNEL_WIDTH / columns;
@@ -217,7 +345,7 @@ function buildTunnel(root) {
 
   const floorGeometry = new THREE.PlaneGeometry(columnWidth, SEGMENT_DEPTH);
   const wallGeometry = new THREE.PlaneGeometry(SEGMENT_DEPTH, rowHeight);
-  const lineGeometry = createLineGeometry(columns, rows);
+  const lineGeometry = createLineGeometry(THREE, columns, rows);
   const lineMaterial = new THREE.LineBasicMaterial({
     color: new THREE.Color(config.lineColor),
     transparent: true,
@@ -231,13 +359,16 @@ function buildTunnel(root) {
     });
   });
 
+  let alive = true;
+  let visible = isInViewport(root);
+  let contextLost = false;
+  let firstTextureShown = false;
+  const fadingMaterials = new Set();
   const textureLoader = new THREE.TextureLoader();
   textureLoader.setCrossOrigin("anonymous");
-  const fadingMaterials = new Set();
-  let alive = true;
-  let firstTextureShown = false;
 
-  const imageMaterials = config.images.map(function (source, index) {
+  const imageSources = config.images.slice(0, profile.textureLimit);
+  const imageMaterials = imageSources.map(function (source, index) {
     const material = new THREE.MeshBasicMaterial({
       color: 0xffffff,
       transparent: true,
@@ -257,18 +388,25 @@ function buildTunnel(root) {
         texture.generateMipmaps = false;
         material.map = texture;
         material.needsUpdate = true;
-        fadingMaterials.add(material);
+        if (reducedMotion) {
+          material.opacity = 1;
+        } else {
+          fadingMaterials.add(material);
+        }
         if (!firstTextureShown) {
           firstTextureShown = true;
           root.classList.add("gallery-tunnel--textures-ready");
         }
+        requestRender();
       },
       undefined,
       function () {
+        if (!alive) return;
         material.color.set(config.colors[index % config.colors.length]);
         material.transparent = false;
         material.opacity = 1;
         material.needsUpdate = true;
+        requestRender();
       }
     );
     return material;
@@ -327,10 +465,10 @@ function buildTunnel(root) {
     const targetVisibility = 0.5 + Math.random() * 0.25;
 
     slabs.forEach(function (slab) {
-      const visible = Math.random() < targetVisibility;
-      slab.visible = visible;
-      signature += visible ? "1" : "0";
-      if (visible) {
+      const slabVisible = Math.random() < targetVisibility;
+      slab.visible = slabVisible;
+      signature += slabVisible ? "1" : "0";
+      if (slabVisible) {
         visibleCount += 1;
         slab.material = takeMaterial();
       }
@@ -346,9 +484,12 @@ function buildTunnel(root) {
       const changed = slabs[Math.floor(Math.random() * slabs.length)];
       changed.visible = !changed.visible;
       if (changed.visible) changed.material = takeMaterial();
-      signature += changed.visible ? "1" : "0";
     }
-    previousPattern = signature;
+    previousPattern = slabs
+      .map(function (slab) {
+        return slab.visible ? "1" : "0";
+      })
+      .join("");
   }
 
   function createSegment(index) {
@@ -370,56 +511,100 @@ function buildTunnel(root) {
   }
 
   const segments = [];
-  for (let index = 0; index < SEGMENT_COUNT; index += 1) {
+  for (let index = 0; index < profile.segmentCount; index += 1) {
     segments.push(createSegment(index));
   }
 
-  function resize() {
-    const width = Math.max(1, root.clientWidth);
-    const height = Math.max(1, root.clientHeight);
-    camera.aspect = width / height;
-    camera.updateProjectionMatrix();
-    renderer.setSize(width, height, false);
-  }
-
-  const resizeObserver =
-    typeof ResizeObserver === "function" ? new ResizeObserver(resize) : null;
-  if (resizeObserver) {
-    resizeObserver.observe(root);
-  } else {
-    window.addEventListener("resize", resize);
-  }
-  resize();
-
-  let pressed = false;
-  let visible = true;
-  let frameId = 0;
-  let lastTime = 0;
-  let currentVelocity = reducedMotion ? 0 : (config.speed / 33) * 0.82;
   let baseSpeed = config.speed;
   let boost = config.boost;
+  let pressed = false;
+  let activePointerId = null;
+  let keyboardPressed = false;
+  let currentVelocity = reducedMotion ? 0 : (baseSpeed / 33) * 0.82;
+  let animationFrameId = 0;
+  let staticFrameId = 0;
+  let resizeFrameId = 0;
+  let cursorFrameId = 0;
+  let visibilityCheckFrameId = 0;
+  let lastFrameTime = 0;
+  let renderedWidth = 0;
+  let renderedHeight = 0;
+  let renderedPixelRatio = 0;
+  let resizePending = false;
+  let cursorClientX = 0;
+  let cursorClientY = 0;
+  let cursorTrackingAttached = false;
+  const frameInterval = 1000 / profile.maxFps;
 
-  function setPressed(nextPressed) {
-    pressed = nextPressed && !reducedMotion;
-    root.classList.toggle("gallery-tunnel--pressed", pressed);
+  function canRender() {
+    return alive && visible && !document.hidden && !contextLost;
+  }
+
+  function normalVelocity() {
+    return (baseSpeed / 33) * 0.82;
+  }
+
+  function renderScene() {
+    if (!canRender()) return;
+    renderer.render(scene, camera);
+    root.classList.add("gallery-tunnel--ready");
+  }
+
+  function cancelStaticFrame() {
+    if (!staticFrameId) return;
+    cancelAnimationFrame(staticFrameId);
+    staticFrameId = 0;
+  }
+
+  function queueStaticRender() {
+    if (!canRender() || staticFrameId || animationFrameId) return;
+    staticFrameId = requestAnimationFrame(function () {
+      staticFrameId = 0;
+      renderScene();
+    });
+  }
+
+  function shouldRunLoop() {
+    return (
+      canRender() &&
+      !reducedMotion &&
+      (baseSpeed > 0 ||
+        pressed ||
+        Math.abs(currentVelocity) > 0.001 ||
+        fadingMaterials.size > 0)
+    );
+  }
+
+  function stopLoop() {
+    if (animationFrameId) {
+      cancelAnimationFrame(animationFrameId);
+      animationFrameId = 0;
+    }
+    lastFrameTime = 0;
   }
 
   function animate(now) {
-    if (!alive) return;
-    frameId = requestAnimationFrame(animate);
-    if (!visible || document.hidden) {
-      lastTime = now;
+    animationFrameId = 0;
+    if (!shouldRunLoop()) return;
+
+    if (lastFrameTime && now - lastFrameTime < frameInterval - 0.5) {
+      animationFrameId = requestAnimationFrame(animate);
       return;
     }
 
-    const delta = lastTime ? Math.min((now - lastTime) / 1000, 1 / 30) : 1 / 60;
-    lastTime = now;
+    const delta = lastFrameTime
+      ? Math.min((now - lastFrameTime) / 1000, 1 / 30)
+      : Math.min(frameInterval / 1000, 1 / 30);
+    lastFrameTime = now;
 
-    const normalVelocity = reducedMotion ? 0 : (baseSpeed / 33) * 0.82;
-    const boostedVelocity = normalVelocity + (boost / 100) * 5.8;
-    const targetVelocity = pressed ? boostedVelocity : normalVelocity;
+    const regularVelocity = normalVelocity();
+    const boostedVelocity = regularVelocity + (boost / 100) * 5.8;
+    const targetVelocity = pressed ? boostedVelocity : regularVelocity;
     const easing = 1 - Math.pow(pressed ? 0.02 : 0.08, delta);
     currentVelocity += (targetVelocity - currentVelocity) * easing;
+    if (Math.abs(targetVelocity - currentVelocity) < 0.001) {
+      currentVelocity = targetVelocity;
+    }
 
     segments.forEach(function (segment) {
       segment.position.z += currentVelocity * delta;
@@ -441,67 +626,318 @@ function buildTunnel(root) {
       if (material.opacity >= 1) fadingMaterials.delete(material);
     });
 
-    renderer.render(scene, camera);
-    if (!root.classList.contains("gallery-tunnel--ready")) {
-      root.classList.add("gallery-tunnel--ready");
+    renderScene();
+    if (shouldRunLoop()) {
+      animationFrameId = requestAnimationFrame(animate);
     }
+  }
+
+  function startLoop() {
+    if (animationFrameId || !shouldRunLoop()) return;
+    cancelStaticFrame();
+    lastFrameTime = 0;
+    animationFrameId = requestAnimationFrame(animate);
+  }
+
+  function requestRender() {
+    if (!canRender()) return;
+    if (shouldRunLoop()) {
+      startLoop();
+    } else {
+      queueStaticRender();
+    }
+  }
+
+  function applyResize(force) {
+    if (!alive || contextLost) return false;
+    const width = Math.max(1, Math.round(root.clientWidth));
+    const height = Math.max(1, Math.round(root.clientHeight));
+    const pixelRatio = Math.min(window.devicePixelRatio || 1, profile.pixelRatio);
+    if (
+      !force &&
+      width === renderedWidth &&
+      height === renderedHeight &&
+      pixelRatio === renderedPixelRatio
+    ) {
+      resizePending = false;
+      return false;
+    }
+
+    renderedWidth = width;
+    renderedHeight = height;
+    renderedPixelRatio = pixelRatio;
+    resizePending = false;
+    renderer.setPixelRatio(pixelRatio);
+    camera.aspect = width / height;
+    camera.updateProjectionMatrix();
+    renderer.setSize(width, height, false);
+    return true;
+  }
+
+  function queueResize() {
+    resizePending = true;
+    if (!canRender() || resizeFrameId) return;
+    resizeFrameId = requestAnimationFrame(function () {
+      resizeFrameId = 0;
+      if (applyResize(false)) requestRender();
+    });
+  }
+
+  function syncMotionAccessibility() {
+    root.tabIndex = reducedMotion ? -1 : 0;
+    root.setAttribute("aria-disabled", reducedMotion ? "true" : "false");
+  }
+
+  function setPressed(nextPressed) {
+    const next = Boolean(nextPressed) && !reducedMotion;
+    if (pressed === next) return;
+    pressed = next;
+    root.classList.toggle("gallery-tunnel--pressed", pressed);
+    root.setAttribute("aria-pressed", pressed ? "true" : "false");
+    requestRender();
+  }
+
+  function syncPressedSources() {
+    setPressed(activePointerId !== null || keyboardPressed);
+  }
+
+  function clearPressSources() {
+    activePointerId = null;
+    keyboardPressed = false;
+    setPressed(false);
+  }
+
+  function cancelCursorFrame() {
+    if (!cursorFrameId) return;
+    cancelAnimationFrame(cursorFrameId);
+    cursorFrameId = 0;
+  }
+
+  function queueCursorUpdate(event) {
+    if (
+      !config.label ||
+      !finePointerQuery ||
+      !finePointerQuery.matches ||
+      !canRender()
+    ) {
+      return;
+    }
+    cursorClientX = event.clientX;
+    cursorClientY = event.clientY;
+    if (cursorFrameId) return;
+    cursorFrameId = requestAnimationFrame(function () {
+      cursorFrameId = 0;
+      if (!canRender() || !finePointerQuery.matches) return;
+      const rect = root.getBoundingClientRect();
+      cursor.style.left = cursorClientX - rect.left + "px";
+      cursor.style.top = cursorClientY - rect.top + "px";
+    });
+  }
+
+  function onPointerEnter(event) {
+    queueCursorUpdate(event);
+    root.classList.add("gallery-tunnel--hovered");
+  }
+
+  function onPointerMove(event) {
+    queueCursorUpdate(event);
+  }
+
+  function detachCursorTracking() {
+    if (!cursorTrackingAttached) return;
+    cursorTrackingAttached = false;
+    root.removeEventListener("pointerenter", onPointerEnter);
+    root.removeEventListener("pointermove", onPointerMove);
+    cancelCursorFrame();
+    root.classList.remove("gallery-tunnel--hovered");
+  }
+
+  function syncCursorTracking() {
+    const shouldTrack =
+      config.label && finePointerQuery && finePointerQuery.matches && alive;
+    if (shouldTrack && !cursorTrackingAttached) {
+      cursorTrackingAttached = true;
+      root.addEventListener("pointerenter", onPointerEnter);
+      root.addEventListener("pointermove", onPointerMove);
+    } else if (!shouldTrack) {
+      detachCursorTracking();
+    }
+  }
+
+  function onFinePointerChange() {
+    syncCursorTracking();
+  }
+
+  function markInteracted() {
+    root.classList.add("gallery-tunnel--interacted");
+  }
+
+  function onPointerDown(event) {
+    if (event.isPrimary === false || activePointerId !== null) return;
+    if (event.pointerType === "mouse" && event.button !== 0) return;
+    markInteracted();
+    queueCursorUpdate(event);
+    activePointerId = event.pointerId;
+    syncPressedSources();
+  }
+
+  function onPointerLeave(event) {
+    if (activePointerId === event.pointerId) {
+      activePointerId = null;
+      syncPressedSources();
+    }
+    root.classList.remove("gallery-tunnel--hovered");
+    cancelCursorFrame();
+  }
+
+  function onPointerUp(event) {
+    if (event.isPrimary === false || activePointerId === null) return;
+    if (event.pointerId !== activePointerId) return;
+    activePointerId = null;
+    syncPressedSources();
+  }
+
+  function onKeyDown(event) {
+    if (event.key !== " " && event.key !== "Enter") return;
+    event.preventDefault();
+    markInteracted();
+    keyboardPressed = true;
+    syncPressedSources();
+  }
+
+  function onKeyUp(event) {
+    if (event.key !== " " && event.key !== "Enter") return;
+    keyboardPressed = false;
+    syncPressedSources();
+  }
+
+  function onWindowBlur() {
+    clearPressSources();
+  }
+
+  function suspendRendering() {
+    stopLoop();
+    cancelStaticFrame();
+    if (resizeFrameId) {
+      cancelAnimationFrame(resizeFrameId);
+      resizeFrameId = 0;
+      resizePending = true;
+    }
+    cancelCursorFrame();
+    if (visibilityCheckFrameId) {
+      cancelAnimationFrame(visibilityCheckFrameId);
+      visibilityCheckFrameId = 0;
+    }
+    clearPressSources();
+  }
+
+  function resumeRendering() {
+    if (!canRender()) return;
+    if (resizePending) applyResize(false);
+    requestRender();
+  }
+
+  function updateVisibility(nextVisible) {
+    if (visible === nextVisible) {
+      if (visible) resumeRendering();
+      return;
+    }
+    visible = nextVisible;
+    if (visible) {
+      resumeRendering();
+    } else {
+      suspendRendering();
+    }
+  }
+
+  function onDocumentVisibilityChange() {
+    if (document.hidden) {
+      suspendRendering();
+    } else {
+      updateVisibility(isInViewport(root));
+    }
+  }
+
+  function handleMotionPreference(event) {
+    reducedMotion = Boolean(event.matches);
+    clearPressSources();
+    if (reducedMotion) {
+      currentVelocity = 0;
+      fadingMaterials.forEach(function (material) {
+        material.opacity = 1;
+      });
+      fadingMaterials.clear();
+      stopLoop();
+    } else {
+      currentVelocity = normalVelocity();
+    }
+    syncMotionAccessibility();
+    requestRender();
+  }
+
+  function onContextLost(event) {
+    event.preventDefault();
+    contextLost = true;
+    root.classList.remove("gallery-tunnel--ready");
+    suspendRendering();
+  }
+
+  function onContextRestored() {
+    if (!alive) return;
+    contextLost = false;
+    renderedWidth = 0;
+    renderedHeight = 0;
+    renderedPixelRatio = 0;
+    visible = isInViewport(root);
+    applyResize(true);
+    requestRender();
+  }
+
+  function queueFallbackVisibilityCheck() {
+    if (visibilityCheckFrameId || document.hidden || !alive) return;
+    visibilityCheckFrameId = requestAnimationFrame(function () {
+      visibilityCheckFrameId = 0;
+      updateVisibility(isInViewport(root));
+    });
+  }
+
+  const resizeObserver =
+    typeof ResizeObserver === "function" ? new ResizeObserver(queueResize) : null;
+  if (resizeObserver) {
+    resizeObserver.observe(root);
+  } else {
+    window.addEventListener("resize", queueResize);
   }
 
   const intersectionObserver =
     typeof IntersectionObserver === "function"
       ? new IntersectionObserver(
           function (entries) {
-            visible = Boolean(entries[0] && entries[0].isIntersecting);
+            const entry = entries[0];
+            updateVisibility(Boolean(entry && entry.isIntersecting));
           },
           { threshold: 0 }
         )
       : null;
-  if (intersectionObserver) intersectionObserver.observe(root);
-
-  function moveCursor(event) {
-    if (!config.label) return;
-    const rect = root.getBoundingClientRect();
-    cursor.style.left = event.clientX - rect.left + "px";
-    cursor.style.top = event.clientY - rect.top + "px";
+  if (intersectionObserver) {
+    intersectionObserver.observe(root);
+  } else {
+    window.addEventListener("scroll", queueFallbackVisibilityCheck, {
+      passive: true
+    });
+    window.addEventListener("resize", queueFallbackVisibilityCheck);
   }
 
-  function onPointerEnter(event) {
-    moveCursor(event);
-    root.classList.add("gallery-tunnel--hovered");
-  }
+  const removeMotionListener = listenToMediaQuery(
+    motionQuery,
+    handleMotionPreference
+  );
+  const removeFinePointerListener = config.label
+    ? listenToMediaQuery(finePointerQuery, onFinePointerChange)
+    : function () {};
 
-  function onPointerLeave() {
-    setPressed(false);
-    root.classList.remove("gallery-tunnel--hovered");
-  }
-
-  function onPointerDown(event) {
-    if (event.pointerType === "mouse" && event.button !== 0) return;
-    moveCursor(event);
-    setPressed(true);
-  }
-
-  function onKeyDown(event) {
-    if (event.key !== " " && event.key !== "Enter") return;
-    event.preventDefault();
-    setPressed(true);
-  }
-
-  function onKeyUp(event) {
-    if (event.key !== " " && event.key !== "Enter") return;
-    setPressed(false);
-  }
-
-  function onPointerUp() {
-    setPressed(false);
-  }
-
-  function onWindowBlur() {
-    setPressed(false);
-  }
-
-  root.addEventListener("pointermove", moveCursor);
-  root.addEventListener("pointerenter", onPointerEnter);
+  syncCursorTracking();
+  syncMotionAccessibility();
   root.addEventListener("pointerleave", onPointerLeave);
   root.addEventListener("pointerdown", onPointerDown);
   root.addEventListener("keydown", onKeyDown);
@@ -509,28 +945,50 @@ function buildTunnel(root) {
   window.addEventListener("pointerup", onPointerUp);
   window.addEventListener("pointercancel", onPointerUp);
   window.addEventListener("blur", onWindowBlur);
+  document.addEventListener("visibilitychange", onDocumentVisibilityChange);
+  canvas.addEventListener("webglcontextlost", onContextLost, false);
+  canvas.addEventListener("webglcontextrestored", onContextRestored, false);
 
-  frameId = requestAnimationFrame(animate);
+  applyResize(true);
+  requestRender();
 
-  return {
+  const api = {
     element: root,
     setSpeed: function (value) {
+      if (!alive) return;
       baseSpeed = numberFrom(value, baseSpeed, 0, 100);
+      requestRender();
     },
     setBoost: function (value) {
+      if (!alive) return;
       boost = numberFrom(value, boost, 0, 200);
+      requestRender();
     },
     destroy: function () {
+      if (!alive) return;
       alive = false;
-      cancelAnimationFrame(frameId);
+
+      stopLoop();
+      cancelStaticFrame();
+      if (resizeFrameId) cancelAnimationFrame(resizeFrameId);
+      if (cursorFrameId) cancelAnimationFrame(cursorFrameId);
+      if (visibilityCheckFrameId) cancelAnimationFrame(visibilityCheckFrameId);
+
       if (resizeObserver) {
         resizeObserver.disconnect();
       } else {
-        window.removeEventListener("resize", resize);
+        window.removeEventListener("resize", queueResize);
       }
-      if (intersectionObserver) intersectionObserver.disconnect();
-      root.removeEventListener("pointermove", moveCursor);
-      root.removeEventListener("pointerenter", onPointerEnter);
+      if (intersectionObserver) {
+        intersectionObserver.disconnect();
+      } else {
+        window.removeEventListener("scroll", queueFallbackVisibilityCheck);
+        window.removeEventListener("resize", queueFallbackVisibilityCheck);
+      }
+
+      removeMotionListener();
+      removeFinePointerListener();
+      detachCursorTracking();
       root.removeEventListener("pointerleave", onPointerLeave);
       root.removeEventListener("pointerdown", onPointerDown);
       root.removeEventListener("keydown", onKeyDown);
@@ -538,6 +996,17 @@ function buildTunnel(root) {
       window.removeEventListener("pointerup", onPointerUp);
       window.removeEventListener("pointercancel", onPointerUp);
       window.removeEventListener("blur", onWindowBlur);
+      document.removeEventListener(
+        "visibilitychange",
+        onDocumentVisibilityChange
+      );
+      canvas.removeEventListener("webglcontextlost", onContextLost, false);
+      canvas.removeEventListener(
+        "webglcontextrestored",
+        onContextRestored,
+        false
+      );
+
       floorGeometry.dispose();
       wallGeometry.dispose();
       lineGeometry.dispose();
@@ -549,16 +1018,162 @@ function buildTunnel(root) {
         if (material.map) material.map.dispose();
         material.dispose();
       });
+      fadingMaterials.clear();
       renderer.dispose();
+      if (typeof renderer.forceContextLoss === "function") {
+        renderer.forceContextLoss();
+      }
+
+      canvas.remove();
+      veil.remove();
+      cursor.remove();
+      if (touchHint) touchHint.remove();
+
+      managedClassNames.forEach(function (className) {
+        root.classList.toggle(className, originalClassState.get(className));
+      });
+      managedAttributes.forEach(function (name) {
+        const value = originalAttributes.get(name);
+        if (value === null) {
+          root.removeAttribute(name);
+        } else {
+          root.setAttribute(name, value);
+        }
+      });
+      if (document.activeElement === root) root.blur();
     }
   };
+
+  return api;
+}
+
+let threeModulePromise = null;
+
+function loadThreeModule() {
+  if (!threeModulePromise) {
+    threeModulePromise = import("./vendor/three.module.min.js").catch(function (
+      error
+    ) {
+      threeModulePromise = null;
+      throw error;
+    });
+  }
+  return threeModulePromise;
 }
 
 function initGalleryTunnels() {
-  const roots = document.querySelectorAll("[data-gallery-tunnel]");
-  window.KobashiGalleryTunnels = Array.from(roots)
-    .map(buildTunnel)
-    .filter(Boolean);
+  const roots = Array.from(document.querySelectorAll("[data-gallery-tunnel]"));
+  const controllers = [];
+  const startByRoot = new WeakMap();
+  let lazyObserver = null;
+
+  window.KobashiGalleryTunnels = controllers;
+
+  function removeController(controller) {
+    const index = controllers.indexOf(controller);
+    if (index >= 0) controllers.splice(index, 1);
+    if (!controllers.length && lazyObserver) lazyObserver.disconnect();
+  }
+
+  roots.forEach(function (root) {
+    let instance = null;
+    let status = "idle";
+    let destroyed = false;
+    let hasPendingSpeed = false;
+    let pendingSpeed;
+    let hasPendingBoost = false;
+    let pendingBoost;
+
+    const controller = {
+      element: root,
+      setSpeed: function (value) {
+        if (destroyed) return;
+        if (instance) {
+          instance.setSpeed(value);
+        } else {
+          hasPendingSpeed = true;
+          pendingSpeed = value;
+        }
+      },
+      setBoost: function (value) {
+        if (destroyed) return;
+        if (instance) {
+          instance.setBoost(value);
+        } else {
+          hasPendingBoost = true;
+          pendingBoost = value;
+        }
+      },
+      destroy: function () {
+        if (destroyed) return;
+        destroyed = true;
+        status = "destroyed";
+        if (lazyObserver) lazyObserver.unobserve(root);
+        if (instance) {
+          instance.destroy();
+          instance = null;
+        }
+        removeController(controller);
+      }
+    };
+
+    function fail() {
+      if (destroyed) return;
+      destroyed = true;
+      status = "failed";
+      removeController(controller);
+    }
+
+    function start() {
+      if (destroyed || status !== "idle") return;
+      status = "loading";
+      loadThreeModule()
+        .then(function (THREE) {
+          if (destroyed) return;
+          if (!root.isConnected) {
+            fail();
+            return;
+          }
+          instance = buildTunnel(root, THREE);
+          if (!instance) {
+            fail();
+            return;
+          }
+          status = "ready";
+          if (hasPendingSpeed) instance.setSpeed(pendingSpeed);
+          if (hasPendingBoost) instance.setBoost(pendingBoost);
+        })
+        .catch(fail);
+    }
+
+    controllers.push(controller);
+    startByRoot.set(root, start);
+  });
+
+  if (typeof IntersectionObserver === "function") {
+    lazyObserver = new IntersectionObserver(
+      function (entries) {
+        entries.forEach(function (entry) {
+          if (!entry.isIntersecting) return;
+          lazyObserver.unobserve(entry.target);
+          const start = startByRoot.get(entry.target);
+          if (start) start();
+        });
+      },
+      {
+        rootMargin: LAZY_ROOT_MARGIN,
+        threshold: 0
+      }
+    );
+    roots.forEach(function (root) {
+      lazyObserver.observe(root);
+    });
+  } else {
+    roots.forEach(function (root) {
+      const start = startByRoot.get(root);
+      if (start) start();
+    });
+  }
 }
 
 if (document.readyState === "loading") {

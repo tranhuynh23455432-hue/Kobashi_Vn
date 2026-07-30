@@ -27,17 +27,32 @@
     var configuredGap = parseFloat(carousel.dataset.gap);
     var backBrightness = parseFloat(carousel.dataset.backBrightness);
     var reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    var compactMotion = window.matchMedia(
+      "(max-width: 767px), (pointer: coarse)"
+    );
+    var supportsIntersectionObserver = "IntersectionObserver" in window;
 
     var rotation = 0;
     var ringRadius = 0;
     var pointerId = null;
+    var pointerType = "";
+    var pointerIntent = null;
+    var pointerStartX = 0;
+    var pointerStartY = 0;
+    var pointerStartTime = 0;
     var lastPointerX = 0;
     var lastPointerTime = 0;
     var angularVelocity = 0;
     var isDragging = false;
-    var isVisible = true;
-    var manualPaused = reducedMotion.matches;
-    var previousFrameTime = performance.now();
+    var isVisible = !supportsIntersectionObserver;
+    var userPaused = false;
+    var prefersReducedMotion = reducedMotion.matches;
+    var animationFrameId = null;
+    var previousFrameTime = 0;
+    var resizeTimer = null;
+    var horizontalIntentThreshold = 8;
+    var minimumAngularVelocity = 0.001;
+    var animationFrameInterval = 1000 / (compactMotion.matches ? 30 : 60);
 
     viewport.setAttribute(
       "aria-label",
@@ -81,34 +96,165 @@
         "translateZ(" + -ringRadius + "px) rotateX(" + tilt + "deg) rotateY(" + rotation + "deg)";
     }
 
-    function setPausedState(paused) {
-      manualPaused = paused;
-      toggleButton.textContent = paused ? "Tiếp tục quay" : "Tạm dừng";
-      toggleButton.setAttribute("aria-pressed", paused ? "true" : "false");
+    function markInteracted() {
+      carousel.classList.add("has-interacted");
     }
 
-    function nudge(amount) {
-      rotation += step * amount;
-      angularVelocity = amount * 0.06;
+    function snapToNearestCard() {
+      rotation = Math.round(rotation / step) * step;
+      angularVelocity = 0;
       render();
     }
 
+    function updateToggleState() {
+      if (!toggleButton) {
+        return;
+      }
+
+      var effectivelyPaused = userPaused || prefersReducedMotion;
+      toggleButton.textContent = effectivelyPaused ? "Tiếp tục quay" : "Tạm dừng";
+      toggleButton.setAttribute("aria-pressed", effectivelyPaused ? "true" : "false");
+      toggleButton.disabled = prefersReducedMotion;
+      toggleButton.setAttribute("aria-disabled", prefersReducedMotion ? "true" : "false");
+    }
+
+    function canAnimate() {
+      return (
+        isVisible &&
+        !document.hidden &&
+        !isDragging &&
+        !userPaused &&
+        !prefersReducedMotion
+      );
+    }
+
+    function stopAnimation(clearInertia) {
+      if (animationFrameId !== null) {
+        window.cancelAnimationFrame(animationFrameId);
+        animationFrameId = null;
+      }
+      if (clearInertia) {
+        angularVelocity = 0;
+      }
+      carousel.classList.remove("is-animating");
+    }
+
+    function requestAnimation() {
+      if (!canAnimate() || animationFrameId !== null) {
+        return;
+      }
+
+      previousFrameTime = performance.now();
+      carousel.classList.add("is-animating");
+      animationFrameId = window.requestAnimationFrame(animate);
+    }
+
+    function updateAnimationState() {
+      if (canAnimate()) {
+        requestAnimation();
+      } else {
+        stopAnimation(false);
+      }
+    }
+
+    function setUserPaused(paused) {
+      userPaused = paused;
+      if (userPaused) {
+        stopAnimation(true);
+      }
+      updateToggleState();
+      updateAnimationState();
+    }
+
+    function nudge(amount) {
+      markInteracted();
+
+      if (prefersReducedMotion || userPaused) {
+        rotation = Math.round(rotation / step) * step + step * amount;
+        angularVelocity = 0;
+        render();
+        stopAnimation(false);
+        return;
+      }
+
+      rotation += step * amount;
+      angularVelocity = amount * 0.06;
+      render();
+      updateAnimationState();
+    }
+
+    function beginDrag(event) {
+      pointerIntent = "horizontal";
+      isDragging = true;
+      angularVelocity = 0;
+      stopAnimation(false);
+      viewport.classList.add("is-dragging");
+      markInteracted();
+
+      if (typeof viewport.setPointerCapture === "function") {
+        try {
+          viewport.setPointerCapture(event.pointerId);
+        } catch (error) {
+          // The pointer may already have been cancelled by native scrolling.
+        }
+      }
+    }
+
     function startDrag(event) {
+      if (pointerId !== null || event.isPrimary === false) {
+        return;
+      }
       if (event.pointerType === "mouse" && event.button !== 0) {
         return;
       }
+
       pointerId = event.pointerId;
+      pointerType = event.pointerType || "mouse";
+      pointerIntent = pointerType === "mouse" ? "horizontal" : null;
+      pointerStartX = event.clientX;
+      pointerStartY = event.clientY;
+      pointerStartTime = performance.now();
       lastPointerX = event.clientX;
-      lastPointerTime = performance.now();
-      angularVelocity = 0;
-      isDragging = true;
-      viewport.setPointerCapture(pointerId);
-      viewport.classList.add("is-dragging");
+      lastPointerTime = pointerStartTime;
+
+      if (pointerIntent === "horizontal") {
+        beginDrag(event);
+      }
     }
 
     function drag(event) {
-      if (!isDragging || event.pointerId !== pointerId) {
+      if (event.pointerId !== pointerId) {
         return;
+      }
+
+      if (!isDragging) {
+        if (pointerIntent === "vertical") {
+          return;
+        }
+
+        var totalX = event.clientX - pointerStartX;
+        var totalY = event.clientY - pointerStartY;
+        var absoluteX = Math.abs(totalX);
+        var absoluteY = Math.abs(totalY);
+
+        if (absoluteY >= horizontalIntentThreshold && absoluteY > absoluteX) {
+          pointerIntent = "vertical";
+          return;
+        }
+        if (
+          absoluteX < horizontalIntentThreshold ||
+          absoluteX <= absoluteY * 1.1
+        ) {
+          return;
+        }
+
+        lastPointerX = pointerStartX;
+        lastPointerTime = pointerStartTime;
+        beginDrag(event);
+      }
+
+      if (event.cancelable && pointerType !== "mouse") {
+        event.preventDefault();
       }
 
       var now = performance.now();
@@ -117,46 +263,100 @@
       var deltaRotation = deltaX * sensitivity;
 
       rotation += deltaRotation;
-      angularVelocity = angularVelocity * 0.35 + (deltaRotation / elapsed) * 0.65;
+      if (prefersReducedMotion || userPaused) {
+        angularVelocity = 0;
+      } else {
+        angularVelocity = angularVelocity * 0.35 + (deltaRotation / elapsed) * 0.65;
+      }
       lastPointerX = event.clientX;
       lastPointerTime = now;
       render();
     }
 
-    function endDrag(event) {
-      if (!isDragging || event.pointerId !== pointerId) {
+    function endDrag(event, captureAlreadyLost) {
+      if (pointerId === null || event.pointerId !== pointerId) {
         return;
       }
+
+      var finishedPointerId = pointerId;
+      var wasDragging = isDragging;
+
+      pointerId = null;
+      pointerType = "";
+      pointerIntent = null;
       isDragging = false;
       viewport.classList.remove("is-dragging");
-      if (viewport.hasPointerCapture(pointerId)) {
-        viewport.releasePointerCapture(pointerId);
+
+      if (
+        !captureAlreadyLost &&
+        typeof viewport.hasPointerCapture === "function" &&
+        typeof viewport.releasePointerCapture === "function" &&
+        viewport.hasPointerCapture(finishedPointerId)
+      ) {
+        try {
+          viewport.releasePointerCapture(finishedPointerId);
+        } catch (error) {
+          // lostpointercapture will perform the same state recovery.
+        }
       }
-      pointerId = null;
+
+      if (!wasDragging) {
+        return;
+      }
+
+      if (prefersReducedMotion || userPaused) {
+        snapToNearestCard();
+      }
+      updateAnimationState();
     }
 
     function animate(now) {
-      var elapsed = Math.min(48, now - previousFrameTime);
-      previousFrameTime = now;
+      animationFrameId = null;
 
-      if (isVisible && !document.hidden && !isDragging) {
-        if (Math.abs(angularVelocity) > 0.001) {
-          rotation += angularVelocity * elapsed;
-          angularVelocity *= Math.pow(0.94, elapsed / 16.67);
-        } else if (!manualPaused) {
-          angularVelocity = 0;
-          rotation += direction * speed * (elapsed / 1000);
-        }
-        render();
+      if (!canAnimate()) {
+        carousel.classList.remove("is-animating");
+        return;
       }
 
-      window.requestAnimationFrame(animate);
+      var timeSincePreviousFrame = now - previousFrameTime;
+      if (timeSincePreviousFrame < animationFrameInterval - 0.5) {
+        animationFrameId = window.requestAnimationFrame(animate);
+        return;
+      }
+
+      var elapsed = Math.min(48, timeSincePreviousFrame);
+      previousFrameTime = now;
+
+      if (Math.abs(angularVelocity) > minimumAngularVelocity) {
+        rotation += angularVelocity * elapsed;
+        angularVelocity *= Math.pow(0.94, elapsed / 16.67);
+        if (Math.abs(angularVelocity) <= minimumAngularVelocity) {
+          angularVelocity = 0;
+        }
+      } else {
+        angularVelocity = 0;
+        rotation += direction * speed * (elapsed / 1000);
+      }
+      render();
+
+      if (canAnimate()) {
+        animationFrameId = window.requestAnimationFrame(animate);
+      } else {
+        carousel.classList.remove("is-animating");
+      }
     }
 
     viewport.addEventListener("pointerdown", startDrag);
     viewport.addEventListener("pointermove", drag);
-    viewport.addEventListener("pointerup", endDrag);
-    viewport.addEventListener("pointercancel", endDrag);
+    viewport.addEventListener("lostpointercapture", function (event) {
+      endDrag(event, true);
+    });
+    window.addEventListener("pointerup", function (event) {
+      endDrag(event, false);
+    });
+    window.addEventListener("pointercancel", function (event) {
+      endDrag(event, true);
+    });
     viewport.addEventListener("keydown", function (event) {
       if (event.key === "ArrowLeft") {
         event.preventDefault();
@@ -167,34 +367,65 @@
       }
     });
 
-    previousButton.addEventListener("click", function () {
-      nudge(1);
-    });
-    nextButton.addEventListener("click", function () {
-      nudge(-1);
-    });
-    toggleButton.addEventListener("click", function () {
-      setPausedState(!manualPaused);
-    });
+    if (previousButton) {
+      previousButton.addEventListener("click", function () {
+        nudge(1);
+      });
+    }
+    if (nextButton) {
+      nextButton.addEventListener("click", function () {
+        nudge(-1);
+      });
+    }
+    if (toggleButton) {
+      toggleButton.addEventListener("click", function () {
+        markInteracted();
+        setUserPaused(!userPaused);
+      });
+    }
 
-    if ("IntersectionObserver" in window) {
+    if (supportsIntersectionObserver) {
       var observer = new IntersectionObserver(
         function (entries) {
-          isVisible = entries[0].isIntersecting;
+          var entry = entries[entries.length - 1];
+          isVisible = Boolean(entry && entry.isIntersecting);
+          if (!isVisible) {
+            stopAnimation(true);
+          } else {
+            updateAnimationState();
+          }
         },
-        { threshold: 0.05 }
+        {
+          threshold: 0.01,
+          rootMargin: "96px 0px"
+        }
       );
       observer.observe(carousel);
     }
 
-    var resizeTimer;
-    window.addEventListener("resize", function () {
+    function scheduleCardPositions() {
       window.clearTimeout(resizeTimer);
       resizeTimer = window.setTimeout(setCardPositions, 120);
-    });
+    }
+
+    if (typeof ResizeObserver === "function") {
+      var resizeObserver = new ResizeObserver(scheduleCardPositions);
+      resizeObserver.observe(viewport);
+      resizeObserver.observe(cards[0]);
+    } else {
+      window.addEventListener("resize", scheduleCardPositions);
+    }
 
     function handleMotionPreference(event) {
-      setPausedState(event.matches);
+      prefersReducedMotion = event.matches;
+      if (prefersReducedMotion) {
+        stopAnimation(true);
+        if (!isDragging) {
+          snapToNearestCard();
+        }
+      }
+      updateToggleState();
+      updateAnimationState();
     }
     if (typeof reducedMotion.addEventListener === "function") {
       reducedMotion.addEventListener("change", handleMotionPreference);
@@ -202,8 +433,26 @@
       reducedMotion.addListener(handleMotionPreference);
     }
 
-    setPausedState(manualPaused);
+    function handleCompactMotion(event) {
+      animationFrameInterval = 1000 / (event.matches ? 30 : 60);
+    }
+    if (typeof compactMotion.addEventListener === "function") {
+      compactMotion.addEventListener("change", handleCompactMotion);
+    } else if (typeof compactMotion.addListener === "function") {
+      compactMotion.addListener(handleCompactMotion);
+    }
+
+    document.addEventListener("visibilitychange", function () {
+      if (document.hidden) {
+        stopAnimation(true);
+      } else {
+        updateAnimationState();
+      }
+    });
+
+    updateToggleState();
     setCardPositions();
-    window.requestAnimationFrame(animate);
+    carousel.classList.add("is-ready");
+    updateAnimationState();
   });
 })();
