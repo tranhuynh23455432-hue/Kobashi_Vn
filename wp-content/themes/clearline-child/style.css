@@ -1520,6 +1520,158 @@ button - ボタン関係のコンポーネント
 .c-basic-btn--w:hover {
   color: #ffffff;
 }
+
+/* =========================================================
+Construction document download
+========================================================= */
+.p-const-download {
+  position: relative;
+  overflow: hidden;
+  padding: 56px 20px;
+  color: #fff;
+  background:
+    radial-gradient(circle at 12% 18%, rgba(231, 30, 25, 0.24), transparent 34%),
+    linear-gradient(125deg, #231815 0%, #352724 100%);
+}
+.p-const-download::after {
+  content: "";
+  position: absolute;
+  right: -78px;
+  bottom: -112px;
+  width: 250px;
+  height: 250px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 50%;
+  box-shadow:
+    0 0 0 30px rgba(255, 255, 255, 0.025),
+    0 0 0 62px rgba(255, 255, 255, 0.02);
+  pointer-events: none;
+}
+.p-const-download__inner {
+  position: relative;
+  z-index: 1;
+  max-width: 1040px;
+  margin: 0 auto;
+}
+.p-const-download__content {
+  margin-bottom: 28px;
+}
+.p-const-download__eyebrow {
+  margin-bottom: 12px;
+  color: #ff706c;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+}
+.p-const-download__title {
+  margin-bottom: 12px;
+  color: #fff;
+  font-size: clamp(24px, 6.4vw, 36px);
+  font-weight: 700;
+  line-height: 1.35;
+}
+.p-const-download__text {
+  max-width: 610px;
+  margin: 0;
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 14px;
+  line-height: 1.8;
+}
+.p-const-download__button {
+  display: grid;
+  grid-template-columns: 38px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  min-height: 74px;
+  padding: 14px 18px;
+  color: #231815;
+  text-decoration: none;
+  background: #fff;
+  border: 2px solid #fff;
+  border-radius: 4px;
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.18);
+  transition: color 0.25s ease, background-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
+}
+.p-const-download__button:hover {
+  color: #fff;
+  background: #e71e19;
+  border-color: #e71e19;
+  transform: translateY(-2px);
+  box-shadow: 0 18px 38px rgba(0, 0, 0, 0.26);
+}
+.p-const-download__button:focus-visible {
+  outline: 3px solid #ff706c;
+  outline-offset: 4px;
+}
+.p-const-download__button-icon {
+  position: relative;
+  display: block;
+  width: 38px;
+  height: 38px;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+}
+.p-const-download__button-icon::before {
+  content: "";
+  position: absolute;
+  top: 8px;
+  left: 17px;
+  width: 2px;
+  height: 13px;
+  background: currentColor;
+}
+.p-const-download__button-icon::after {
+  content: "";
+  position: absolute;
+  top: 14px;
+  left: 13px;
+  width: 8px;
+  height: 8px;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: rotate(45deg);
+}
+.p-const-download__button-text {
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.45;
+}
+.p-const-download__button-meta {
+  color: #776c66;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+  transition: color 0.25s ease;
+}
+.p-const-download__button:hover .p-const-download__button-meta {
+  color: rgba(255, 255, 255, 0.78);
+}
+@media screen and (min-width: 768px) {
+  .p-const-download {
+    padding: 72px 40px;
+  }
+  .p-const-download__inner {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(330px, 420px);
+    align-items: center;
+    gap: 64px;
+  }
+  .p-const-download__content {
+    margin-bottom: 0;
+  }
+  .p-const-download__eyebrow {
+    font-size: 13px;
+  }
+  .p-const-download__text {
+    font-size: 15px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .p-const-download__button {
+    transition: none;
+  }
+}
 .c-basic-btn:focus-visible {
   outline: 3px solid currentColor;
   outline-offset: 3px;
@@ -10776,12 +10928,15 @@ header - ヘッダー内のクラス
   border-bottom: #FFF 2px solid;
   transition: .3s;
   padding: 0 0 !important;
+  width: 100%;
+  max-width: none;
 }
 @media screen and (max-width: 991px) {
   .c-header {
     position: fixed;
     top: 0;
     left: 0;
+    right: 0;
     z-index: 100;
   }
 }
@@ -10828,6 +10983,8 @@ header - ヘッダー内のクラス
     max-width: 100%;
     padding-right: 0px !important;
     padding-left: 0px !important;
+    padding-right: env(safe-area-inset-right) !important;
+    padding-left: env(safe-area-inset-left) !important;
     box-sizing: border-box;
   }
 }
@@ -11089,7 +11246,7 @@ header - ヘッダー内のクラス
   left: calc(50% - 15px);
 }
 .c-header-contact::after {
-  content: "liên hệ ngay";
+  content: "Liên hệ";
   color: #FFF;
   position: absolute;
   bottom: 9px;
@@ -11103,10 +11260,10 @@ header - ヘッダー内のクラス
 Nút chuyển đổi ngôn ngữ (VI / 日本語)
 ========================================================= */
 .c-header-lang {
-  background-color: #4c4948;
-  min-width: 44px;
-  height: 62px;
-  margin-right: 2px;
+  width: 86px;
+  min-width: 86px;
+  height: 44px;
+  margin: 0 8px;
   display: -webkit-box;
   display: -webkit-flex;
   display: -moz-flex;
@@ -11122,32 +11279,93 @@ Nút chuyển đổi ngôn ngữ (VI / 日本語)
   -moz-box-pack: center;
   -ms-flex-pack: center;
   justify-content: center;
+  position: relative;
+  padding: 0;
+  border-radius: 999px;
   text-decoration: none;
   color: #FFF;
-  font-weight: 700;
-  font-size: 13px;
-  letter-spacing: 0.05em;
   flex-shrink: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+.c-header-lang__control {
+  width: 100%;
+  height: 36px;
+  padding: 3px;
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: center;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.42);
+  border-radius: 999px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.08));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 4px 12px rgba(0, 0, 0, 0.2);
+  transition: border-color .2s ease, background-color .2s ease, box-shadow .2s ease;
+}
+.c-header-lang__thumb {
+  position: absolute;
+  top: 3px;
+  bottom: 3px;
+  left: 3px;
+  width: calc(50% - 3px);
+  border-radius: 999px;
+  background-color: #FFF;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  transition: transform .24s cubic-bezier(.2, .8, .2, 1);
+}
+.c-header-lang--current-ja .c-header-lang__thumb {
+  transform: translateX(100%);
+}
+.c-header-lang__label {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0.03em;
+  transition: color .2s ease;
+}
+.c-header-lang--current-vi .c-header-lang__label--vi,
+.c-header-lang--current-ja .c-header-lang__label--ja {
+  color: #231815;
 }
 .c-header-lang:hover {
-  opacity: 0.8;
+  opacity: 1;
   color: #FFF;
   text-decoration: none;
 }
-@media screen and (min-width: 1200px) {
-  .c-header-lang {
-    font-size: 15px;
+.c-header-lang:hover .c-header-lang__control {
+  border-color: rgba(255, 255, 255, 0.85);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0.1));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.16), 0 5px 14px rgba(0, 0, 0, 0.28);
+}
+.c-header-lang:focus-visible {
+  outline: none;
+}
+.c-header-lang:focus-visible .c-header-lang__control {
+  outline: 2px solid #FFF;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px #17499d;
+}
+.c-header-lang:active .c-header-lang__thumb {
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
+}
+@media screen and (max-width: 600px) {
+  .c-header-insta,
+  .c-header-fb {
+    display: none;
   }
 }
 @media screen and (max-width: 480px) {
   .c-header-logo {
-    width: clamp(112px, 36vw, 140px);
+    width: clamp(104px, 34vw, 140px);
     min-width: 0;
-    margin-left: max(8px, env(safe-area-inset-left));
-  }
-  .c-header-insta,
-  .c-header-fb {
-    display: none;
+    margin-left: 8px;
   }
   .c-header-contact,
   .c-slide-menu__btn {
@@ -11155,10 +11373,20 @@ Nút chuyển đổi ngôn ngữ (VI / 日本語)
     min-width: 52px;
   }
   .c-header-lang {
-    min-width: 42px;
+    width: 80px;
+    min-width: 80px;
+    margin-right: 4px;
+    margin-left: 4px;
   }
   .c-slide-menu__btn {
-    margin-right: max(0px, env(safe-area-inset-right));
+    margin-right: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .c-header-lang__control,
+  .c-header-lang__thumb,
+  .c-header-lang__label {
+    transition: none;
   }
 }
 
@@ -14124,6 +14352,14 @@ iera - イエラ事業
   background: #71c7d5;
   padding: 20px 0;
 }
+.p-iera-dl-links {
+  display: grid;
+  gap: 8px;
+  width: 100%;
+}
+.p-iera-dl-links .c-basic-btn--ieradl {
+  width: 100%;
+}
 @media screen and (min-width: 992px) {
   .p-iera-dl-wrap {
     display: -webkit-box;
@@ -14135,6 +14371,10 @@ iera - イエラ事業
     -webkit-box-align: center;
     -ms-flex-align: center;
     align-items: center;
+    gap: 24px;
+  }
+  .p-iera-dl-links {
+    width: min(100%, 430px);
   }
 }
 .p-iera-dl-ttl {
