@@ -12983,6 +12983,9 @@ gallery - ギャラリー
 .p-gallery-const-item-img {
   margin-bottom: 15px;
 }
+[data-defer-slider]:not(.slick-initialized) > :not(:first-child) {
+  display: none;
+}
 .p-gallery-const-item-img__in {
   height: 240px;
 }

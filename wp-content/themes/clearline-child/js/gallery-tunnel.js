@@ -1,12 +1,12 @@
 const DEFAULT_IMAGE_NAMES = [
-  "LINE_20260729_161507.jpg",
-  "LINE_20260729_161603.jpg",
-  "LINE_20260729_161636.jpg",
-  "LINE_20260729_161704.jpg",
-  "LINE_20260729_161733.jpg",
-  "LINE_20260729_161801.jpg",
-  "LINE_20260729_161843.jpg",
-  "LINE_20260729_161918.jpg"
+  "LINE_20260729_161507-tunnel.webp",
+  "LINE_20260729_161603-tunnel.webp",
+  "LINE_20260729_161636-tunnel.webp",
+  "LINE_20260729_161704-tunnel.webp",
+  "LINE_20260729_161733-tunnel.webp",
+  "LINE_20260729_161801-tunnel.webp",
+  "LINE_20260729_161843-tunnel.webp",
+  "LINE_20260729_161918-tunnel.webp"
 ];
 
 const DEFAULT_IMAGES = DEFAULT_IMAGE_NAMES.map(function (name) {
@@ -34,9 +34,9 @@ const DEFAULTS = {
 const TUNNEL_WIDTH = 4.4;
 const TUNNEL_HEIGHT = 2.8;
 const SEGMENT_DEPTH = 1.1;
-const DESKTOP_SEGMENT_COUNT = 22;
+const DESKTOP_SEGMENT_COUNT = 18;
 const TEXTURE_FADE_SECONDS = 0.8;
-const LAZY_ROOT_MARGIN = "320px 0px";
+const LAZY_ROOT_MARGIN = "160px 0px";
 
 function clamp(value, min, max) {
   return Math.min(max, Math.max(min, value));
@@ -83,6 +83,18 @@ function getDeviceProfile(config) {
     return {
       constrained: true,
       grid: Math.min(config.grid, 3),
+      segmentCount: 10,
+      pixelRatio: 1,
+      antialias: false,
+      maxFps: 30,
+      textureLimit: Math.min(config.images.length, 3)
+    };
+  }
+
+  if (narrow && coarse) {
+    return {
+      constrained: true,
+      grid: Math.min(config.grid, 3),
       segmentCount: 12,
       pixelRatio: 1,
       antialias: false,
@@ -91,27 +103,15 @@ function getDeviceProfile(config) {
     };
   }
 
-  if (narrow && coarse) {
-    return {
-      constrained: true,
-      grid: Math.min(config.grid, 3),
-      segmentCount: 14,
-      pixelRatio: 1,
-      antialias: false,
-      maxFps: 30,
-      textureLimit: Math.min(config.images.length, 5)
-    };
-  }
-
   if (narrow || coarse) {
     return {
       constrained: true,
       grid: Math.min(config.grid, 3),
-      segmentCount: 16,
-      pixelRatio: 1.25,
+      segmentCount: 14,
+      pixelRatio: 1.2,
       antialias: false,
-      maxFps: 45,
-      textureLimit: Math.min(config.images.length, 6)
+      maxFps: 30,
+      textureLimit: Math.min(config.images.length, 4)
     };
   }
 
@@ -119,10 +119,10 @@ function getDeviceProfile(config) {
     constrained: false,
     grid: config.grid,
     segmentCount: DESKTOP_SEGMENT_COUNT,
-    pixelRatio: 1.75,
+    pixelRatio: 1.5,
     antialias: true,
-    maxFps: 60,
-    textureLimit: config.images.length
+    maxFps: 45,
+    textureLimit: Math.min(config.images.length, 6)
   };
 }
 
@@ -1181,15 +1181,7 @@ function initGalleryTunnels() {
     startByRoot.set(root, start);
   });
 
-  const eagerOnMobile =
-    mediaMatches("(max-width: 767px)") || mediaMatches("(pointer: coarse)");
-
-  if (eagerOnMobile) {
-    roots.forEach(function (root) {
-      const start = startByRoot.get(root);
-      if (start) start();
-    });
-  } else if (typeof IntersectionObserver === "function") {
+  if (typeof IntersectionObserver === "function") {
     lazyObserver = new IntersectionObserver(
       function (entries) {
         entries.forEach(function (entry) {
