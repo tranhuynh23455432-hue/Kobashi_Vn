@@ -1,0 +1,230 @@
+/* =========================================================
+Company page — cinematic scroll reveal
+Loaded only on Home/Company & ja/Company. Progressive
+enhancement: everything below is only ever hidden by a class
+("is-inview" / "js-lines-ready") that company-reveal.js adds,
+so if JS fails the static markup underneath is unaffected.
+========================================================= */
+
+.p-company {
+  --company-accent: #6ab82d;
+  --company-ease: cubic-bezier(0.16, 0.84, 0.44, 1);
+}
+
+/* ---------- Section background: dark overlay + fixed parallax image ---------- */
+.p-company-section {
+  background-image: linear-gradient(rgba(10, 20, 35, 0.75), rgba(10, 20, 35, 0.75)),
+    url("../images/company/img_company_mv.webp");
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  color: #ffffff;
+}
+@media (max-width: 991px) {
+  /* background-attachment: fixed is janky/unsupported on many mobile browsers */
+  .p-company-section {
+    background-attachment: scroll;
+  }
+}
+
+/* ---------- Section title: rise + underline draw-in ---------- */
+.p-company-section-ttl {
+  position: relative;
+  padding-bottom: 18px;
+}
+.p-company-section-ttl__en,
+.p-company-section-ttl__jp {
+  opacity: 0;
+  transform: translate3d(0, 26px, 0);
+  transition: opacity 0.8s var(--company-ease), transform 0.8s var(--company-ease);
+}
+.p-company-section-ttl__jp {
+  transition-delay: 0.1s;
+}
+.p-company-section-ttl::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: 0;
+  height: 2px;
+  background: var(--company-accent);
+  transform: translateX(-50%);
+  transition: width 0.9s var(--company-ease) 0.25s;
+}
+.p-company-section-ttl.is-inview .p-company-section-ttl__en,
+.p-company-section-ttl.is-inview .p-company-section-ttl__jp {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+}
+.p-company-section-ttl.is-inview::after {
+  width: 56px;
+}
+
+/* ---------- Quote headline: per-line mask reveal ----------
+   company-reveal.js rewrites the text of .p-company-section-read
+   into <span class="c-reveal-line"><span class="c-reveal-line__inner">
+   so each visual line can rise out of its own mask. Until that
+   runs, the paragraph is plain text and fully visible. */
+.p-company-section-read .c-reveal-line {
+  display: block;
+  overflow: hidden;
+}
+.p-company-section-read .c-reveal-line__inner {
+  display: block;
+  transform: translate3d(0, 108%, 0);
+  transition: transform 0.9s var(--company-ease);
+}
+.p-company-section-read.is-inview .c-reveal-line__inner {
+  transform: translate3d(0, 0, 0);
+}
+
+/* ---------- Info / History list items: staggered cascade ---------- */
+.p-company-section-list > .p-company-section-item {
+  opacity: 0;
+  transform: translate3d(0, 22px, 0);
+  transition: opacity 0.6s var(--company-ease), transform 0.6s var(--company-ease);
+}
+.p-company-section-list > .p-company-section-item.is-inview {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+}
+
+/* ---------- Access map cards ---------- */
+.p-company-section-map-item {
+  opacity: 0;
+  transform: translate3d(0, 24px, 0);
+  transition: opacity 0.6s var(--company-ease), transform 0.6s var(--company-ease);
+}
+.p-company-section-map-item.is-inview {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+}
+
+/* ---------- Photos / history images / CEO signature: mask reveal + hover zoom ---------- */
+.p-company-section-photo__in,
+.p-company-section-item-img__in,
+.p-company-section-name {
+  opacity: 0;
+  clip-path: inset(10% round 2px);
+  transition: opacity 0.7s var(--company-ease), clip-path 1s var(--company-ease),
+    transform 0.5s var(--company-ease), filter 0.5s var(--company-ease);
+}
+.p-company-section-photo__in.is-inview,
+.p-company-section-item-img__in.is-inview,
+.p-company-section-name.is-inview {
+  opacity: 1;
+  clip-path: inset(0% round 0);
+}
+.p-company-section-photo__txt {
+  opacity: 0;
+  transform: translate3d(0, 12px, 0);
+  transition: opacity 0.6s var(--company-ease) 0.2s, transform 0.6s var(--company-ease) 0.2s;
+}
+.p-company-section-photo__in.is-inview + .p-company-section-photo__txt {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+}
+@media (hover: hover) and (pointer: fine) {
+  .p-company-section-photo:hover .p-company-section-photo__in {
+    transform: scale(1.045);
+    filter: brightness(1.05) saturate(1.08);
+  }
+  .p-company-section-item-img:hover .p-company-section-item-img__in {
+    transform: scale(1.035);
+  }
+}
+
+/* ---------- History timeline: progress line + dots (desktop) ---------- */
+@media screen and (min-width: 992px) {
+  .p-company-section-list--his {
+    position: relative;
+    padding-left: 32px;
+  }
+  .p-company-section-list--his::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 4px;
+    bottom: 4px;
+    width: 2px;
+    background: rgba(255, 255, 255, 0.14);
+  }
+  .p-company-section-list--his::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 4px;
+    width: 2px;
+    height: calc(var(--history-progress, 0) * 1%);
+    max-height: calc(100% - 4px);
+    background: var(--company-accent);
+    box-shadow: 0 0 10px 0 var(--company-accent);
+    transition: height 0.1s linear;
+  }
+  .p-company-section-list--his .p-company-section-item {
+    position: relative;
+  }
+  .p-company-section-list--his .p-company-section-item::before {
+    content: "";
+    position: absolute;
+    left: -32px;
+    top: 28px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #4b4b4b;
+    border: 2px solid #231815;
+    transition: background 0.4s var(--company-ease), transform 0.4s var(--company-ease);
+  }
+  .p-company-section-list--his .p-company-section-item.is-inview::before {
+    background: var(--company-accent);
+    transform: scale(1.25);
+  }
+}
+
+/* ---------- Number counters ---------- */
+.js-count {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- Respect reduced motion: force everything static & visible ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .p-company-section-ttl__en,
+  .p-company-section-ttl__jp,
+  .p-company-section-ttl::after,
+  .p-company-section-read .c-reveal-line__inner,
+  .p-company-section-list > .p-company-section-item,
+  .p-company-section-map-item,
+  .p-company-section-photo__in,
+  .p-company-section-item-img__in,
+  .p-company-section-name,
+  .p-company-section-photo__txt,
+  .p-company-section-list--his::after,
+  .p-company-section-list--his .p-company-section-item::before {
+    transition: none !important;
+  }
+  .p-company-section-ttl__en,
+  .p-company-section-ttl__jp,
+  .p-company-section-read .c-reveal-line__inner,
+  .p-company-section-list > .p-company-section-item,
+  .p-company-section-map-item,
+  .p-company-section-photo__in,
+  .p-company-section-item-img__in,
+  .p-company-section-name,
+  .p-company-section-photo__txt {
+    opacity: 1 !important;
+    transform: none !important;
+    clip-path: none !important;
+  }
+  .p-company-section-ttl::after {
+    width: 56px !important;
+  }
+  @media screen and (min-width: 992px) {
+    .p-company-section-list--his .p-company-section-item.is-inview::before,
+    .p-company-section-list--his .p-company-section-item::before {
+      background: var(--company-accent);
+      transform: none !important;
+    }
+  }
+}
