@@ -11002,6 +11002,8 @@ header - ヘッダー内のクラス
   -moz-align-items: center;
   align-items: center;
   width: 140px;
+  min-width: 140px;
+  flex-shrink: 0;
   position: relative;
 }
 .c-header-logo a:not(.in-link) {
@@ -11015,12 +11017,14 @@ header - ヘッダー内のクラス
 }
 @media screen and (min-width: 992px) {
   .c-header-logo {
-    width: 200px;
+    width: 150px;
+    min-width: 150px;
   }
 }
-@media (min-width: 992px) and (max-width: 1149px) {
+@media screen and (min-width: 1150px) {
   .c-header-logo {
-    width: 120px;
+    width: 200px;
+    min-width: 200px;
   }
 }
 .c-header-logo__link {
