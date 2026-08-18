@@ -13590,7 +13590,8 @@ gallery - ギャラリー
 /* =========================================================
 Gallery tunnel
 ========================================================= */
-.c-page-ttl--constgallery[data-gallery-tunnel] {
+.c-page-ttl--constgallery[data-gallery-tunnel],
+.c-page-ttl--constgallery[data-spotlight-hero] {
   isolation: isolate;
   overflow: hidden;
   height: 58vh;
@@ -13601,23 +13602,41 @@ Gallery tunnel
   -webkit-user-select: none;
   user-select: none;
 }
+.c-page-ttl--constgallery[data-spotlight-hero] {
+  height: 42vh;
+  height: clamp(260px, 42svh, 420px);
+}
 @media screen and (min-width: 992px) {
-  .c-page-ttl--constgallery[data-gallery-tunnel] {
+  .c-page-ttl--constgallery[data-gallery-tunnel],
+  .c-page-ttl--constgallery[data-spotlight-hero] {
     height: 78vh;
     height: clamp(560px, 78vh, 840px);
+  }
+  .p-const > .c-page-ttl--constgallery[data-gallery-tunnel],
+  .p-const > .c-page-ttl--constgallery[data-spotlight-hero] {
+    height: 100vh;
+  }
+  .c-page-ttl--constgallery[data-spotlight-hero] {
+    height: 46vh;
+    height: clamp(360px, 46vh, 520px);
   }
 }
 .c-page-ttl--constgallery[data-gallery-tunnel].gallery-tunnel--active.gallery-tunnel--with-label {
   cursor: none;
 }
-.c-page-ttl--constgallery[data-gallery-tunnel]::before {
+.c-page-ttl--constgallery[data-gallery-tunnel]::before,
+.c-page-ttl--constgallery[data-spotlight-hero]::before {
+  content: "";
+  position: absolute;
+  inset: 0;
   z-index: 2;
   background:
     radial-gradient(circle at 50% 48%, rgba(0, 0, 0, 0.04) 0%, rgba(0, 0, 0, 0.28) 66%, rgba(0, 0, 0, 0.58) 100%),
     linear-gradient(180deg, rgba(0, 0, 0, 0.16) 0%, rgba(0, 0, 0, 0.1) 52%, rgba(0, 0, 0, 0.4) 100%);
   pointer-events: none;
 }
-.c-page-ttl--constgallery[data-gallery-tunnel] .c-page-ttl__in {
+.c-page-ttl--constgallery[data-gallery-tunnel] .c-page-ttl__in,
+.c-page-ttl--constgallery[data-spotlight-hero] .c-page-ttl__in {
   position: absolute;
   z-index: 5;
   inset: 0;
@@ -13637,14 +13656,16 @@ Gallery tunnel
   text-shadow: 0 3px 24px rgba(0, 0, 0, 0.88);
   pointer-events: none;
 }
-.c-page-ttl--constgallery[data-gallery-tunnel] .c-page-ttl__en {
+.c-page-ttl--constgallery[data-gallery-tunnel] .c-page-ttl__en,
+.c-page-ttl--constgallery[data-spotlight-hero] .c-page-ttl__en {
   margin: 0 0 clamp(12px, 2vw, 22px);
   font-size: clamp(48px, 11vw, 132px);
   line-height: 0.86;
   letter-spacing: 0.08em;
   color: #fff;
 }
-.c-page-ttl--constgallery[data-gallery-tunnel] .c-page-ttl__jp {
+.c-page-ttl--constgallery[data-gallery-tunnel] .c-page-ttl__jp,
+.c-page-ttl--constgallery[data-spotlight-hero] .c-page-ttl__jp {
   margin: 0;
   font-size: clamp(20px, 3vw, 36px);
   line-height: 1.35;
@@ -13736,24 +13757,29 @@ Gallery tunnel
   }
 }
 @media screen and (max-width: 767px) {
-  .c-page-ttl--constgallery[data-gallery-tunnel] .c-page-ttl__in {
+  .c-page-ttl--constgallery[data-gallery-tunnel] .c-page-ttl__in,
+  .c-page-ttl--constgallery[data-spotlight-hero] .c-page-ttl__in {
     padding: 28px 20px 72px;
   }
-  .c-page-ttl--constgallery[data-gallery-tunnel] .c-page-ttl__en {
+  .c-page-ttl--constgallery[data-gallery-tunnel] .c-page-ttl__en,
+  .c-page-ttl--constgallery[data-spotlight-hero] .c-page-ttl__en {
     font-size: clamp(42px, 15vw, 72px);
     letter-spacing: 0.055em;
   }
-  .c-page-ttl--constgallery[data-gallery-tunnel] .c-page-ttl__jp {
+  .c-page-ttl--constgallery[data-gallery-tunnel] .c-page-ttl__jp,
+  .c-page-ttl--constgallery[data-spotlight-hero] .c-page-ttl__jp {
     font-size: clamp(18px, 6vw, 26px);
   }
 }
 @media screen and (max-width: 767px) and (max-height: 500px) and (orientation: landscape) {
-  .c-page-ttl--constgallery[data-gallery-tunnel] {
+  .c-page-ttl--constgallery[data-gallery-tunnel],
+  .c-page-ttl--constgallery[data-spotlight-hero] {
     height: calc(100svh - 62px);
     min-height: 260px;
     max-height: 420px;
   }
-  .c-page-ttl--constgallery[data-gallery-tunnel] .c-page-ttl__in {
+  .c-page-ttl--constgallery[data-gallery-tunnel] .c-page-ttl__in,
+  .c-page-ttl--constgallery[data-spotlight-hero] .c-page-ttl__in {
     padding-top: 20px;
     padding-bottom: 56px;
   }
@@ -13766,6 +13792,29 @@ Gallery tunnel
   .gallery-tunnel__touch-hint {
     display: none;
   }
+}
+
+/* =========================================================
+Spotlight hero
+========================================================= */
+.c-page-ttl--constgallery[data-spotlight-hero]::before {
+  display: none;
+}
+.spotlight-hero__img {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  user-select: none;
+}
+.spotlight-hero__veil {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
 }
 
     /* =========================================================
