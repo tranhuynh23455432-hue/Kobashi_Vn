@@ -1577,6 +1577,11 @@ Construction document download
   font-size: 14px;
   line-height: 1.8;
 }
+.p-const-download__buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
 .p-const-download__button {
   display: grid;
   grid-template-columns: 38px minmax(0, 1fr) auto;
