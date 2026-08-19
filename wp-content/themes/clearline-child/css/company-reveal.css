@@ -1,6 +1,6 @@
 /* =========================================================
 Company page — cinematic scroll reveal
-Loaded only on Home/Company & ja/Company. Progressive
+Loaded only on vi/Company & ja/Company. Progressive
 enhancement: everything below is only ever hidden by a class
 ("is-inview" / "js-lines-ready") that company-reveal.js adds,
 so if JS fails the static markup underneath is unaffected.
