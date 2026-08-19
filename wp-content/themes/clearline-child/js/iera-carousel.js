@@ -112,7 +112,9 @@
       }
 
       var effectivelyPaused = userPaused || prefersReducedMotion;
-      toggleButton.textContent = effectivelyPaused ? "Tiếp tục quay" : "Tạm dừng";
+      var playLabel = toggleButton.dataset.labelPlay || "Tiếp tục quay";
+      var pauseLabel = toggleButton.dataset.labelPause || "Tạm dừng";
+      toggleButton.textContent = effectivelyPaused ? playLabel : pauseLabel;
       toggleButton.setAttribute("aria-pressed", effectivelyPaused ? "true" : "false");
       toggleButton.disabled = prefersReducedMotion;
       toggleButton.setAttribute("aria-disabled", prefersReducedMotion ? "true" : "false");
