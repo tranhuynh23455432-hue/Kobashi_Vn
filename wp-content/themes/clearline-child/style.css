@@ -904,7 +904,7 @@ navigation - グローバルナビなど
   width: 100%;
   text-align: center;
 }
-@media screen and (min-width: 992px) {
+@media screen and (min-width: 1300px) {
   .c-slide-menu__btn {
     display: none;
   }
@@ -10936,7 +10936,7 @@ header - ヘッダー内のクラス
   width: 100%;
   max-width: none;
 }
-@media screen and (max-width: 991px) {
+@media screen and (max-width: 1299px) {
   .c-header {
     position: fixed;
     top: 0;
@@ -10945,7 +10945,7 @@ header - ヘッダー内のクラス
     z-index: 100;
   }
 }
-@media screen and (min-width: 992px) {
+@media screen and (min-width: 1300px) {
   .c-header {
     padding: 15px;
     position: absolute;
@@ -10955,7 +10955,7 @@ header - ヘッダー内のクラス
     width: 100%;
   }
 }
-@media screen and (min-width: 992px) {
+@media screen and (min-width: 1300px) {
   .c-header.fixed {
     position: fixed;
     top: 0;
@@ -10981,7 +10981,7 @@ header - ヘッダー内のクラス
   align-items: center;
   height: 84px;
 }
-@media screen and (max-width: 991px) {
+@media screen and (max-width: 1299px) {
   .c-header__in {
     width: 100%;
     height: 62px;
@@ -11056,13 +11056,13 @@ header - ヘッダー内のクラス
   flex-shrink: 0;
 }
 .c-header-insta {
-  background-color: #4c4948;
+  background-color: transparent;
   width: 58px;
   height: 62px;
   margin-right: 2px;
   position: relative;
 }
-@media screen and (min-width: 992px) {
+@media screen and (min-width: 1300px) {
   .c-header-insta {
     display: none;
   }
@@ -11108,12 +11108,12 @@ header - ヘッダー内のクラス
   border-left: solid #FFF 2px;
   white-space: nowrap;
 }
-@media screen and (max-width: 991px) {
+@media screen and (max-width: 1299px) {
   .c-header-instapc {
     display: none;
   }
 }
-@media (min-width: 992px) and (max-width: 1135px) {
+@media (min-width: 1300px) and (max-width: 1440px) {
   .c-header-instapc {
     padding: 0 8px;
   }
@@ -11143,13 +11143,13 @@ header - ヘッダー内のクラス
   }
 }
 .c-header-fb {
-  background-color: #4c4948;
+  background-color: transparent;
   width: 58px;
   height: 62px;
   margin-right: 2px;
   position: relative;
 }
-@media screen and (min-width: 992px) {
+@media screen and (min-width: 1300px) {
   .c-header-fb {
     display: none;
   }
@@ -11195,12 +11195,12 @@ header - ヘッダー内のクラス
   border-left: solid #FFF 2px;
   white-space: nowrap;
 }
-@media screen and (max-width: 991px) {
+@media screen and (max-width: 1299px) {
   .c-header-fbpc {
     display: none;
   }
 }
-@media (min-width: 992px) and (max-width: 1135px) {
+@media (min-width: 1300px) and (max-width: 1440px) {
   .c-header-fbpc {
     padding: 0 8px;
   }
@@ -11230,13 +11230,13 @@ header - ヘッダー内のクラス
   }
 }
 .c-header-contact {
-  background-color: #4c4948;
+  background-color: transparent;
   width: 58px;
   height: 62px;
   margin-right: 2px;
   position: relative;
 }
-@media screen and (min-width: 992px) {
+@media screen and (min-width: 1300px) {
   .c-header-contact {
     display: none;
   }
@@ -11430,7 +11430,7 @@ Nút chuyển đổi ngôn ngữ (VI / 日本語)
 .c-header-nav {
   display: none;
 }
-@media screen and (min-width: 992px) {
+@media screen and (min-width: 1300px) {
   .c-header-nav {
     display: block;
   }
