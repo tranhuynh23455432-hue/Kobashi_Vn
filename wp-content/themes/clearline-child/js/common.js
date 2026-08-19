@@ -3,7 +3,7 @@
 ================*/
 var commonDesktopMediaQuery =
   typeof window.matchMedia === "function"
-    ? window.matchMedia("(min-width: 1300px)")
+    ? window.matchMedia("(min-width: 1440px)")
     : null;
 var commonReducedMotionQuery =
   typeof window.matchMedia === "function"
@@ -209,7 +209,7 @@ $(function () {
     function isDesktopMenuLayout() {
       return commonDesktopMediaQuery
         ? commonDesktopMediaQuery.matches
-        : window.innerWidth >= 1300;
+        : window.innerWidth >= 1440;
     }
 
     function setElementInert(element, shouldBeInert) {
@@ -426,7 +426,7 @@ $(function () {
 
     if (!commonDesktopMediaQuery) {
       window.addEventListener("resize", function () {
-        if (window.innerWidth >= 1300) {
+        if (window.innerWidth >= 1440) {
           closeMenu({ restoreFocus: false });
         }
       });
@@ -566,7 +566,7 @@ document.addEventListener("DOMContentLoaded", function () {
   function isDesktopHeaderLayout() {
     return commonDesktopMediaQuery
       ? commonDesktopMediaQuery.matches
-      : window.innerWidth >= 1300;
+      : window.innerWidth >= 1440;
   }
 
   function updateHeaderPosition() {
