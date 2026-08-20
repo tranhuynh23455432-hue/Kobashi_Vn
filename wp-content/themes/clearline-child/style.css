@@ -14680,6 +14680,10 @@ iera - イエラ事業
   height: 54px;
   margin-right: 20px;
 }
+.p-iera-demo-company-item-ttl--spacer {
+  border-color: transparent;
+  visibility: hidden;
+}
 .p-iera-demo-company-item-logokobashi {
   height: 32px;
 }
