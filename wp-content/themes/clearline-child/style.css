@@ -1374,16 +1374,19 @@ page-ttl - 子ページのタイトル
 }
 .c-page-ttl__en {
   margin-bottom: 5px;
-  font-size: 36px;
-  font-size: 2.25rem;
+  font-size: clamp(28px, 9.5vw, 36px);
   color: #FFF;
   font-weight: 900;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.05em;
+  max-width: 100%;
+  white-space: nowrap;
 }
 @media screen and (min-width: 992px) {
   .c-page-ttl__en {
     font-size: 108px;
     font-size: 6.75rem;
+    letter-spacing: 0.1em;
+    white-space: normal;
   }
 }
 .c-page-ttl__en__red {
@@ -11095,7 +11098,7 @@ header - ヘッダー内のクラス
   text-align: center;
   white-space: nowrap;
 }
-@media screen and (max-width: 400px) {
+@media screen and (max-width: 600px) {
   .c-header-insta::after {
     content: "";
   }
@@ -11182,7 +11185,7 @@ header - ヘッダー内のクラス
   text-align: center;
   white-space: nowrap;
 }
-@media screen and (max-width: 400px) {
+@media screen and (max-width: 600px) {
   .c-header-fb::after {
     content: "";
   }
@@ -13739,10 +13742,11 @@ Gallery tunnel
 .c-page-ttl--constgallery[data-gallery-tunnel] .c-page-ttl__en,
 .c-page-ttl--constgallery[data-spotlight-hero] .c-page-ttl__en {
   margin: 0 0 clamp(12px, 2vw, 22px);
-  font-size: clamp(48px, 11vw, 132px);
+  font-size: clamp(40px, 9vw, 132px);
   line-height: 0.86;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.05em;
   color: #fff;
+  white-space: nowrap;
 }
 .c-page-ttl--constgallery[data-gallery-tunnel] .c-page-ttl__jp,
 .c-page-ttl--constgallery[data-spotlight-hero] .c-page-ttl__jp {
@@ -13843,8 +13847,9 @@ Gallery tunnel
   }
   .c-page-ttl--constgallery[data-gallery-tunnel] .c-page-ttl__en,
   .c-page-ttl--constgallery[data-spotlight-hero] .c-page-ttl__en {
-    font-size: clamp(42px, 15vw, 72px);
-    letter-spacing: 0.055em;
+    font-size: clamp(26px, 8.7vw, 72px);
+    letter-spacing: 0.02em;
+    white-space: nowrap;
   }
   .c-page-ttl--constgallery[data-gallery-tunnel] .c-page-ttl__jp,
   .c-page-ttl--constgallery[data-spotlight-hero] .c-page-ttl__jp {
