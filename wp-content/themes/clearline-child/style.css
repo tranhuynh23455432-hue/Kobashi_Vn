@@ -11075,7 +11075,7 @@ header - ヘッダー内のクラス
 .c-header-insta:before {
   background-image: url(./images/common/img_logo_insta.svg) !important;
   display: block;
-  background-position: center right;
+  background-position: center;
   background-repeat: no-repeat;
   content: "";
   height: 30px;
@@ -11094,6 +11094,11 @@ header - ヘッダー内のクラス
   width: 100%;
   text-align: center;
   white-space: nowrap;
+}
+@media screen and (max-width: 400px) {
+  .c-header-insta::after {
+    content: "";
+  }
 }
 .c-header-instapc {
   text-decoration: none;
@@ -11157,7 +11162,7 @@ header - ヘッダー内のクラス
 .c-header-fb:before {
   background-image: url(./images/common/img_logo_fb.svg) !important;
   display: block;
-  background-position: center right;
+  background-position: center;
   background-repeat: no-repeat;
   content: "";
   height: 30px;
@@ -11165,7 +11170,7 @@ header - ヘッダー内のクラス
   background-size: contain;
   position: absolute;
   top: 8px;
-  left: 14px;
+  left: calc(50% - 15px);
 }
 .c-header-fb::after {
   content: "Facebook";
@@ -11176,6 +11181,11 @@ header - ヘッダー内のクラス
   width: 100%;
   text-align: center;
   white-space: nowrap;
+}
+@media screen and (max-width: 400px) {
+  .c-header-fb::after {
+    content: "";
+  }
 }
 .c-header-fbpc {
   text-decoration: none;
