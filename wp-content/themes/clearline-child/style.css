@@ -15377,118 +15377,78 @@ iera - イエラ事業
   }
 }
 .p-company-section-item-img {
-  display: flex;
-  justify-content: space-between;
-  flex-direction: row-reverse;
-  flex-wrap: wrap;
-  margin-top: 5px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin-top: 12px;
   width: 100%;
 }
 .p-company-section-item-img__in {
-  width: 45%;
-  height: 110px;
-  margin: 5px;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  margin: 0;
+  border-radius: 4px;
+}
+.p-company-section-item-img__in:last-child:nth-child(odd) {
+  grid-column: 1 / -1;
 }
 @media screen and (min-width: 992px) {
+  .p-company-section-item-img {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row-reverse;
+    flex-wrap: nowrap;
+    gap: 0;
+  }
   .p-company-section-item-img__in {
     width: 30%;
     height: 280px;
+    aspect-ratio: auto;
     margin-left: auto;
   }
+  .p-company-section-item-img__in:last-child:nth-child(odd) {
+    grid-column: auto;
+  }
+}
+.p-company-section-item-img__in--0204,
+.p-company-section-item-img__in--1506,
+.p-company-section-item-img__in--200301,
+.p-company-section-item-img__in--200302,
+.p-company-section-item-img__in--200303,
+.p-company-section-item-img__in--210701,
+.p-company-section-item-img__in--210702,
+.p-company-section-item-img__in--210703,
+.p-company-section-item-img__in--2306 {
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
 }
 .p-company-section-item-img__in--0204 {
   background-image: url(../clearline-child/images/company/img_company_history_2002.webp);
-  background-repeat: no-repeat;
-  background-position: bottom center;
-  background-size: contain;
-}
-@media screen and (min-width: 992px) {
-  .p-company-section-item-img__in--0204 {
-    background-size: cover;
-  }
 }
 .p-company-section-item-img__in--1506 {
   background-image: url(../clearline-child/images/company/img_company_history_2015.webp);
-  background-repeat: no-repeat;
-  background-position: bottom center;
-  background-size: contain;
-}
-@media screen and (min-width: 992px) {
-  .p-company-section-item-img__in--1506 {
-    background-size: cover;
-  }
 }
 .p-company-section-item-img__in--200301 {
   background-image: url(../clearline-child/images/company/img_company_history_2020_01.webp);
-  background-repeat: no-repeat;
-  background-position: bottom center;
-  background-size: contain;
-}
-@media screen and (min-width: 992px) {
-  .p-company-section-item-img__in--200301 {
-    background-size: cover;
-  }
 }
 .p-company-section-item-img__in--200302 {
   background-image: url(../clearline-child/images/company/img_company_history_2020_02.webp);
-  background-repeat: no-repeat;
-  background-position: bottom center;
-  background-size: contain;
-}
-@media screen and (min-width: 992px) {
-  .p-company-section-item-img__in--200302 {
-    background-size: contain;
-  }
 }
 .p-company-section-item-img__in--200303 {
   background-image: url(../clearline-child/images/company/img_company_history_2020_03.webp);
-  background-repeat: no-repeat;
-  background-position: bottom center;
-  background-size: contain;
-}
-@media screen and (min-width: 992px) {
-  .p-company-section-item-img__in--200303 {
-    background-size: cover;
-  }
 }
 .p-company-section-item-img__in--210701 {
   background-image: url(../clearline-child/images/company/img_company_history_2021_01.webp);
-  background-repeat: no-repeat;
-  background-position: bottom center;
-  background-size: contain;
-}
-@media screen and (min-width: 992px) {
-  .p-company-section-item-img__in--210701 {
-    background-size: cover;
-  }
 }
 .p-company-section-item-img__in--210702 {
   background-image: url(../clearline-child/images/company/img_company_history_2021_02.webp);
-  background-repeat: no-repeat;
-  background-position: bottom center;
-  background-size: cover;
 }
 .p-company-section-item-img__in--210703 {
   background-image: url(../clearline-child/images/company/img_company_history_2021_03.webp);
-  background-repeat: no-repeat;
-  background-position: bottom center;
-  background-size: contain;
-}
-@media screen and (min-width: 992px) {
-  .p-company-section-item-img__in--210703 {
-    background-size: cover;
-  }
 }
 .p-company-section-item-img__in--2306 {
   background-image: url(../clearline-child/images/company/img_company_history_2023.webp);
-  background-repeat: no-repeat;
-  background-position: bottom center;
-  background-size: contain;
-}
-@media screen and (min-width: 992px) {
-  .p-company-section-item-img__in--2306 {
-    background-size: cover;
-  }
 }
 .p-company-section-photo {
   margin-bottom: 30px;
