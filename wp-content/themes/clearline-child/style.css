@@ -14260,6 +14260,9 @@ iera - イエラ事業
   background-color: #e85298;
 }
 .p-iera-comp-item-ttl__no {
+  font-family: "Anton", "Be Vietnam Pro", sans-serif;
+  font-weight: 400;
+  letter-spacing: .02em;
   font-size: 14px;
   margin-right: 15px;
   color: #FFFFFF;
@@ -14270,6 +14273,8 @@ iera - イエラ事業
   }
 }
 .p-iera-comp-item-ttl__no__span {
+  font-family: "Anton", "Be Vietnam Pro", sans-serif;
+  font-weight: 400;
   font-size: 22px;
 }
 @media screen and (min-width: 992px) {
