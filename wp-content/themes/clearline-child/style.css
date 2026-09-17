@@ -215,6 +215,7 @@ base - 基本設定
 html {
   margin: 0 !important;
   scroll-behavior: smooth;
+  overflow-x: hidden;
 }
 
 body {
@@ -1342,7 +1343,7 @@ page-ttl - 子ページのタイトル
 .c-page-ttl--const {
   background-image: url(../clearline-child/images/const/img_const_mv.webp);
   background-repeat: no-repeat;
-  background-size: 265%;
+  background-size: cover;
   background-position: center;
 }
 @media screen and (min-width: 992px) {
@@ -1364,7 +1365,7 @@ page-ttl - 子ページのタイトル
 .c-page-ttl--iera {
   background-image: url(../clearline-child/images/iera/img_iera_mv.png);
   background-repeat: no-repeat;
-  background-size: 265%;
+  background-size: cover;
   background-position: center;
 }
 @media screen and (min-width: 992px) {
@@ -1383,7 +1384,7 @@ page-ttl - 子ページのタイトル
 .c-page-ttl--ieragallery {
   background-image: url(../clearline-child/images/iera/img_iera_gallery.webp);
   background-repeat: no-repeat;
-  background-size: 265%;
+  background-size: cover;
   background-position: center;
 }
 @media screen and (min-width: 992px) {
@@ -1394,7 +1395,7 @@ page-ttl - 子ページのタイトル
 .c-page-ttl--other {
   background-image: url(../clearline-child/images/other/img_other_mv.webp);
   background-repeat: no-repeat;
-  background-size: 200%;
+  background-size: cover;
   background-position: center bottom;
 }
 .c-page-ttl--other::before {
@@ -1408,7 +1409,7 @@ page-ttl - 子ページのタイトル
 .c-page-ttl--company {
   background-image: url(../clearline-child/images/company/img_company_mv.webp);
   background-repeat: no-repeat;
-  background-size: 200%;
+  background-size: cover;
   background-position: center bottom;
 }
 .c-page-ttl--company::before {
@@ -1422,7 +1423,7 @@ page-ttl - 子ページのタイトル
 .c-page-ttl--recruit {
   background-image: url(../clearline-child/images/recruit/img_recruit_mv.webp);
   background-repeat: no-repeat;
-  background-size: 200%;
+  background-size: cover;
   background-position: center bottom;
 }
 .c-page-ttl--recruit::before {
@@ -1436,7 +1437,7 @@ page-ttl - 子ページのタイトル
 .c-page-ttl--contact {
   background-image: url(../clearline-child/images/contact/img_contact_mv.jpg);
   background-repeat: no-repeat;
-  background-size: 200%;
+  background-size: cover;
   background-position: center bottom;
 }
 .c-page-ttl--contact::before {
@@ -11535,7 +11536,7 @@ footer - フッター内のクラス
   }
 }
 .c-footer__img {
-  width: 100vw;
+  width: 100%;
   height: 160px;
   background-image: url(../clearline-child/images/element/bg-footer-kobashi-vn.png);
   background-repeat: no-repeat;
@@ -11550,7 +11551,7 @@ footer - フッター内のクラス
 }
 .c-footer__img::before {
   content: "";
-  width: 100vw;
+  width: 100%;
   height: 160px;
   background-color: rgba(0, 0, 0, 0.5);
   position: absolute;
@@ -12949,12 +12950,15 @@ top- topページ
   align-items: center;
   width: 100%;
   height: calc(100vh - 61px);
+  min-height: 677px;
+  overflow: hidden;
   position: relative;
   margin-top: 64px;
 }
 @media screen and (min-width: 992px) {
   .p-top-mainvisual {
     height: 100vh;
+    min-height: inherit;
     margin-top: 0;
   }
 }
@@ -12986,13 +12990,7 @@ top- topページ
   object-fit: cover;
   object-position: bottom;
   width: 100%;
-  height: calc(100vh - 61px);
-  min-height: 677px;
-}
-@media screen and (min-width: 992px) {
-  .p-top-mainvisual-video video {
-    min-height: inherit;
-  }
+  height: 100%;
 }
 
 .p-top-slider__list {
@@ -13120,7 +13118,7 @@ menu
   background-image: url(../clearline-child/images/top/img_top_construction.webp);
   background-repeat: no-repeat;
   background-position: bottom center;
-  background-size: 160%;
+  background-size: cover;
 }
 @media screen and (min-width: 992px) {
   .p-top-menu-content--const {
@@ -13131,6 +13129,7 @@ menu
   background-image: url(../clearline-child/images/top/img_top_iera.webp);
   background-repeat: no-repeat;
   background-size: cover;
+  background-position: center;
 }
 @media screen and (min-width: 992px) {
   .p-top-menu-content--iera {
@@ -13140,7 +13139,7 @@ menu
 .p-top-menu-content--other {
   background-image: url(../clearline-child/images/top/img_top_other.webp);
   background-repeat: no-repeat;
-  background-size: 240%;
+  background-size: cover;
   background-position: center;
 }
 @media screen and (min-width: 992px) {
@@ -13151,7 +13150,7 @@ menu
 .p-top-menu-content--company {
   background-image: url(../clearline-child/images/top/img_top_company.webp);
   background-repeat: no-repeat;
-  background-size: 245%;
+  background-size: cover;
   background-position: 55% 5%;
 }
 @media screen and (min-width: 992px) {
@@ -13162,7 +13161,7 @@ menu
 .p-top-menu-content--recruit {
   background-image: url(../clearline-child/images/top/img_top_recruit.webp);
   background-repeat: no-repeat;
-  background-size: 210%;
+  background-size: cover;
   background-position: center;
 }
 @media screen and (min-width: 992px) {
@@ -13180,7 +13179,7 @@ menu
     justify-content: center;
     align-items: center;
     background-color: #231815;
-    width: 35vw;
+    width: 35%;
     height: 100%;
     position: relative;
     filter: none;
@@ -13210,7 +13209,7 @@ menu
 }
 @media screen and (min-width: 992px) {
   .p-top-menu-content-pcimg--const {
-    width: 65vw;
+    width: 65%;
     height: 100%;
     display: block;
     background-image: url(../clearline-child/images/top/img_top_construction.jpg);
@@ -13221,7 +13220,7 @@ menu
 }
 @media screen and (min-width: 992px) {
   .p-top-menu-content-pcimg--iera {
-    width: 65vw;
+    width: 65%;
     height: 100%;
     display: block;
     background-image: url(../clearline-child/images/top/img_top_iera.jpg);
@@ -13232,7 +13231,7 @@ menu
 }
 @media screen and (min-width: 992px) {
   .p-top-menu-content-pcimg--other {
-    width: 65vw;
+    width: 65%;
     height: 100%;
     display: block;
     background-image: url(../clearline-child/images/top/img_top_other.jpg);
@@ -13243,7 +13242,7 @@ menu
 }
 @media screen and (min-width: 992px) {
   .p-top-menu-content-pcimg--company {
-    width: 65vw;
+    width: 65%;
     height: 100%;
     display: block;
     background-image: url(../clearline-child/images/top/img_top_company.jpg);
@@ -13254,7 +13253,7 @@ menu
 }
 @media screen and (min-width: 992px) {
   .p-top-menu-content-pcimg--recruit {
-    width: 65vw;
+    width: 65%;
     height: 100%;
     display: block;
     background-image: url(../clearline-child/images/top/img_top_recruit.jpg);
