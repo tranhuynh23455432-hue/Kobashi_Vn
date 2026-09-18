@@ -1368,17 +1368,20 @@ page-ttl - 子ページのタイトル
   background-size: cover;
   background-position: center;
 }
+.c-page-ttl--iera > .c-page-ttl__in {
+  justify-content: flex-start;
+  align-items: center;
+  max-width: none;
+  margin: 0;
+  padding: clamp(24px, 8vw, 70px) 20px 0;
+  text-align: center;
+}
 @media screen and (min-width: 992px) {
   .c-page-ttl--iera {
     background-size: cover;
   }
   .c-page-ttl--iera > .c-page-ttl__in {
-    justify-content: flex-start;
-    align-items: center;
-    max-width: none;
-    margin: 0;
     padding: clamp(40px, 5vh, 70px) 20px 0;
-    text-align: center;
   }
 }
 .c-page-ttl--ieragallery {
