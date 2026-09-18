@@ -99,6 +99,8 @@ function initShowcase(root) {
     });
   }
 
+  var announceTemplate = root.dataset.announceTemplate || "{model}";
+
   function updateStatus(index) {
     if (!status) {
       return;
@@ -106,7 +108,10 @@ function initShowcase(root) {
     var nameEl = tabs[index]
       ? tabs[index].querySelector(".p-iera-showcase__tab-name")
       : null;
-    status.textContent = "Đã chọn model " + (nameEl ? nameEl.textContent : "");
+    status.textContent = announceTemplate.replace(
+      "{model}",
+      nameEl ? nameEl.textContent : ""
+    );
   }
 
   var activeIndex = -1;
