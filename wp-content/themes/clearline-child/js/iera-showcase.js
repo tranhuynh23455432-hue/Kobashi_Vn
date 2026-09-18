@@ -1,27 +1,25 @@
-const SETTLE_DELAY = 120;
-const WHEEL_SETTLE_DELAY = 160;
-
 function clamp(value, min, max) {
   return Math.min(max, Math.max(min, value));
 }
 
-function setupImageFallback(card) {
-  const img = card.querySelector("img");
+function setupImageFallback(img, label) {
   if (!img) {
     return;
   }
-
   function showFallback() {
-    if (card.classList.contains("is-broken")) {
+    if (img.dataset.fallbackApplied) {
       return;
     }
-    card.classList.add("is-broken");
-    const fallback = document.createElement("div");
-    fallback.className = "p-iera-showcase__card-fallback";
-    fallback.textContent = card.dataset.model || "";
-    card.appendChild(fallback);
+    img.dataset.fallbackApplied = "1";
+    img.style.visibility = "hidden";
+    var fallback = document.createElement("span");
+    fallback.className = "p-iera-showcase__photo-fallback";
+    fallback.textContent = label || "";
+    if (img.parentNode) {
+      img.parentNode.style.position = "relative";
+      img.parentNode.appendChild(fallback);
+    }
   }
-
   if (img.complete && img.naturalWidth === 0) {
     showFallback();
   } else {
@@ -30,63 +28,44 @@ function setupImageFallback(card) {
 }
 
 function initShowcase(root) {
-  const viewport = root.querySelector(".p-iera-showcase__viewport");
-  const track = root.querySelector(".p-iera-showcase__track");
-  const cards = Array.prototype.slice.call(
-    root.querySelectorAll(".p-iera-showcase__card")
+  var tabs = Array.prototype.slice.call(
+    root.querySelectorAll(".js-iera-showcase-tab")
   );
-  const panels = Array.prototype.slice.call(
+  var panels = Array.prototype.slice.call(
     root.querySelectorAll(".p-iera-showcase__spec")
   );
-  const dots = Array.prototype.slice.call(
-    root.querySelectorAll(".js-iera-showcase-dot")
-  );
-  const prevButton = root.querySelector(".js-iera-showcase-prev");
-  const nextButton = root.querySelector(".js-iera-showcase-next");
+  var status = root.querySelector(".p-iera-showcase__status");
 
-  if (!viewport || !track || !cards.length) {
+  if (!tabs.length || !panels.length) {
     return;
   }
 
-  cards.forEach(setupImageFallback);
+  panels.forEach(function (panel) {
+    setupImageFallback(
+      panel.querySelector(".p-iera-showcase__photo img"),
+      panel.querySelector(".p-iera-showcase__spec-name")
+        ? panel.querySelector(".p-iera-showcase__spec-name").textContent
+        : ""
+    );
+  });
 
-  const count = cards.length;
-  let activeIndex = clamp(parseInt(root.dataset.active, 10) || 0, 0, count - 1);
-  let settleTimer = null;
-  let interactionTimer = null;
-  let isPointerDown = false;
-  let pointerId = null;
-  let dragStartX = 0;
-  let dragStartScroll = 0;
+  var count = tabs.length;
 
-  function centerFor(card) {
-    return card.offsetLeft + card.offsetWidth / 2;
+  function hashOf(index) {
+    return tabs[index] ? tabs[index].dataset.hash : "";
   }
 
-  function nearestIndex() {
-    const center = viewport.scrollLeft + viewport.clientWidth / 2;
-    let closest = 0;
-    let minDistance = Infinity;
-    cards.forEach(function (card, i) {
-      const distance = Math.abs(centerFor(card) - center);
-      if (distance < minDistance) {
-        minDistance = distance;
-        closest = i;
+  function indexFromHash() {
+    var hash = window.location.hash.replace("#", "");
+    if (!hash) {
+      return -1;
+    }
+    for (var i = 0; i < tabs.length; i++) {
+      if (tabs[i].dataset.hash === hash) {
+        return i;
       }
-    });
-    return closest;
-  }
-
-  function updateParallax() {
-    const center = viewport.scrollLeft + viewport.clientWidth / 2;
-    cards.forEach(function (card) {
-      const distance = Math.abs(centerFor(card) - center);
-      const norm = clamp(distance / (card.offsetWidth + 22), 0, 1.6);
-      const scale = 1 - norm * 0.16;
-      const opacity = 1 - norm * 0.55;
-      card.style.transform = "scale(" + scale.toFixed(3) + ")";
-      card.style.opacity = opacity.toFixed(3);
-    });
+    }
+    return -1;
   }
 
   function activatePanel(index) {
@@ -102,7 +81,7 @@ function initShowcase(root) {
         }, 340);
       }
     });
-    const target = panels[index];
+    var target = panels[index];
     if (!target) {
       return;
     }
@@ -111,182 +90,90 @@ function initShowcase(root) {
     target.classList.add("is-active");
   }
 
-  function updateDots(index) {
-    dots.forEach(function (dot, i) {
-      const active = i === index;
-      dot.classList.toggle("is-active", active);
-      dot.setAttribute("aria-selected", active ? "true" : "false");
+  function updateTabs(index) {
+    tabs.forEach(function (tab, i) {
+      var active = i === index;
+      tab.classList.toggle("is-active", active);
+      tab.setAttribute("aria-selected", active ? "true" : "false");
+      tab.setAttribute("tabindex", active ? "0" : "-1");
     });
   }
 
-  function updateCards(index) {
-    cards.forEach(function (card, i) {
-      card.classList.toggle("is-active", i === index);
-      card.setAttribute("aria-current", i === index ? "true" : "false");
-    });
-  }
-
-  function applyActiveState(index) {
-    activeIndex = clamp(index, 0, count - 1);
-    activatePanel(activeIndex);
-    updateDots(activeIndex);
-    updateCards(activeIndex);
-    root.dataset.active = String(activeIndex);
-    if (prevButton) {
-      prevButton.disabled = activeIndex === 0;
-    }
-    if (nextButton) {
-      nextButton.disabled = activeIndex === count - 1;
-    }
-  }
-
-  function scrollToIndex(index, smooth) {
-    const target = clamp(index, 0, count - 1);
-    const card = cards[target];
-    const left = card.offsetLeft - (viewport.clientWidth - card.offsetWidth) / 2;
-    viewport.scrollTo({
-      left: left,
-      behavior: smooth === false ? "auto" : "smooth",
-    });
-    applyActiveState(target);
-  }
-
-  function nudge(step) {
-    scrollToIndex(activeIndex + step, true);
-  }
-
-  function onScroll() {
-    updateParallax();
-    window.clearTimeout(settleTimer);
-    settleTimer = window.setTimeout(function () {
-      const nearest = nearestIndex();
-      if (nearest !== activeIndex) {
-        applyActiveState(nearest);
-      }
-    }, SETTLE_DELAY);
-  }
-
-  viewport.addEventListener("scroll", onScroll, { passive: true });
-
-  function beginInteraction() {
-    window.clearTimeout(interactionTimer);
-    viewport.classList.add("is-dragging");
-  }
-
-  function endInteractionSoon(delay) {
-    window.clearTimeout(interactionTimer);
-    interactionTimer = window.setTimeout(function () {
-      viewport.classList.remove("is-dragging");
-      scrollToIndex(nearestIndex(), true);
-    }, delay);
-  }
-
-  viewport.addEventListener(
-    "wheel",
-    function (event) {
-      const delta =
-        Math.abs(event.deltaX) > Math.abs(event.deltaY)
-          ? event.deltaX
-          : event.deltaY;
-      if (delta === 0) {
-        return;
-      }
-      beginInteraction();
-      viewport.scrollLeft += delta;
-      endInteractionSoon(WHEEL_SETTLE_DELAY);
-      event.preventDefault();
-    },
-    { passive: false }
-  );
-
-  function onPointerDown(event) {
-    if (event.pointerType !== "mouse" || event.button !== 0) {
+  function updateStatus(index) {
+    if (!status) {
       return;
     }
-    isPointerDown = true;
-    pointerId = event.pointerId;
-    dragStartX = event.clientX;
-    dragStartScroll = viewport.scrollLeft;
-    beginInteraction();
-    if (typeof viewport.setPointerCapture === "function") {
-      try {
-        viewport.setPointerCapture(event.pointerId);
-      } catch (error) {
-        // Pointer capture can fail if native scrolling already claimed it.
+    var nameEl = tabs[index]
+      ? tabs[index].querySelector(".p-iera-showcase__tab-name")
+      : null;
+    status.textContent = "Đã chọn model " + (nameEl ? nameEl.textContent : "");
+  }
+
+  var activeIndex = -1;
+
+  function setActive(index, opts) {
+    opts = opts || {};
+    index = clamp(index, 0, count - 1);
+    activeIndex = index;
+    activatePanel(index);
+    updateTabs(index);
+    updateStatus(index);
+    root.dataset.active = String(index);
+    if (opts.scroll !== false && tabs[index].scrollIntoView) {
+      tabs[index].scrollIntoView({
+        inline: "center",
+        block: "nearest",
+        behavior: opts.smooth === false ? "auto" : "smooth",
+      });
+    }
+    if (opts.focus) {
+      tabs[index].focus();
+    }
+    if (opts.hash !== false && window.history && window.history.replaceState) {
+      var newHash = "#" + hashOf(index);
+      if (window.location.hash !== newHash) {
+        window.history.replaceState(null, "", newHash);
       }
     }
   }
 
-  function onPointerMove(event) {
-    if (!isPointerDown || event.pointerId !== pointerId) {
-      return;
-    }
-    const dx = event.clientX - dragStartX;
-    viewport.scrollLeft = dragStartScroll - dx;
-  }
+  tabs.forEach(function (tab, i) {
+    tab.addEventListener("click", function () {
+      setActive(i, { focus: false });
+    });
+  });
 
-  function onPointerUp(event) {
-    if (!isPointerDown || (event && event.pointerId !== pointerId)) {
-      return;
-    }
-    isPointerDown = false;
-    pointerId = null;
-    endInteractionSoon(0);
-  }
-
-  viewport.addEventListener("pointerdown", onPointerDown);
-  viewport.addEventListener("pointermove", onPointerMove);
-  viewport.addEventListener("pointerup", onPointerUp);
-  viewport.addEventListener("pointercancel", onPointerUp);
-  viewport.addEventListener("lostpointercapture", onPointerUp);
-
-  viewport.addEventListener("keydown", function (event) {
-    if (event.key === "ArrowLeft") {
+  root.addEventListener("keydown", function (event) {
+    var key = event.key;
+    var current = activeIndex < 0 ? 0 : activeIndex;
+    if (key === "ArrowRight" || key === "ArrowDown") {
       event.preventDefault();
-      nudge(-1);
-    } else if (event.key === "ArrowRight") {
+      setActive((current + 1) % count, { focus: true });
+    } else if (key === "ArrowLeft" || key === "ArrowUp") {
       event.preventDefault();
-      nudge(1);
+      setActive((current - 1 + count) % count, { focus: true });
+    } else if (key === "Home") {
+      event.preventDefault();
+      setActive(0, { focus: true });
+    } else if (key === "End") {
+      event.preventDefault();
+      setActive(count - 1, { focus: true });
     }
   });
 
-  if (prevButton) {
-    prevButton.addEventListener("click", function () {
-      nudge(-1);
-    });
-  }
-  if (nextButton) {
-    nextButton.addEventListener("click", function () {
-      nudge(1);
-    });
-  }
-  dots.forEach(function (dot, i) {
-    dot.addEventListener("click", function () {
-      scrollToIndex(i, true);
-    });
+  window.addEventListener("hashchange", function () {
+    var idx = indexFromHash();
+    if (idx >= 0 && idx !== activeIndex) {
+      setActive(idx, { focus: false, hash: false });
+    }
   });
 
-  function onResize() {
-    scrollToIndex(activeIndex, false);
-    updateParallax();
+  var initialIndex = indexFromHash();
+  if (initialIndex < 0) {
+    initialIndex = clamp(parseInt(root.dataset.active, 10) || 0, 0, count - 1);
   }
-
-  if (typeof ResizeObserver === "function") {
-    let resizeTimer = null;
-    const observer = new ResizeObserver(function () {
-      window.clearTimeout(resizeTimer);
-      resizeTimer = window.setTimeout(onResize, 100);
-    });
-    observer.observe(viewport);
-  } else {
-    window.addEventListener("resize", onResize);
-  }
-
-  window.requestAnimationFrame(function () {
-    scrollToIndex(activeIndex, false);
-    updateParallax();
-    root.classList.add("is-ready");
-  });
+  setActive(initialIndex, { focus: false, scroll: false, hash: false });
+  root.classList.add("is-ready");
 }
 
 function initAll() {

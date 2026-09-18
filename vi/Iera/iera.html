@@ -363,106 +363,238 @@ img:is([sizes=auto i],[sizes^="auto," i]){contain-intrinsic-size:3000px 1500px}
     <div class="l-container l-container--wide">
       <div class="p-iera-showcase__heading js-inview-fadeIn">
         <p class="p-iera-showcase__eyebrow">iERA Minus 65</p>
-        <h2 class="p-iera-showcase__title" id="iera-showcase-title">ECO Series – Chọn model phù hợp</h2>
-        <p class="p-iera-showcase__lead">Kéo ảnh hoặc bấm mũi tên để xem thông số kỹ thuật chi tiết của từng model máy cấp đông siêu tốc −65°C.</p>
+        <h2 class="p-iera-showcase__title" id="iera-showcase-title">ECO Series – Các model</h2>
+        <p class="p-iera-showcase__lead">So sánh 4 model để chọn công suất phù hợp với quy mô sản xuất của bạn.</p>
       </div>
 
       <div class="p-iera-showcase__stage js-iera-showcase" data-active="0">
-        <div class="p-iera-showcase__gallery">
-          <div
-            class="p-iera-showcase__viewport"
-            tabindex="0"
-            role="group"
-            aria-label="Bộ sưu tập 4 model máy ECO. Kéo ngang hoặc dùng phím mũi tên để xem."
-          >
-            <div class="p-iera-showcase__track">
-              <div class="p-iera-showcase__card" data-index="0" data-model="ECO 1000B">
-                <img src="../../wp-content/themes/clearline-child/images/iera/products/eco-1000b.png" alt="Máy cấp đông siêu tốc iERA ECO 1000B" loading="lazy" decoding="async" draggable="false">
-              </div>
-              <div class="p-iera-showcase__card" data-index="1" data-model="ECO 1000C">
-                <img src="../../wp-content/themes/clearline-child/images/iera/products/eco-1000c.png" alt="Máy cấp đông siêu tốc iERA ECO 1000C" loading="lazy" decoding="async" draggable="false">
-              </div>
-              <div class="p-iera-showcase__card" data-index="2" data-model="ECO 2000">
-                <img src="../../wp-content/themes/clearline-child/images/iera/products/eco-2000.png" alt="Máy cấp đông siêu tốc iERA ECO 2000" loading="lazy" decoding="async" draggable="false">
-              </div>
-              <div class="p-iera-showcase__card" data-index="3" data-model="ECO 7000">
-                <img src="../../wp-content/themes/clearline-child/images/iera/products/eco-7000.png" alt="Máy cấp đông siêu tốc iERA ECO 7000" loading="lazy" decoding="async" draggable="false">
-              </div>
-            </div>
-          </div>
-
-          <div class="p-iera-showcase__controls" aria-label="Điều khiển bộ sưu tập">
-            <button class="p-iera-showcase__arrow js-iera-showcase-prev" type="button" aria-label="Model trước">‹</button>
-            <div class="p-iera-showcase__dots" role="tablist" aria-label="Chọn model máy">
-              <button class="p-iera-showcase__dot js-iera-showcase-dot" type="button" role="tab" aria-selected="false" aria-label="ECO 1000B"></button>
-              <button class="p-iera-showcase__dot js-iera-showcase-dot" type="button" role="tab" aria-selected="false" aria-label="ECO 1000C"></button>
-              <button class="p-iera-showcase__dot js-iera-showcase-dot" type="button" role="tab" aria-selected="false" aria-label="ECO 2000"></button>
-              <button class="p-iera-showcase__dot js-iera-showcase-dot" type="button" role="tab" aria-selected="false" aria-label="ECO 7000"></button>
-            </div>
-            <button class="p-iera-showcase__arrow js-iera-showcase-next" type="button" aria-label="Model tiếp theo">›</button>
-          </div>
+        <div class="p-iera-showcase__tabs" role="tablist" aria-label="Chọn model máy iERA ECO Series">
+          <button class="p-iera-showcase__tab js-iera-showcase-tab is-active" type="button" role="tab" id="tab-eco-1000b" aria-selected="true" aria-controls="panel-eco-1000b" tabindex="0" data-index="0" data-hash="eco-1000b">
+            <span class="p-iera-showcase__tab-thumb" aria-hidden="true"><img src="../../wp-content/themes/clearline-child/images/iera/products/eco-1000b.png" alt="" loading="lazy" decoding="async"></span>
+            <span class="p-iera-showcase__tab-body">
+              <span class="p-iera-showcase__tab-name">ECO 1000B</span>
+              <span class="p-iera-showcase__tab-type">Liền khối · Theo mẻ</span>
+              <span class="p-iera-showcase__tab-kw">4.5 kW</span>
+            </span>
+          </button>
+          <button class="p-iera-showcase__tab js-iera-showcase-tab" type="button" role="tab" id="tab-eco-1000c" aria-selected="false" aria-controls="panel-eco-1000c" tabindex="-1" data-index="1" data-hash="eco-1000c">
+            <span class="p-iera-showcase__tab-thumb" aria-hidden="true"><img src="../../wp-content/themes/clearline-child/images/iera/products/eco-1000c.png" alt="" loading="lazy" decoding="async"></span>
+            <span class="p-iera-showcase__tab-body">
+              <span class="p-iera-showcase__tab-name">ECO 1000C</span>
+              <span class="p-iera-showcase__tab-type">Tách rời · Theo mẻ</span>
+              <span class="p-iera-showcase__tab-kw">4.5 kW</span>
+            </span>
+          </button>
+          <button class="p-iera-showcase__tab js-iera-showcase-tab" type="button" role="tab" id="tab-eco-2000" aria-selected="false" aria-controls="panel-eco-2000" tabindex="-1" data-index="2" data-hash="eco-2000">
+            <span class="p-iera-showcase__tab-thumb" aria-hidden="true"><img src="../../wp-content/themes/clearline-child/images/iera/products/eco-2000.png" alt="" loading="lazy" decoding="async"></span>
+            <span class="p-iera-showcase__tab-body">
+              <span class="p-iera-showcase__tab-name">ECO 2000</span>
+              <span class="p-iera-showcase__tab-type">Tách rời · Theo mẻ</span>
+              <span class="p-iera-showcase__tab-kw">15 kW</span>
+            </span>
+          </button>
+          <button class="p-iera-showcase__tab js-iera-showcase-tab" type="button" role="tab" id="tab-eco-7000" aria-selected="false" aria-controls="panel-eco-7000" tabindex="-1" data-index="3" data-hash="eco-7000">
+            <span class="p-iera-showcase__tab-thumb" aria-hidden="true"><img src="../../wp-content/themes/clearline-child/images/iera/products/eco-7000.png" alt="" loading="lazy" decoding="async"></span>
+            <span class="p-iera-showcase__tab-body">
+              <span class="p-iera-showcase__tab-name">ECO 7000</span>
+              <span class="p-iera-showcase__tab-type">Hầm liên tục</span>
+              <span class="p-iera-showcase__tab-kw">63.97 kW</span>
+            </span>
+          </button>
         </div>
+        <p class="p-iera-showcase__tabs-note">* ECO 1000B &amp; 1000C: cùng công suất 4.5 kW, khác kiểu máy (liền khối / tách rời).</p>
+        <p class="p-iera-showcase__status" role="status" aria-live="polite">Đã chọn model ECO 1000B</p>
 
-        <div class="p-iera-showcase__panel" aria-live="polite">
-          <div class="p-iera-showcase__spec" data-index="0">
-            <p class="p-iera-showcase__spec-eyebrow">iERA Minus 65</p>
-            <h3 class="p-iera-showcase__spec-name">ECO 1000B</h3>
-            <ul class="p-iera-showcase__spec-list">
-              <li class="p-iera-showcase__spec-row" style="--i:0"><span class="p-iera-showcase__spec-key">Dạng máy</span><span class="p-iera-showcase__spec-val">Kiểu liền khối · Theo mẻ</span></li>
-              <li class="p-iera-showcase__spec-row" style="--i:1"><span class="p-iera-showcase__spec-key">Nhiệt độ giới thiệu</span><span class="p-iera-showcase__spec-val">−65°C</span></li>
-              <li class="p-iera-showcase__spec-row" style="--i:2"><span class="p-iera-showcase__spec-key">Khả năng làm lạnh</span><span class="p-iera-showcase__spec-val">4.5 kW</span></li>
-              <li class="p-iera-showcase__spec-row" style="--i:3"><span class="p-iera-showcase__spec-key">Kích thước máy / dàn lạnh (W×D×H)</span><span class="p-iera-showcase__spec-val">2200 × 1300 × 1990 mm</span></li>
-              <li class="p-iera-showcase__spec-row" style="--i:4"><span class="p-iera-showcase__spec-key">Kích thước dàn nóng</span><span class="p-iera-showcase__spec-val">Tích hợp</span></li>
-              <li class="p-iera-showcase__spec-row" style="--i:5"><span class="p-iera-showcase__spec-key">Trọng lượng</span><span class="p-iera-showcase__spec-val">830 kg</span></li>
-              <li class="p-iera-showcase__spec-row" style="--i:6"><span class="p-iera-showcase__spec-key">Điện năng</span><span class="p-iera-showcase__spec-val">8 kWh</span></li>
-              <li class="p-iera-showcase__spec-row" style="--i:7"><span class="p-iera-showcase__spec-key">Nguồn điện</span><span class="p-iera-showcase__spec-val">3 pha 200V, 50/60Hz</span></li>
-              <li class="p-iera-showcase__spec-row" style="--i:8"><span class="p-iera-showcase__spec-key">Cấu hình khay</span><span class="p-iera-showcase__spec-val">15 tầng × 2 khay/tầng (tổng 30 khay)</span></li>
-            </ul>
+        <div class="p-iera-showcase__panel">
+          <div class="p-iera-showcase__spec is-active" id="panel-eco-1000b" role="tabpanel" aria-labelledby="tab-eco-1000b" tabindex="0" data-index="0">
+            <div class="p-iera-showcase__photo">
+              <img src="../../wp-content/themes/clearline-child/images/iera/products/eco-1000b.png" alt="Máy cấp đông siêu tốc iERA ECO 1000B" loading="lazy" decoding="async">
+            </div>
+            <div class="p-iera-showcase__data">
+              <div class="p-iera-showcase__spec-head">
+                <h3 class="p-iera-showcase__spec-name">ECO 1000B</h3>
+                <span class="p-iera-showcase__spec-badge">Kiểu liền khối · Theo mẻ</span>
+                <span class="p-iera-showcase__spec-temp">−65°C</span>
+              </div>
+              <div class="p-iera-showcase__stats">
+                <div class="p-iera-showcase__stat" style="--i:0">
+                  <svg class="p-iera-showcase__stat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true" focusable="false"><line x1="12" y1="2" x2="12" y2="22"/><line x1="4" y1="7" x2="20" y2="17"/><line x1="4" y1="17" x2="20" y2="7"/><line x1="12" y1="2" x2="9" y2="5"/><line x1="12" y1="2" x2="15" y2="5"/><line x1="12" y1="22" x2="9" y2="19"/><line x1="12" y1="22" x2="15" y2="19"/></svg>
+                  <span class="p-iera-showcase__stat-value">4.5<small>kW</small></span>
+                  <span class="p-iera-showcase__stat-label">Khả năng làm lạnh</span>
+                  <span class="p-iera-showcase__stat-gauge" aria-hidden="true" style="--pct:4%"><span></span></span>
+                </div>
+                <div class="p-iera-showcase__stat" style="--i:1">
+                  <svg class="p-iera-showcase__stat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="2" y="9" width="20" height="6" rx="1"/><line x1="6" y1="9" x2="6" y2="12"/><line x1="10" y1="9" x2="10" y2="12"/><line x1="14" y1="9" x2="14" y2="12"/><line x1="18" y1="9" x2="18" y2="12"/></svg>
+                  <span class="p-iera-showcase__stat-value">2200×<wbr>1300×<wbr>1990<small>mm</small></span>
+                  <span class="p-iera-showcase__stat-label">Kích thước máy / dàn lạnh (W×D×H)</span>
+                </div>
+                <div class="p-iera-showcase__stat" style="--i:2">
+                  <svg class="p-iera-showcase__stat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="7"/><path d="M9 10c0-1.7 1.3-3 3-3s3 1.3 3 3"/><line x1="9" y1="14" x2="15" y2="14"/></svg>
+                  <span class="p-iera-showcase__stat-value">830<small>kg</small></span>
+                  <span class="p-iera-showcase__stat-label">Trọng lượng</span>
+                </div>
+                <div class="p-iera-showcase__stat" style="--i:3">
+                  <svg class="p-iera-showcase__stat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M8 3v5M16 3v5"/><path d="M6 8h12v3a6 6 0 0 1-6 6 6 6 0 0 1-6-6V8Z"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                  <span class="p-iera-showcase__stat-value">200<small>V</small></span>
+                  <span class="p-iera-showcase__stat-label">Nguồn điện · 3 pha · 50/60Hz</span>
+                </div>
+              </div>
+              <h4 class="p-iera-showcase__detail-title">Chi tiết kỹ thuật</h4>
+              <ul class="p-iera-showcase__spec-list">
+                <li class="p-iera-showcase__spec-row" style="--i:4"><span class="p-iera-showcase__spec-key">Dạng máy</span><span class="p-iera-showcase__spec-val">Kiểu liền khối · Theo mẻ</span></li>
+                <li class="p-iera-showcase__spec-row" style="--i:5"><span class="p-iera-showcase__spec-key">Kích thước dàn nóng</span><span class="p-iera-showcase__spec-val">Tích hợp</span></li>
+                <li class="p-iera-showcase__spec-row" style="--i:6"><span class="p-iera-showcase__spec-key">Điện năng</span><span class="p-iera-showcase__spec-val">8 kWh</span></li>
+                <li class="p-iera-showcase__spec-row" style="--i:7"><span class="p-iera-showcase__spec-key">Cấu hình khay</span><span class="p-iera-showcase__spec-val">15 tầng × 2 khay/tầng (tổng 30 khay)</span></li>
+              </ul>
+              <div class="p-iera-showcase__cta">
+                <a href="../Contact/contact.html?model=ECO+1000B" class="c-basic-btn c-basic-btn--iera c-basic-btn--sm"><span class="c-basic-btn__in">Yêu cầu báo giá ECO 1000B</span></a>
+                <a href="#iera-dl" class="p-iera-showcase__cta-secondary">Xem thông số trong catalogue PDF ↓</a>
+              </div>
+            </div>
           </div>
-          <div class="p-iera-showcase__spec" data-index="1">
-            <p class="p-iera-showcase__spec-eyebrow">iERA Minus 65</p>
-            <h3 class="p-iera-showcase__spec-name">ECO 1000C</h3>
-            <ul class="p-iera-showcase__spec-list">
-              <li class="p-iera-showcase__spec-row" style="--i:0"><span class="p-iera-showcase__spec-key">Dạng máy</span><span class="p-iera-showcase__spec-val">Kiểu tách rời · Theo mẻ</span></li>
-              <li class="p-iera-showcase__spec-row" style="--i:1"><span class="p-iera-showcase__spec-key">Nhiệt độ giới thiệu</span><span class="p-iera-showcase__spec-val">−65°C</span></li>
-              <li class="p-iera-showcase__spec-row" style="--i:2"><span class="p-iera-showcase__spec-key">Khả năng làm lạnh</span><span class="p-iera-showcase__spec-val">4.5 kW</span></li>
-              <li class="p-iera-showcase__spec-row" style="--i:3"><span class="p-iera-showcase__spec-key">Kích thước máy / dàn lạnh (W×D×H)</span><span class="p-iera-showcase__spec-val">1700 × 1300 × 1990 mm</span></li>
-              <li class="p-iera-showcase__spec-row" style="--i:4"><span class="p-iera-showcase__spec-key">Kích thước dàn nóng (W×D×H)</span><span class="p-iera-showcase__spec-val">1471 × 744 × 1448 mm</span></li>
-              <li class="p-iera-showcase__spec-row" style="--i:5"><span class="p-iera-showcase__spec-key">Trọng lượng</span><span class="p-iera-showcase__spec-val">430 kg (dàn nóng 470 kg)</span></li>
-              <li class="p-iera-showcase__spec-row" style="--i:6"><span class="p-iera-showcase__spec-key">Điện năng</span><span class="p-iera-showcase__spec-val">8 kWh</span></li>
-              <li class="p-iera-showcase__spec-row" style="--i:7"><span class="p-iera-showcase__spec-key">Nguồn điện</span><span class="p-iera-showcase__spec-val">3 pha 200V, 50/60Hz</span></li>
-              <li class="p-iera-showcase__spec-row" style="--i:8"><span class="p-iera-showcase__spec-key">Cấu hình khay</span><span class="p-iera-showcase__spec-val">15 tầng × 2 khay/tầng (tổng 30 khay)</span></li>
-            </ul>
+
+          <div class="p-iera-showcase__spec" id="panel-eco-1000c" role="tabpanel" aria-labelledby="tab-eco-1000c" tabindex="0" data-index="1">
+            <div class="p-iera-showcase__photo">
+              <img src="../../wp-content/themes/clearline-child/images/iera/products/eco-1000c.png" alt="Máy cấp đông siêu tốc iERA ECO 1000C" loading="lazy" decoding="async">
+            </div>
+            <div class="p-iera-showcase__data">
+              <div class="p-iera-showcase__spec-head">
+                <h3 class="p-iera-showcase__spec-name">ECO 1000C</h3>
+                <span class="p-iera-showcase__spec-badge">Kiểu tách rời · Theo mẻ</span>
+                <span class="p-iera-showcase__spec-temp">−65°C</span>
+              </div>
+              <div class="p-iera-showcase__stats">
+                <div class="p-iera-showcase__stat" style="--i:0">
+                  <svg class="p-iera-showcase__stat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true" focusable="false"><line x1="12" y1="2" x2="12" y2="22"/><line x1="4" y1="7" x2="20" y2="17"/><line x1="4" y1="17" x2="20" y2="7"/><line x1="12" y1="2" x2="9" y2="5"/><line x1="12" y1="2" x2="15" y2="5"/><line x1="12" y1="22" x2="9" y2="19"/><line x1="12" y1="22" x2="15" y2="19"/></svg>
+                  <span class="p-iera-showcase__stat-value">4.5<small>kW</small></span>
+                  <span class="p-iera-showcase__stat-label">Khả năng làm lạnh</span>
+                  <span class="p-iera-showcase__stat-gauge" aria-hidden="true" style="--pct:4%"><span></span></span>
+                </div>
+                <div class="p-iera-showcase__stat" style="--i:1">
+                  <svg class="p-iera-showcase__stat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="2" y="9" width="20" height="6" rx="1"/><line x1="6" y1="9" x2="6" y2="12"/><line x1="10" y1="9" x2="10" y2="12"/><line x1="14" y1="9" x2="14" y2="12"/><line x1="18" y1="9" x2="18" y2="12"/></svg>
+                  <span class="p-iera-showcase__stat-value">1700×<wbr>1300×<wbr>1990<small>mm</small></span>
+                  <span class="p-iera-showcase__stat-label">Kích thước máy / dàn lạnh (W×D×H)</span>
+                </div>
+                <div class="p-iera-showcase__stat" style="--i:2">
+                  <svg class="p-iera-showcase__stat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="7"/><path d="M9 10c0-1.7 1.3-3 3-3s3 1.3 3 3"/><line x1="9" y1="14" x2="15" y2="14"/></svg>
+                  <span class="p-iera-showcase__stat-value">430<small>kg</small></span>
+                  <span class="p-iera-showcase__stat-note">(dàn nóng 470 kg)</span>
+                  <span class="p-iera-showcase__stat-label">Trọng lượng</span>
+                </div>
+                <div class="p-iera-showcase__stat" style="--i:3">
+                  <svg class="p-iera-showcase__stat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M8 3v5M16 3v5"/><path d="M6 8h12v3a6 6 0 0 1-6 6 6 6 0 0 1-6-6V8Z"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                  <span class="p-iera-showcase__stat-value">200<small>V</small></span>
+                  <span class="p-iera-showcase__stat-label">Nguồn điện · 3 pha · 50/60Hz</span>
+                </div>
+              </div>
+              <h4 class="p-iera-showcase__detail-title">Chi tiết kỹ thuật</h4>
+              <ul class="p-iera-showcase__spec-list">
+                <li class="p-iera-showcase__spec-row" style="--i:4"><span class="p-iera-showcase__spec-key">Dạng máy</span><span class="p-iera-showcase__spec-val">Kiểu tách rời · Theo mẻ</span></li>
+                <li class="p-iera-showcase__spec-row" style="--i:5"><span class="p-iera-showcase__spec-key">Kích thước dàn nóng (W×D×H)</span><span class="p-iera-showcase__spec-val">1471 × 744 × 1448 mm</span></li>
+                <li class="p-iera-showcase__spec-row" style="--i:6"><span class="p-iera-showcase__spec-key">Điện năng</span><span class="p-iera-showcase__spec-val">8 kWh</span></li>
+                <li class="p-iera-showcase__spec-row" style="--i:7"><span class="p-iera-showcase__spec-key">Cấu hình khay</span><span class="p-iera-showcase__spec-val">15 tầng × 2 khay/tầng (tổng 30 khay)</span></li>
+              </ul>
+              <div class="p-iera-showcase__cta">
+                <a href="../Contact/contact.html?model=ECO+1000C" class="c-basic-btn c-basic-btn--iera c-basic-btn--sm"><span class="c-basic-btn__in">Yêu cầu báo giá ECO 1000C</span></a>
+                <a href="#iera-dl" class="p-iera-showcase__cta-secondary">Xem thông số trong catalogue PDF ↓</a>
+              </div>
+            </div>
           </div>
-          <div class="p-iera-showcase__spec" data-index="2">
-            <p class="p-iera-showcase__spec-eyebrow">iERA Minus 65</p>
-            <h3 class="p-iera-showcase__spec-name">ECO 2000</h3>
-            <ul class="p-iera-showcase__spec-list">
-              <li class="p-iera-showcase__spec-row" style="--i:0"><span class="p-iera-showcase__spec-key">Dạng máy</span><span class="p-iera-showcase__spec-val">Kiểu tách rời · Theo mẻ</span></li>
-              <li class="p-iera-showcase__spec-row" style="--i:1"><span class="p-iera-showcase__spec-key">Nhiệt độ giới thiệu</span><span class="p-iera-showcase__spec-val">−65°C</span></li>
-              <li class="p-iera-showcase__spec-row" style="--i:2"><span class="p-iera-showcase__spec-key">Khả năng làm lạnh</span><span class="p-iera-showcase__spec-val">15 kW</span></li>
-              <li class="p-iera-showcase__spec-row" style="--i:3"><span class="p-iera-showcase__spec-key">Kích thước máy / dàn lạnh (W×D×H)</span><span class="p-iera-showcase__spec-val">2000 × 1600 × 2450 mm</span></li>
-              <li class="p-iera-showcase__spec-row" style="--i:4"><span class="p-iera-showcase__spec-key">Kích thước dàn nóng (W×D×H)</span><span class="p-iera-showcase__spec-val">1471 × 710 × 1680 mm</span></li>
-              <li class="p-iera-showcase__spec-row" style="--i:5"><span class="p-iera-showcase__spec-key">Trọng lượng</span><span class="p-iera-showcase__spec-val">660 kg (dàn nóng 500 kg)</span></li>
-              <li class="p-iera-showcase__spec-row" style="--i:6"><span class="p-iera-showcase__spec-key">Điện năng</span><span class="p-iera-showcase__spec-val">15 kWh</span></li>
-              <li class="p-iera-showcase__spec-row" style="--i:7"><span class="p-iera-showcase__spec-key">Nguồn điện</span><span class="p-iera-showcase__spec-val">3 pha 200–220V, 50/60Hz</span></li>
-              <li class="p-iera-showcase__spec-row" style="--i:8"><span class="p-iera-showcase__spec-key">Cấu hình khay</span><span class="p-iera-showcase__spec-val">(18 tầng × 2 khay) × 2 giá (tổng 72 khay)</span></li>
-            </ul>
+
+          <div class="p-iera-showcase__spec" id="panel-eco-2000" role="tabpanel" aria-labelledby="tab-eco-2000" tabindex="0" data-index="2">
+            <div class="p-iera-showcase__photo">
+              <img src="../../wp-content/themes/clearline-child/images/iera/products/eco-2000.png" alt="Máy cấp đông siêu tốc iERA ECO 2000" loading="lazy" decoding="async">
+            </div>
+            <div class="p-iera-showcase__data">
+              <div class="p-iera-showcase__spec-head">
+                <h3 class="p-iera-showcase__spec-name">ECO 2000</h3>
+                <span class="p-iera-showcase__spec-badge">Kiểu tách rời · Theo mẻ</span>
+                <span class="p-iera-showcase__spec-temp">−65°C</span>
+              </div>
+              <div class="p-iera-showcase__stats">
+                <div class="p-iera-showcase__stat" style="--i:0">
+                  <svg class="p-iera-showcase__stat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true" focusable="false"><line x1="12" y1="2" x2="12" y2="22"/><line x1="4" y1="7" x2="20" y2="17"/><line x1="4" y1="17" x2="20" y2="7"/><line x1="12" y1="2" x2="9" y2="5"/><line x1="12" y1="2" x2="15" y2="5"/><line x1="12" y1="22" x2="9" y2="19"/><line x1="12" y1="22" x2="15" y2="19"/></svg>
+                  <span class="p-iera-showcase__stat-value">15<small>kW</small></span>
+                  <span class="p-iera-showcase__stat-label">Khả năng làm lạnh</span>
+                  <span class="p-iera-showcase__stat-gauge" aria-hidden="true" style="--pct:18%"><span></span></span>
+                </div>
+                <div class="p-iera-showcase__stat" style="--i:1">
+                  <svg class="p-iera-showcase__stat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="2" y="9" width="20" height="6" rx="1"/><line x1="6" y1="9" x2="6" y2="12"/><line x1="10" y1="9" x2="10" y2="12"/><line x1="14" y1="9" x2="14" y2="12"/><line x1="18" y1="9" x2="18" y2="12"/></svg>
+                  <span class="p-iera-showcase__stat-value">2000×<wbr>1600×<wbr>2450<small>mm</small></span>
+                  <span class="p-iera-showcase__stat-label">Kích thước máy / dàn lạnh (W×D×H)</span>
+                </div>
+                <div class="p-iera-showcase__stat" style="--i:2">
+                  <svg class="p-iera-showcase__stat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="7"/><path d="M9 10c0-1.7 1.3-3 3-3s3 1.3 3 3"/><line x1="9" y1="14" x2="15" y2="14"/></svg>
+                  <span class="p-iera-showcase__stat-value">660<small>kg</small></span>
+                  <span class="p-iera-showcase__stat-note">(dàn nóng 500 kg)</span>
+                  <span class="p-iera-showcase__stat-label">Trọng lượng</span>
+                </div>
+                <div class="p-iera-showcase__stat" style="--i:3">
+                  <svg class="p-iera-showcase__stat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M8 3v5M16 3v5"/><path d="M6 8h12v3a6 6 0 0 1-6 6 6 6 0 0 1-6-6V8Z"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                  <span class="p-iera-showcase__stat-value">200–220<small>V</small></span>
+                  <span class="p-iera-showcase__stat-label">Nguồn điện · 3 pha · 50/60Hz</span>
+                </div>
+              </div>
+              <h4 class="p-iera-showcase__detail-title">Chi tiết kỹ thuật</h4>
+              <ul class="p-iera-showcase__spec-list">
+                <li class="p-iera-showcase__spec-row" style="--i:4"><span class="p-iera-showcase__spec-key">Dạng máy</span><span class="p-iera-showcase__spec-val">Kiểu tách rời · Theo mẻ</span></li>
+                <li class="p-iera-showcase__spec-row" style="--i:5"><span class="p-iera-showcase__spec-key">Kích thước dàn nóng (W×D×H)</span><span class="p-iera-showcase__spec-val">1471 × 710 × 1680 mm</span></li>
+                <li class="p-iera-showcase__spec-row" style="--i:6"><span class="p-iera-showcase__spec-key">Điện năng</span><span class="p-iera-showcase__spec-val">15 kWh</span></li>
+                <li class="p-iera-showcase__spec-row" style="--i:7"><span class="p-iera-showcase__spec-key">Cấu hình khay</span><span class="p-iera-showcase__spec-val">(18 tầng × 2 khay) × 2 giá (tổng 72 khay)</span></li>
+              </ul>
+              <div class="p-iera-showcase__cta">
+                <a href="../Contact/contact.html?model=ECO+2000" class="c-basic-btn c-basic-btn--iera c-basic-btn--sm"><span class="c-basic-btn__in">Yêu cầu báo giá ECO 2000</span></a>
+                <a href="#iera-dl" class="p-iera-showcase__cta-secondary">Xem thông số trong catalogue PDF ↓</a>
+              </div>
+            </div>
           </div>
-          <div class="p-iera-showcase__spec" data-index="3">
-            <p class="p-iera-showcase__spec-eyebrow">iERA Minus 65</p>
-            <h3 class="p-iera-showcase__spec-name">ECO 7000</h3>
-            <ul class="p-iera-showcase__spec-list">
-              <li class="p-iera-showcase__spec-row" style="--i:0"><span class="p-iera-showcase__spec-key">Dạng máy</span><span class="p-iera-showcase__spec-val">Kiểu hầm liên tục · Hầm liên tục</span></li>
-              <li class="p-iera-showcase__spec-row" style="--i:1"><span class="p-iera-showcase__spec-key">Nhiệt độ giới thiệu</span><span class="p-iera-showcase__spec-val">−65°C</span></li>
-              <li class="p-iera-showcase__spec-row" style="--i:2"><span class="p-iera-showcase__spec-key">Khả năng làm lạnh</span><span class="p-iera-showcase__spec-val">63.97 kW</span></li>
-              <li class="p-iera-showcase__spec-row" style="--i:3"><span class="p-iera-showcase__spec-key">Kích thước máy / dàn lạnh (W×D×H)</span><span class="p-iera-showcase__spec-val">1600 × 8150 × 2450 mm</span></li>
-              <li class="p-iera-showcase__spec-row" style="--i:4"><span class="p-iera-showcase__spec-key">Kích thước dàn nóng (W×D×H)</span><span class="p-iera-showcase__spec-val">1949 × 1849 × 2250 mm</span></li>
-              <li class="p-iera-showcase__spec-row" style="--i:5"><span class="p-iera-showcase__spec-key">Trọng lượng</span><span class="p-iera-showcase__spec-val">4.050 kg (dàn nóng 3.564 kg)</span></li>
-              <li class="p-iera-showcase__spec-row" style="--i:6"><span class="p-iera-showcase__spec-key">Điện năng</span><span class="p-iera-showcase__spec-val">60 kWh × 2</span></li>
-              <li class="p-iera-showcase__spec-row" style="--i:7"><span class="p-iera-showcase__spec-key">Nguồn điện</span><span class="p-iera-showcase__spec-val">3 pha 200–220V, 50/60Hz</span></li>
-              <li class="p-iera-showcase__spec-row" style="--i:8"><span class="p-iera-showcase__spec-key">Cấu hình khay</span><span class="p-iera-showcase__spec-val">Không nêu trong tài liệu</span></li>
-            </ul>
+
+          <div class="p-iera-showcase__spec" id="panel-eco-7000" role="tabpanel" aria-labelledby="tab-eco-7000" tabindex="0" data-index="3">
+            <div class="p-iera-showcase__photo">
+              <img src="../../wp-content/themes/clearline-child/images/iera/products/eco-7000.png" alt="Máy cấp đông siêu tốc iERA ECO 7000" loading="lazy" decoding="async">
+            </div>
+            <div class="p-iera-showcase__data">
+              <div class="p-iera-showcase__spec-head">
+                <h3 class="p-iera-showcase__spec-name">ECO 7000</h3>
+                <span class="p-iera-showcase__spec-badge">Kiểu hầm liên tục · Hầm liên tục</span>
+                <span class="p-iera-showcase__spec-temp">−65°C</span>
+              </div>
+              <div class="p-iera-showcase__stats">
+                <div class="p-iera-showcase__stat" style="--i:0">
+                  <svg class="p-iera-showcase__stat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true" focusable="false"><line x1="12" y1="2" x2="12" y2="22"/><line x1="4" y1="7" x2="20" y2="17"/><line x1="4" y1="17" x2="20" y2="7"/><line x1="12" y1="2" x2="9" y2="5"/><line x1="12" y1="2" x2="15" y2="5"/><line x1="12" y1="22" x2="9" y2="19"/><line x1="12" y1="22" x2="15" y2="19"/></svg>
+                  <span class="p-iera-showcase__stat-value">63.97<small>kW</small></span>
+                  <span class="p-iera-showcase__stat-label">Khả năng làm lạnh</span>
+                  <span class="p-iera-showcase__stat-gauge" aria-hidden="true" style="--pct:100%"><span></span></span>
+                </div>
+                <div class="p-iera-showcase__stat" style="--i:1">
+                  <svg class="p-iera-showcase__stat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="2" y="9" width="20" height="6" rx="1"/><line x1="6" y1="9" x2="6" y2="12"/><line x1="10" y1="9" x2="10" y2="12"/><line x1="14" y1="9" x2="14" y2="12"/><line x1="18" y1="9" x2="18" y2="12"/></svg>
+                  <span class="p-iera-showcase__stat-value">1600×<wbr>8150×<wbr>2450<small>mm</small></span>
+                  <span class="p-iera-showcase__stat-label">Kích thước máy / dàn lạnh (W×D×H)</span>
+                </div>
+                <div class="p-iera-showcase__stat" style="--i:2">
+                  <svg class="p-iera-showcase__stat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="7"/><path d="M9 10c0-1.7 1.3-3 3-3s3 1.3 3 3"/><line x1="9" y1="14" x2="15" y2="14"/></svg>
+                  <span class="p-iera-showcase__stat-value">4.050<small>kg</small></span>
+                  <span class="p-iera-showcase__stat-note">(dàn nóng 3.564 kg)</span>
+                  <span class="p-iera-showcase__stat-label">Trọng lượng</span>
+                </div>
+                <div class="p-iera-showcase__stat" style="--i:3">
+                  <svg class="p-iera-showcase__stat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M8 3v5M16 3v5"/><path d="M6 8h12v3a6 6 0 0 1-6 6 6 6 0 0 1-6-6V8Z"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                  <span class="p-iera-showcase__stat-value">200–220<small>V</small></span>
+                  <span class="p-iera-showcase__stat-label">Nguồn điện · 3 pha · 50/60Hz</span>
+                </div>
+              </div>
+              <h4 class="p-iera-showcase__detail-title">Chi tiết kỹ thuật</h4>
+              <ul class="p-iera-showcase__spec-list">
+                <li class="p-iera-showcase__spec-row" style="--i:4"><span class="p-iera-showcase__spec-key">Dạng máy</span><span class="p-iera-showcase__spec-val">Kiểu hầm liên tục · Hầm liên tục</span></li>
+                <li class="p-iera-showcase__spec-row" style="--i:5"><span class="p-iera-showcase__spec-key">Kích thước dàn nóng (W×D×H)</span><span class="p-iera-showcase__spec-val">1949 × 1849 × 2250 mm</span></li>
+                <li class="p-iera-showcase__spec-row" style="--i:6"><span class="p-iera-showcase__spec-key">Điện năng</span><span class="p-iera-showcase__spec-val">60 kWh × 2</span></li>
+                <li class="p-iera-showcase__spec-row" style="--i:7"><span class="p-iera-showcase__spec-key">Cấu hình khay</span><span class="p-iera-showcase__spec-val">Không nêu trong tài liệu<a class="p-iera-showcase__spec-note-link" href="../Contact/contact.html">Liên hệ để biết chi tiết →</a></span></li>
+              </ul>
+              <div class="p-iera-showcase__cta">
+                <a href="../Contact/contact.html?model=ECO+7000" class="c-basic-btn c-basic-btn--iera c-basic-btn--sm"><span class="c-basic-btn__in">Yêu cầu báo giá ECO 7000</span></a>
+                <a href="#iera-dl" class="p-iera-showcase__cta-secondary">Xem thông số trong catalogue PDF ↓</a>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -470,7 +602,7 @@ img:is([sizes=auto i],[sizes^="auto," i]){contain-intrinsic-size:3000px 1500px}
   </section>
 
 
-  <section class="">
+  <section class="" id="iera-dl">
     <div class="p-iera-dl">
       <div class="l-container l-container--wide">
         <div class="p-iera-dl-wrap js-inview-fadeIn">
@@ -491,7 +623,7 @@ img:is([sizes=auto i],[sizes^="auto," i]){contain-intrinsic-size:3000px 1500px}
       <div class="l-container l-container--wide">
       <div class="p-iera-demo-wrap">
         <h2 class="p-iera-demo-ttl js-inview-fadeIn">Chúng tôi đang trình diễn máy demo<br> tại Phòng thử nghiệm Osaka.</h2>
-        <p class="p-iera-demo-txt js-inview-fadeIn">Thịt・cá・rau củ?　<br class="sp-show">Chúng tôi sẽ đề xuất chiếc máy cấp đông siêu tốc <br  class="p-iera-demo-txt__br"
+        <p class="p-iera-demo-txt js-inview-fadeIn">Thịt・cá・rau củ ?　<br class="sp-show">Chúng tôi sẽ đề xuất chiếc máy cấp đông siêu tốc <br  class="p-iera-demo-txt__br"
         >phù hợp nhất với quý khách.<br>Hãy trải nghiệm trực tiếp trên máy thực tế.<br>※Với xe iERA, quý khách có thể trải nghiệm cấp đông ở bất cứ đâu.<br  class="p-iera-demo-txt__br"
         >Khách ở xa vui lòng liên hệ để được tư vấn.</p>
 
