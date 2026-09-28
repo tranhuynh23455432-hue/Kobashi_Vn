@@ -148,6 +148,21 @@ function initShowcase(root) {
     });
   });
 
+  var prevBtn = root.querySelector(".js-iera-showcase-prev");
+  var nextBtn = root.querySelector(".js-iera-showcase-next");
+  if (prevBtn) {
+    prevBtn.addEventListener("click", function () {
+      var current = activeIndex < 0 ? 0 : activeIndex;
+      setActive((current - 1 + count) % count, { focus: false });
+    });
+  }
+  if (nextBtn) {
+    nextBtn.addEventListener("click", function () {
+      var current = activeIndex < 0 ? 0 : activeIndex;
+      setActive((current + 1) % count, { focus: false });
+    });
+  }
+
   root.addEventListener("keydown", function (event) {
     var key = event.key;
     var current = activeIndex < 0 ? 0 : activeIndex;

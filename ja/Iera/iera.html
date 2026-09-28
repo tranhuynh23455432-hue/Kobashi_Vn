@@ -266,6 +266,10 @@ img:is([sizes=auto i],[sizes^="auto," i]){contain-intrinsic-size:3000px 1500px}
       </div>
 
       <div class="p-iera-showcase__stage js-iera-showcase" data-active="0" data-announce-template="{model} を選択中">
+        <div class="p-iera-showcase__tabs-row">
+        <button type="button" class="p-iera-showcase__nav p-iera-showcase__nav--prev js-iera-showcase-prev" aria-label="前の機種">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M15 6l-6 6 6 6"/></svg>
+        </button>
         <div class="p-iera-showcase__tabs" role="tablist" aria-label="iERA ECOシリーズの機種を選択">
           <button class="p-iera-showcase__tab js-iera-showcase-tab is-active" type="button" role="tab" id="tab-eco-1000b" aria-selected="true" aria-controls="panel-eco-1000b" tabindex="0" data-index="0" data-hash="eco-1000b">
             <span class="p-iera-showcase__tab-thumb" aria-hidden="true"><img src="../../wp-content/themes/clearline-child/images/iera/products/1000B.jpg" alt="" loading="lazy" decoding="async"></span>
@@ -299,6 +303,10 @@ img:is([sizes=auto i],[sizes^="auto," i]){contain-intrinsic-size:3000px 1500px}
               <span class="p-iera-showcase__tab-kw">63.97 kW</span>
             </span>
           </button>
+        </div>
+        <button type="button" class="p-iera-showcase__nav p-iera-showcase__nav--next js-iera-showcase-next" aria-label="次の機種">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9 6l6 6-6 6"/></svg>
+        </button>
         </div>
         <p class="p-iera-showcase__tabs-note">※ ECO 1000B・1000C：能力は同じ４．５kWですが、機種タイプが異なります（一体型／セパレート型）。</p>
         <p class="p-iera-showcase__status" role="status" aria-live="polite">ECO 1000B を選択中</p>
@@ -543,7 +551,7 @@ img:is([sizes=auto i],[sizes^="auto," i]){contain-intrinsic-size:3000px 1500px}
           </li>
 
         </ul>
-        <a href="https://kobashidenko.com/iera_works" class="c-basic-btn c-basic-btn--iera js-inview-fadeIn js-open-gallery"><span class="c-basic-btn__in">納入実績はこちら</span></a>
+        <a href="https://kobashidenko.com/iera_works" class="c-basic-btn c-basic-btn--iera js-inview-fadeIn js-open-gallery"><span class="c-basic-btn__in">最近の納入実績</span></a>
       </div>
     </div>
   </section>
@@ -630,7 +638,7 @@ img:is([sizes=auto i],[sizes^="auto," i]){contain-intrinsic-size:3000px 1500px}
         >遠方の方はご相談ください。</p>
 
 
-        <a href="https://kobashidenko.com/iera_works" class="c-basic-btn c-basic-btn--iera js-inview-fadeIn js-open-gallery"><span class="c-basic-btn__in">納入実績はこちら</span></a>
+        <a href="https://kobashidenko.com/iera_works" class="c-basic-btn c-basic-btn--iera js-inview-fadeIn js-open-gallery"><span class="c-basic-btn__in">最近の納入実績</span></a>
     </div>
     </div>
 
@@ -661,7 +669,6 @@ img:is([sizes=auto i],[sizes^="auto," i]){contain-intrinsic-size:3000px 1500px}
   <div class="c-page-ttl c-page-ttl--ieragallery">
     <div class="c-page-ttl__in">
       <div class="c-page-ttl__en"><span  class="c-page-ttl__en__blue">G</span>ALLERY</div>
-      <h1 class="c-page-ttl__jp">ギャラリー</h1>
     </div>
   </div>
   <section class="">
@@ -798,7 +805,7 @@ TEL: (+84) 0385-050-911</div>
 <script type="text/javascript" src="../../wp-content/themes/clearline/js/jquery-3.7.1.min.js?ver=3.7.1" id="jquery-js"></script>
 <script type="text/javascript" src="../../wp-content/themes/clearline/js/plugin/slick/slick.min.js?ver=1.7.1" id="custom-script-2-js"></script>
 <script type="text/javascript" src="../../wp-content/themes/clearline-child/js/common.js?ver=1.10.0" id="custom-script-4-js"></script>
-<script type="module" src="../../wp-content/themes/clearline-child/js/iera-showcase.js?ver=1.1.0" id="iera-showcase-js"></script>
+<script type="module" src="../../wp-content/themes/clearline-child/js/iera-showcase.js?ver=1.2.0" id="iera-showcase-js"></script>
 <script type="text/javascript">
 jQuery(function ($) {
   "use strict";
