@@ -556,7 +556,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   const isFixedHeaderPage =
     document.querySelector(".p-news") !== null ||
-    document.querySelector(".p-gallery--iera") !== null;
+    document.querySelector(".p-iera") !== null;
   let headerThreshold = Number.POSITIVE_INFINITY;
   let scrollFrameId = 0;
   let recalculateFrameId = 0;
