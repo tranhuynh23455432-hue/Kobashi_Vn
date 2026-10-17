@@ -556,7 +556,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Header luôn dính ở trên cùng (CSS). Khi đã cuộn trang thì gắn .is-scrolled để header thấp lại nhẹ và có bóng đổ.
   function updateScrolledState() {
-    header.classList.toggle("is-scrolled", (window.scrollY || window.pageYOffset || 0) > 8);
+    // Khi menu mobile mở, body bị khóa bằng position:fixed; top:-Y nên scrollY = 0: lấy vị trí cuộn thật từ top
+    const bodyStyle = document.body.style;
+    const y = bodyStyle.position === "fixed"
+      ? -(parseInt(bodyStyle.top, 10) || 0)
+      : (window.scrollY || window.pageYOffset || 0);
+    header.classList.toggle("is-scrolled", y > 8);
   }
   window.addEventListener("scroll", updateScrolledState, { passive: true });
   window.addEventListener("load", updateScrolledState);

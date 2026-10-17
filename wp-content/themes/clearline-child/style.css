@@ -32,7 +32,22 @@
 .p-company .p-company-section-item:last-child{border-bottom:0}
 .p-company .p-company-section-item-ttl{color:rgba(255,255,255,.62);font-weight:600}
 .p-company .p-company-section-item-txt{color:rgba(255,255,255,.9)}
-.p-company .p-company-section-item-img__in,.p-company .p-company-section-photo__in{border-radius:12px;box-shadow:0 14px 34px rgba(0,0,0,.35)}
+.p-company .p-company-section-item-img__in,.p-company .p-company-section-photo__in{border-radius:12px}
 .p-company .p-company-section-photo__txt{color:rgba(255,255,255,.78)}
 .p-company .p-company-section-map__in iframe{border-radius:14px}
 @media screen and (max-width:767px){.p-company .p-company-section-list{padding:4px 16px;border-radius:14px}}
+/* Sửa sau kiểm tra: */
+/* Hero Home và Construction (overflow:hidden, có lớp phủ do JS chèn ở z-index 2): dải mờ nằm trên lớp phủ, sát đáy */
+.p-top-mainvisual::after{bottom:0}
+.c-page-ttl.c-page-ttl--constgallery:not(.c-page-ttl--sub):not(.c-page-ttl--iera):not(.c-page-ttl--ieragallery)::after{z-index:3;bottom:0}
+/* Home trên mobile: bỏ đường trắng cũ ở đầu ô menu đầu tiên để đường nối chỉ còn vạch 7 màu */
+@media screen and (max-width:991px){.p-top-menu-content:first-child{border-top:0}}
+/* Company: dòng thời gian lịch sử nằm gọn trong panel, không đè lên viền bo góc */
+@media screen and (min-width:992px){.p-company .p-company-section-list--his{padding-left:64px}.p-company .p-company-section-list--his::before,.p-company .p-company-section-list--his::after{left:36px;top:24px}.p-company .p-company-section-list--his::before{bottom:24px}.p-company .p-company-section-list--his::after{max-height:calc(100% - 48px)}}
+/* Company trên mobile: nhãn mục là thẻ trong suốt nhẹ thay cho khối xám đặc, chữ đủ tương phản */
+@media screen and (max-width:991px){.p-company .p-company-section-item-ttl{background:rgba(255,255,255,.06);color:rgba(255,255,255,.88);border-radius:8px;padding:8px 12px}}
+/* iERA (en/ja; bản vi có quy tắc riêng trong css/iera-premium.css): đáy ảnh hero mờ dần vào nền sáng của trang */
+.c-page-ttl--iera{position:relative}
+.c-page-ttl--iera::after{content:"";position:absolute;left:0;right:0;bottom:0;height:18%;pointer-events:none;background:linear-gradient(to bottom,rgba(247,248,248,0),#f7f8f8)}
+/* Company: nhãn "Điện thoại / Phone / 電話" và "FAX" không bị xuống dòng, số thẳng hàng */
+.p-company .p-company-section-item-txt .in-telfax-txt{width:auto;min-width:7.4em;white-space:nowrap;padding-right:1.4em;color:rgba(255,255,255,.62)}
