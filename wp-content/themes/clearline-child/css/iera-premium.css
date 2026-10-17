@@ -1,0 +1,66 @@
+/* =====================================================================
+   iERA – ảnh bìa mờ dần và thanh giới thiệu (logo, mô tả, nút) ngay dưới ảnh bìa.
+   Chỉ áp dụng cho .c-page-ttl--iera và .p-iera-intro. Phần còn lại của trang giữ phong cách cũ.
+   Thanh "Tính nhanh lợi ích" (công cụ tính) dùng cùng ngôn ngữ, CSS nằm trong embed-into-page.py.
+   Nhận diện: xanh KOBASHI #005BAC · xanh băng iERA #56B9C9 · chữ #231815 / #776C66 · Be Vietnam Pro
+   ===================================================================== */
+.c-page-ttl--iera, .p-iera-intro {
+  --i-brand: #005BAC; --i-brand-dk: #00437F; --i-ice: #56B9C9; --i-ink: #231815; --i-ink2: #776C66; --i-ink3: #8C817B; --i-bg: #F7F8F7;
+  --i-line: rgba(119,108,102,.14); --i-line2: rgba(119,108,102,.22);
+  --i-strip: linear-gradient(90deg, #5DB443 0 14.28%, #E3262B 0 28.57%, #F5D400 0 42.85%, #5CC3DA 0 57.14%, #9A5BB5 0 71.42%, #F08A24 0 85.71%, #005BAC 0);
+  --i-font: "Be Vietnam Pro", "Noto Sans", sans-serif;
+}
+
+/* Ảnh bìa: mờ dần xuống nền trang */
+.c-page-ttl--iera { position: relative; }
+.c-page-ttl--iera::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 18%; background: linear-gradient(to bottom, rgba(247,248,247,0), var(--i-bg)); pointer-events: none; }
+.c-page-ttl--iera .c-page-ttl__jp { margin-top: 6px; font-family: var(--i-font); font-weight: 600; letter-spacing: .14em; }
+
+/* Thanh giới thiệu: viền mảnh, bóng nhẹ, dấu 7 màu KOBASHI nhỏ thay cho dải màu dày */
+.p-iera-intro { position: relative; z-index: 1; padding: 8px 0 0; background: var(--i-bg); }
+.p-iera-intro__bar { max-width: 1180px; margin: 0 auto; position: relative; display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 24px 40px; padding: 26px 30px; background: #fff; border: 1px solid var(--i-line); border-radius: 18px; box-shadow: 0 1px 2px rgba(71,63,59,.04), 0 14px 36px rgba(71,63,59,.07); }
+.p-iera-intro__logo { display: block; width: 168px; padding-right: 40px; border-right: 1px solid var(--i-line); box-sizing: content-box; }
+.p-iera-intro__logo img { display: block; width: 100%; height: auto; }
+.p-iera-intro__txt { min-width: 0; }
+.p-iera-intro__eyebrow { display: flex; align-items: center; gap: 10px; margin: 0 0 6px; color: var(--i-ink3); font: 700 11px/1.4 var(--i-font); letter-spacing: .18em; text-transform: uppercase; }
+.p-iera-intro__mark { flex: none; width: 28px; height: 3px; border-radius: 2px; background: var(--i-strip); }
+.p-iera-intro__lead { margin: 0; max-width: 60ch; color: var(--i-ink2); font: 400 15px/1.7 var(--i-font); letter-spacing: 0; text-wrap: pretty; }
+.p-iera-intro__lead strong { color: var(--i-ink); font-weight: 700; }
+.p-iera-intro__cta { display: flex; align-items: center; gap: 22px; }
+/* Khối −65°C phía dưới: bỏ khoảng trống lớn vốn dành cho hàng logo cũ */
+.p-iera-intro + section .p-iera-about { padding-top: 60px; }
+
+/* Nút chính */
+.p-iera-btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 48px; padding: 0 22px; border: 1px solid transparent; border-radius: 999px; font: 700 14.5px/1.25 var(--i-font); letter-spacing: .01em; text-align: center; text-decoration: none; white-space: nowrap; cursor: pointer; transition: background-color .2s, box-shadow .2s, transform .15s; }
+.p-iera-btn svg { flex: none; width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transition: transform .2s; }
+.p-iera-btn--primary { background: var(--i-brand); color: #fff; box-shadow: 0 6px 16px rgba(0,91,172,.18); }
+.p-iera-btn:active { transform: translateY(1px); }
+.p-iera-btn:focus-visible, .p-iera-link:focus-visible, .p-iera-fb:focus-visible, .p-iera-intro__logo:focus-visible { outline: 3px solid rgba(86,185,201,.55); outline-offset: 3px; border-radius: 999px; }
+/* Liên kết phụ: chữ xanh, gạch chân mảnh */
+.p-iera-link { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; color: var(--i-brand); font: 700 14.5px/1.25 var(--i-font); letter-spacing: .01em; text-decoration: none; white-space: nowrap; background: linear-gradient(currentColor, currentColor) left calc(50% + 11px) / 0 1px no-repeat; transition: background-size .25s; }
+.p-iera-link svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transition: transform .2s; }
+/* Facebook: nút tròn nhỏ */
+.p-iera-fb { display: grid; place-items: center; flex: none; width: 40px; height: 40px; border: 1px solid var(--i-line2); border-radius: 50%; color: #1462CC; transition: background-color .2s, border-color .2s, color .2s; }
+.p-iera-fb svg { width: 18px; height: 18px; fill: currentColor; }
+@media (hover: hover) {
+  .p-iera-btn--primary:hover { background: var(--i-brand-dk); color: #fff; box-shadow: 0 10px 22px rgba(0,91,172,.24); }
+  .p-iera-btn--primary:hover svg { transform: translateY(2px); }
+  .p-iera-link:hover { color: var(--i-brand-dk); background-size: calc(100% - 24px) 1px; }
+  .p-iera-link:hover svg { transform: translateX(3px); }
+  .p-iera-fb:hover { background: #1462CC; border-color: #1462CC; color: #fff; }
+}
+
+@media (max-width: 1100px) {
+  .p-iera-intro__bar { grid-template-columns: auto minmax(0, 1fr); }
+  .p-iera-intro__cta { grid-column: 1 / -1; padding-top: 18px; border-top: 1px solid var(--i-line); }
+  .p-iera-intro__cta .p-iera-fb { margin-left: auto; }
+}
+@media (max-width: 640px) {
+  .p-iera-intro__bar { grid-template-columns: minmax(0, 1fr); gap: 16px; padding: 22px 20px; }
+  .p-iera-intro__logo { width: 150px; padding: 0 0 16px; border-right: 0; border-bottom: 1px solid var(--i-line); }
+  .p-iera-intro__lead { font-size: 14.5px; }
+  .p-iera-intro__cta { flex-wrap: wrap; gap: 8px 18px; }
+  .p-iera-intro__cta .p-iera-btn { flex: 1 1 100%; }
+  .p-iera-intro + section .p-iera-about { padding-top: 40px; }
+}
+@media (prefers-reduced-motion: reduce) { .p-iera-btn, .p-iera-btn svg, .p-iera-link, .p-iera-link svg, .p-iera-fb { transition: none; } }
