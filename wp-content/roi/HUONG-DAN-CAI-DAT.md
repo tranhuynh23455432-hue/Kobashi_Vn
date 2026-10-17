@@ -108,6 +108,13 @@ Trong GA4, đánh dấu `iera_roi_lead` là **Sự kiện chính (Key event)** �
   Có công suất thì công cụ cảnh báo "cần khoảng N máy" khi sản lượng khách vượt một máy, và tính điện theo mức sử dụng thật. Chưa có thì không kiểm tra công suất. Trường `kwh` trong `MODELS` thực chất là công suất điện kW ghi ở mục "Điện năng" của catalogue.
 - **Giá điện mặc định và ngưỡng khách "Nóng"**: `kwhPrice` và `hotPaybackMonths` trong `CONFIG`. Đối chiếu `kwhPrice` với biểu giá điện sản xuất hiện hành.
 - **Các giả định khách tự nhập** (mục "Giả định tính toán" ở bước 4, mặc định thu gọn): mức đạt được (K, mặc định 75%), số máy (M, trống = tự tính), giá điện (P), giờ chạy mỗi ngày (H, mặc định 8), ngày chạy mỗi tháng (N, mặc định 26), số năm tính lợi nhuận tích lũy (Y, mặc định 5). Giá trị mặc định nằm trong `const DEFAULT`, giới hạn nhập nằm trong `const LIMITS`. Ba nút Thận trọng / Kỳ vọng / Tối đa ở phần kết quả chỉ là lối tắt đặt K = 50 / 75 / 100.
+
+  Mỗi giả định tác động vào kết quả như sau:
+  - **K**: nhân thẳng vào phần lời.
+  - **P, H, N**: tính tiền điện = công suất điện (kW) × số máy × H × N × mức sử dụng × P. Mặc định chi phí vận hành tự lấy số này và tự cập nhật khi khách đổi P, H, N, số máy, máy. Khách gõ số vào ô "Chi phí vận hành" thì dùng số khách gõ (nút "Tự tính tiền điện theo giả định" để quay lại tự tính).
+  - **T, R** (kg/khay, mẻ/ngày): cần cả hai mới tính được công suất 1 máy = số khay × T × R × N. Có công suất thì công cụ tính số máy cần (khi M để trống) và mức sử dụng máy cho tiền điện.
+  - **M**: số máy, nhân vào báo giá tham khảo (tiền đầu tư, khi đang dùng báo giá) và tiền điện. Không làm tăng phần lời vì phần lời phụ thuộc sản lượng A.
+  - **Y**: số năm của biểu đồ tiền tích lũy và ô "Sau Y năm, đã trừ tiền máy".
 - **Hao hụt hiện tại và khi dùng iERA** kéo được từ 0 đến 50%.
 - **Công thức**: hàm `calc()`:
 
@@ -118,6 +125,7 @@ Trong GA4, đánh dấu `iera_roi_lead` là **Sự kiện chính (Key event)** �
     - Phần hao hụt vẫn bán được (S%, giảm giá G%) chỉ mất phần chênh giá `G × B`.
   - E chỉ tính trên phần hàng bán được `A × (1 − D)`.
   - `k` là mức đạt được so với số khách nhập.
+  - Chi phí vận hành mặc định là tiền điện ước tính (xem trên), chưa gồm bảo trì và nhân công.
   - Hoàn vốn là hoàn vốn đơn giản, chưa tính thuế, khấu hao, lãi vay.
   - Giá mua trong `PRESETS` (V) chỉ là số ví dụ minh họa, nên thay bằng số thật từ khách hàng của bạn.
 

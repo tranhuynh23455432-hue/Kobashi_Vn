@@ -808,6 +808,8 @@ img:is([sizes=auto i],[sizes^="auto," i]){contain-intrinsic-size:3000px 1500px}
 #iera-roi .tile .s { font-size: 12px; color: var(--fg3t); }
 #iera-roi .tile.accent { border-top: 3px solid var(--ice); }
 #iera-roi .tile.accent .v { color: var(--brand); }
+#iera-roi .tile.wide { grid-column: 1 / -1; }
+#iera-roi .tile .v.neg { color: var(--loss); }
 
 #iera-roi .card { background: var(--card); border: 1px solid var(--sep); border-radius: var(--r-card); box-shadow: var(--shadow); padding: 16px 18px; display: grid; gap: 10px; }
 #iera-roi .card h3 { font-size: 15px; font-weight: 800; color: var(--fg); display: flex; align-items: center; gap: 8px; }
@@ -1059,14 +1061,14 @@ img:is([sizes=auto i],[sizes^="auto," i]){contain-intrinsic-size:3000px 1500px}
             <p class="readout" data-ro="I"></p>
           </div>
           <div class="cell field" data-key="O">
-            <label class="label" for="iera-in-O">Chi phí vận hành tăng thêm mỗi tháng<small>Điện, bảo trì, nhân công, khay. Không bắt buộc, có số này thì kết quả sát thực tế hơn.</small></label>
+            <label class="label" for="iera-in-O">Chi phí vận hành tăng thêm mỗi tháng<small>Mặc định là tiền điện ước tính theo giá điện, giờ chạy, ngày chạy ở mục "Giả định tính toán". Bạn gõ số khác nếu đã biết (điện, bảo trì, nhân công, khay).</small></label>
             <div class="numrow">
               <button type="button" class="pm" data-delta="-" aria-label="Giảm">−</button>
               <div class="box"><input type="text" id="iera-in-O" inputmode="numeric" autocomplete="off" placeholder="0"><span class="unit">đ / tháng</span></div>
               <button type="button" class="pm" data-delta="+" aria-label="Tăng">+</button>
             </div>
             <p class="readout" data-ro="O"></p>
-            <button type="button" class="inline-btn" data-el="estO">Ước tính giúp tôi tiền điện</button>
+            <button type="button" class="inline-btn" data-el="estO">Tự tính tiền điện theo giả định</button>
             <p class="hint" data-el="estNote" hidden></p>
           </div>
         </div>
@@ -1097,6 +1099,7 @@ img:is([sizes=auto i],[sizes^="auto," i]){contain-intrinsic-size:3000px 1500px}
               <div class="box"><input type="text" id="iera-in-T" inputmode="numeric" autocomplete="off" placeholder="Chưa biết"><span class="unit">kg / khay</span></div>
               <button type="button" class="pm" data-delta="+" aria-label="Tăng">+</button>
             </div>
+            <p class="readout" data-ro="T"></p>
           </div>
           <div class="cell field" data-key="R">
             <label class="label" for="iera-in-R">Số mẻ cấp đông mỗi ngày<small>Máy theo mẻ (ECO 1000B, 1000C, 2000). Hầm liên tục ECO 7000 không dùng mục này.</small></label>
@@ -1105,14 +1108,16 @@ img:is([sizes=auto i],[sizes^="auto," i]){contain-intrinsic-size:3000px 1500px}
               <div class="box"><input type="text" id="iera-in-R" inputmode="numeric" autocomplete="off" placeholder="Chưa biết"><span class="unit">mẻ / ngày</span></div>
               <button type="button" class="pm" data-delta="+" aria-label="Tăng">+</button>
             </div>
+            <p class="readout" data-ro="R"></p>
           </div>
           <div class="cell field" data-key="P">
-            <label class="label" for="iera-in-P">Giá điện<small>Dùng cho nút "Ước tính giúp tôi tiền điện". Xem trên hóa đơn điện của xưởng (chưa gồm VAT).</small></label>
+            <label class="label" for="iera-in-P">Giá điện<small>Xem trên hóa đơn điện của xưởng (chưa gồm VAT).</small></label>
             <div class="numrow">
               <button type="button" class="pm" data-delta="-" aria-label="Giảm">−</button>
               <div class="box"><input type="text" id="iera-in-P" inputmode="numeric" autocomplete="off"><span class="unit">đ / kWh</span></div>
               <button type="button" class="pm" data-delta="+" aria-label="Tăng">+</button>
             </div>
+            <p class="readout" data-ro="P"></p>
           </div>
           <div class="cell field" data-key="H">
             <label class="label" for="iera-in-H">Giờ máy chạy mỗi ngày</label>
@@ -1121,6 +1126,7 @@ img:is([sizes=auto i],[sizes^="auto," i]){contain-intrinsic-size:3000px 1500px}
               <div class="box"><input type="text" id="iera-in-H" inputmode="numeric" autocomplete="off"><span class="unit">giờ / ngày</span></div>
               <button type="button" class="pm" data-delta="+" aria-label="Tăng">+</button>
             </div>
+            <p class="readout" data-ro="H"></p>
           </div>
           <div class="cell field" data-key="N">
             <label class="label" for="iera-in-N">Số ngày chạy mỗi tháng</label>
@@ -1129,9 +1135,10 @@ img:is([sizes=auto i],[sizes^="auto," i]){contain-intrinsic-size:3000px 1500px}
               <div class="box"><input type="text" id="iera-in-N" inputmode="numeric" autocomplete="off"><span class="unit">ngày / tháng</span></div>
               <button type="button" class="pm" data-delta="+" aria-label="Tăng">+</button>
             </div>
+            <p class="readout" data-ro="N"></p>
           </div>
           <div class="cell field" data-key="Y">
-            <label class="label" for="iera-in-Y">Tính lợi nhuận tích lũy trong<small>Từ 1 đến 10 năm.</small></label>
+            <label class="label" for="iera-in-Y">Tính lợi nhuận tích lũy trong<small>Từ 1 đến 10 năm. Dùng cho biểu đồ tiền tích lũy và ô "Sau … năm" ở phần kết quả.</small></label>
             <div class="numrow">
               <button type="button" class="pm" data-delta="-" aria-label="Giảm">−</button>
               <div class="box"><input type="text" id="iera-in-Y" inputmode="numeric" autocomplete="off"><span class="unit">năm</span></div>
@@ -1180,6 +1187,7 @@ img:is([sizes=auto i],[sizes^="auto," i]){contain-intrinsic-size:3000px 1500px}
       <div class="tiles">
         <div class="tile"><span class="k">Mỗi năm</span><span class="v" data-r="year"></span><span class="s">đồng giữ lại mỗi năm</span></div>
         <div class="tile accent"><span class="k" data-r="pbK"></span><span class="v" data-r="pb"></span><span class="s" data-r="pbW"></span></div>
+        <div class="tile wide"><span class="k" data-r="cumK"></span><span class="v" data-r="cum"></span><span class="s" data-r="cumW"></span></div>
       </div>
 
       <div class="card">
@@ -1366,7 +1374,7 @@ img:is([sizes=auto i],[sizes^="auto," i]){contain-intrinsic-size:3000px 1500px}
   //   K = mức đạt được (%), P = giá điện (đ/kWh), H = giờ chạy/ngày, N = ngày chạy/tháng,
   //   M = số máy (0 = tự tính theo công suất), Y = số năm tính lời tích lũy
   // V = giá mua / giá vốn nguyên liệu (đ/kg). mode = cách tính hàng giữ lại được: 'cost' (đỡ phải mua thêm, theo giá mua) hoặc 'sell' (bán thêm, theo giá bán)
-  const DEFAULT = { ...productVals(productOf(PRESETS.seafood.def)), mode: 'cost', iAuto: true, variant: 'std', opts: { cart: false, rack: false, rail: false }, S: 30, G: 40, K: 75, P: CONFIG.kwhPrice, H: 8, N: 26, M: 0, Y: 5, T: CONFIG.kgPerTray, R: CONFIG.batchesPerDay, I: 0, O: 0, model: 'eco2000', step: 1, edited: false };
+  const DEFAULT = { ...productVals(productOf(PRESETS.seafood.def)), mode: 'cost', iAuto: true, variant: 'std', opts: { cart: false, rack: false, rail: false }, S: 30, G: 40, K: 75, P: CONFIG.kwhPrice, H: 8, N: 26, M: 0, Y: 5, T: CONFIG.kgPerTray, R: CONFIG.batchesPerDay, I: 0, O: 0, oAuto: true, model: 'eco2000', step: 1, edited: false };
   const KEY = 'kobashi-iera-roi-v4';
   // Giới hạn [nhỏ nhất, lớn nhất] của từng giả định. Gõ vượt mức lớn nhất sẽ bị chặn ngay, mức nhỏ nhất áp dụng khi tính và khi rời ô nhập.
   const LIMITS = { K: [10, 100], P: [0, 20000], H: [1, 24], N: [1, 31], M: [0, 100], Y: [1, 10], T: [0, 300], R: [0, 24] };
@@ -1394,6 +1402,8 @@ img:is([sizes=auto i],[sizes^="auto," i]){contain-intrinsic-size:3000px 1500px}
       if (m.mode !== 'cost' && m.mode !== 'sell') m.mode = DEFAULT.mode;
       if (typeof m.name !== 'string') m.name = DEFAULT.name;
       if (!m.opts || typeof m.opts !== 'object') m.opts = { ...DEFAULT.opts };
+      if (typeof v.oAuto !== 'boolean') m.oAuto = !(v.O > 0); // bản cũ: giữ chi phí khách đã gõ
+      if (typeof m.iAuto !== 'boolean') m.iAuto = DEFAULT.iAuto;
       return m;
     } catch { return null; }
   }
@@ -1469,6 +1479,7 @@ img:is([sizes=auto i],[sizes^="auto," i]){contain-intrinsic-size:3000px 1500px}
       const d = input.value.replace(/\D/g, '').slice(0, 13);
       s[key] = d ? (LIMITS[key] ? Math.min(LIMITS[key][1], +d) : +d) : 0;
       if (key === 'I') s.iAuto = false;
+      if (key === 'O') s.oAuto = false;
       const txt = d ? nf.format(s[key]) : '';
       if (input.value !== txt) {
         input.value = txt;
@@ -1488,6 +1499,7 @@ img:is([sizes=auto i],[sizes^="auto," i]){contain-intrinsic-size:3000px 1500px}
       const d = b.dataset.delta === '+' ? STEP[key] : -STEP[key];
       s[key] = lim(key, Math.max(0, Math.round((s[key] + d) / STEP[key]) * STEP[key]));
       if (key === 'I') s.iAuto = false;
+      if (key === 'O') s.oAuto = false;
       touched(); render();
     }));
     cell.querySelectorAll('.chip').forEach(c => c.addEventListener('click', () => { s[key] = +c.dataset.set; touched(); render(); }));
@@ -1529,18 +1541,18 @@ img:is([sizes=auto i],[sizes^="auto," i]){contain-intrinsic-size:3000px 1500px}
   });
 
   // Ước tính tiền điện (field `kwh` trong MODELS thực ra là công suất điện kW): công suất × số máy × giờ/ngày × ngày/tháng × mức sử dụng × giá điện.
-  // Giờ chạy, ngày chạy, giá điện, số máy lấy từ mục "Giả định tính toán" (khách chỉnh được).
-  // Mức sử dụng = sản lượng / công suất tối đa (tối thiểu 25%); chưa có công suất máy thì tính 100%.
-  el('estO').addEventListener('click', () => {
-    const m = MODELS.find(x => x.id === s.model && x.kwh) || MODELS[2];
+  // Giờ chạy (H), ngày chạy (N), giá điện (P), số máy (M) lấy từ mục "Giả định tính toán" (khách chỉnh được).
+  // Mức sử dụng = sản lượng / công suất tối đa (tối thiểu 25%); chưa có công suất máy (T, R) thì tính 100%.
+  // Khi s.oAuto bật (mặc định), chi phí vận hành O = số này và được tính lại mỗi khi khách đổi giả định;
+  // khách gõ số vào ô chi phí vận hành thì oAuto tắt và dùng số khách gõ.
+  function elecEst() {
+    const m = MODELS.find(x => x.id === s.model && x.kwh) || MODELS.find(x => x.id === 'eco2000');
     const p = plan(m), n = p.n, u = p.cap ? Math.min(1, Math.max(0.25, s.A / (p.cap * n))) : 1;
     const h = lim('H', s.H), d = lim('N', s.N), price = lim('P', s.P);
     const kwhMonth = Math.round(m.kwh * n * h * d * u);
-    s.O = Math.round(kwhMonth * price / 10000) * 10000;
-    el('estNote').hidden = false;
-    el('estNote').textContent = `${n > 1 ? n + ' máy ' : ''}${m.name}: ${m.kwh} kW × ${h} giờ/ngày × ${d} ngày${u < 1 ? ' × ' + Math.round(u * 100) + '% mức sử dụng' : ''} ≈ ${nf.format(kwhMonth)} kWh, giá điện ${nf.format(price)} đ/kWh, chưa gồm VAT. Đây chỉ là tiền điện, chưa có bảo trì và nhân công. Bạn chỉnh giờ chạy, giá điện ở mục "Giả định tính toán", hoặc sửa thẳng số tiền theo hóa đơn thực tế.`;
-    touched(); render();
-  });
+    return { m, n, u, h, d, price, kwhMonth, cost: Math.round(kwhMonth * price / 10000) * 10000, guess: m.id !== s.model };
+  }
+  el('estO').addEventListener('click', () => { s.oAuto = true; touched(); render(); });
 
   function touched() {
     if (!s.edited) track('iera_roi_start');
@@ -1582,8 +1594,11 @@ img:is([sizes=auto i],[sizes^="auto," i]){contain-intrinsic-size:3000px 1500px}
   function render(syncInputs = true) {
     const qt = quote();
     if (s.iAuto) s.I = qt ? qt.total : 0; // chưa chọn máy cụ thể thì chưa có báo giá
+    const est = elecEst();
+    if (s.oAuto) s.O = est.cost; // tiền điện tự tính lại theo giá điện, giờ chạy, ngày chạy, số máy
     const r = calc();
-    if (syncInputs) NUM_KEYS.forEach(k => { const i = $('#iera-in-' + k); if (document.activeElement !== i) i.value = s[k] ? nf.format(s[k]) : ''; });
+    // Luôn cập nhật các ô khác (tiền đầu tư, chi phí vận hành có thể được tự tính lại), trừ ô khách đang gõ
+    NUM_KEYS.forEach(k => { const i = $('#iera-in-' + k); if (document.activeElement !== i) i.value = s[k] ? nf.format(s[k]) : ''; });
 
     const cur = Math.min(s.step, 4);
     $$('.pane').forEach(p => p.hidden = +p.dataset.step !== cur);
@@ -1641,7 +1656,12 @@ img:is([sizes=auto i],[sizes^="auto," i]){contain-intrinsic-size:3000px 1500px}
     [...dots.children].forEach((d, i) => { d.className = i < nLost ? 'lost' : i < nLost + nSaved ? 'saved' : ''; });
 
     ro('I', s.I ? `Đọc là <b>${money(s.I)}</b>.${s.iAuto && qt ? ' Đang lấy theo báo giá tham khảo ở trên, bạn có thể gõ số khác.' : ''}` : 'Chưa có báo giá: kết quả sẽ cho biết máy giá bao nhiêu thì hoàn vốn trong 2 năm.');
-    ro('O', s.O ? `Đọc là <b>${money(s.O)}</b> mỗi tháng, sẽ được trừ vào phần lời.` : '');
+    ro('O', s.oAuto
+      ? `Đang tự tính tiền điện: <b>${money(s.O)}</b> mỗi tháng, đã trừ vào phần lời. Đổi giá điện, giờ chạy, ngày chạy ở mục "Giả định tính toán" thì số này tự cập nhật.`
+      : (s.O ? `Bạn tự nhập: <b>${money(s.O)}</b> mỗi tháng, đã trừ vào phần lời. Giá điện, giờ chạy, ngày chạy không còn ảnh hưởng số này.` : 'Đang để 0: kết quả chưa trừ tiền điện, bảo trì, nhân công.'));
+    el('estO').hidden = s.oAuto;
+    el('estNote').hidden = !s.oAuto;
+    el('estNote').textContent = `Cách tính: ${est.n > 1 ? est.n + ' máy ' : ''}${est.m.name}${est.guess ? ' (tạm tính vì chưa chọn máy)' : ''}: ${est.m.kwh} kW × ${est.h} giờ/ngày × ${est.d} ngày${est.u < 1 ? ' × ' + Math.round(est.u * 100) + '% mức sử dụng' : ''} ≈ ${nf.format(est.kwhMonth)} kWh × ${nf.format(est.price)} đ/kWh, chưa gồm VAT. Chỉ là tiền điện, chưa có bảo trì và nhân công.`;
 
     // Công suất máy so với sản lượng
     const mdl = MODELS.find(x => x.id === s.model), pl = plan(mdl);
@@ -1653,8 +1673,20 @@ img:is([sizes=auto i],[sizes^="auto," i]){contain-intrinsic-size:3000px 1500px}
     }
     ['capWarn', 'capWarn2'].forEach(n => { el(n).hidden = !capMsg; el(n).textContent = capMsg; });
     ro('M', lim('M', s.M) > 0 ? `Bạn đang tính theo <b>${lim('M', s.M)} máy</b>${pl && pl.need > 1 ? `, theo công suất cần khoảng ${pl.need} máy` : ''}.` : (pl && pl.need > 1 ? `Đang để tự động: công cụ tính <b>${pl.need} máy</b> theo sản lượng.` : 'Để trống: công cụ tự tính số máy theo sản lượng và công suất máy.'));
+    const capM = mdl && capOf(mdl), tv = lim('T', s.T), rv = lim('R', s.R);
+    const capTxt = !mdl || !mdl.kwh ? 'Chưa chọn máy cụ thể nên chưa tính công suất.'
+      : mdl.cap ? `${mdl.name} có công suất cố định ${kg(mdl.cap)}/tháng, không dùng mục này.`
+      : !mdl.trays ? `${mdl.name} là hầm liên tục, không tính theo khay và mẻ nên mục này không ảnh hưởng.`
+      : capM ? `Một máy ${mdl.name}: ${mdl.trays} khay × ${nf1.format(tv)} kg × ${rv} mẻ × ${lim('N', s.N)} ngày ≈ <b>${kg(capM)}/tháng</b>. Cần <b>${pl.need} máy</b> cho ${kg(s.A)}/tháng.`
+      : (tv > 0 || rv > 0) ? `Nhập thêm ${tv > 0 ? 'số mẻ mỗi ngày' : 'số kg mỗi khay'} để công cụ tính công suất máy và số máy cần.`
+      : 'Chưa nhập: công cụ chưa kiểm tra được công suất, tạm tính 1 máy.';
+    ro('T', capTxt); ro('R', capTxt);
+    const elecTxt = s.oAuto ? `Tiền điện ước tính <b>${money(est.cost)}</b> mỗi tháng (${nf.format(est.kwhMonth)} kWh), đã trừ vào kết quả.` : 'Bạn đang tự nhập chi phí vận hành ở trên nên mục này không ảnh hưởng kết quả. Bấm "Tự tính tiền điện theo giả định" để dùng lại.';
+    ro('P', elecTxt); ro('H', elecTxt);
+    ro('N', elecTxt + (capM ? ' Số ngày chạy cũng dùng để tính công suất máy.' : ''));
+    if (lim('M', s.M) > 0 && !s.iAuto && qt) root.querySelector('[data-ro="M"]').innerHTML += ' Tổng tiền đầu tư đang là số bạn tự nhập nên không đổi theo số máy; bấm "Dùng giá tham khảo này làm tiền đầu tư" để tính theo số máy.';
     ro('K', `Công cụ đang tính <b>${lim('K', s.K)}%</b> mức lời theo số bạn nhập. 50% là thận trọng, 75% là kỳ vọng, 100% là đạt đúng như bạn nhập.`);
-    ro('Y', s.I > 0 ? `Dùng cho dòng "sau ${lim('Y', s.Y)} năm" ở mục "Nói đơn giản".` : 'Dòng này chỉ hiện khi bạn nhập tổng tiền đầu tư ở trên.');
+    ro('Y', `Biểu đồ và ô "Sau ${lim('Y', s.Y)} năm" ở phần kết quả đang tính trong <b>${lim('Y', s.Y)} năm</b>.`);
 
     // Kết quả
     const neg = r.net <= 0;
@@ -1663,7 +1695,7 @@ img:is([sizes=auto i],[sizes^="auto," i]){contain-intrinsic-size:3000px 1500px}
     el('miniV').classList.toggle('neg', neg);
     R('month').textContent = (neg ? '' : '+') + vnd(r.net);
     R('month').classList.toggle('neg', neg);
-    R('monthW').textContent = neg ? 'Với số liệu hiện tại, iERA chưa tạo ra phần lời. Hãy kiểm tra lại hai mức hao hụt.' : `Đọc là ${money(r.net)} mỗi tháng (mức ${scenName()}, ${lim('K', s.K)}%).` + (s.O ? '' : ' Chưa trừ chi phí vận hành (điện, bảo trì, nhân công): nhập ở bước 4 hoặc bấm "Ước tính giúp tôi tiền điện".');
+    R('monthW').textContent = neg ? 'Với số liệu hiện tại, iERA chưa tạo ra phần lời. Hãy kiểm tra lại hai mức hao hụt và chi phí vận hành.' : `Đọc là ${money(r.net)} mỗi tháng (mức ${scenName()}, ${lim('K', s.K)}%), ` + (s.O ? (s.oAuto ? 'đã trừ tiền điện ước tính, chưa trừ bảo trì và nhân công.' : 'đã trừ chi phí vận hành bạn nhập.') : 'chưa trừ chi phí vận hành (điện, bảo trì, nhân công).');
     const lo = calc(0.5), hi = calc(1);
     R('range').textContent = hi.net > 0 ? `Tùy mức đạt được: từ ${money(lo.net, true)} (thận trọng) đến ${money(hi.net, true)} (tối đa) mỗi tháng.` : '';
     $$('[data-k]').forEach(b => b.setAttribute('aria-pressed', Math.round(+b.dataset.k * 100) === lim('K', s.K)));
@@ -1674,6 +1706,7 @@ img:is([sizes=auto i],[sizes^="auto," i]){contain-intrinsic-size:3000px 1500px}
     R('price').textContent = '+' + money(r.price);
     R('legPrice').hidden = !r.price;
     R('opex').textContent = '−' + money(s.O);
+    R('legOpex').querySelector('span').textContent = s.oAuto ? 'Trừ tiền điện ước tính' : 'Trừ chi phí vận hành';
     R('legOpex').hidden = !s.O;
     R('year').textContent = money(r.net * 12, true);
 
@@ -1681,10 +1714,21 @@ img:is([sizes=auto i],[sizes^="auto," i]){contain-intrinsic-size:3000px 1500px}
     else if (!neg) { R('pbK').textContent = 'Hoàn vốn trong 2 năm nếu máy dưới'; R('pb').textContent = money(r.net * 24, true); R('pbW').textContent = 'đồng (chưa có báo giá)'; }
     else { R('pbK').textContent = 'Hoàn vốn'; R('pb').textContent = 'Chưa tính được'; R('pbW').textContent = 'Cần phần lời lớn hơn 0'; }
 
+    const yrsT = lim('Y', s.Y), cumGain = r.net * 12 * yrsT;
+    if (s.I > 0) {
+      R('cumK').textContent = `Sau ${yrsT} năm, đã trừ tiền máy`;
+      R('cum').textContent = (cumGain - s.I >= 0 ? '+' : '') + money(cumGain - s.I, true);
+      R('cumW').textContent = `Lời tích lũy ${money(cumGain, true)} − tiền máy ${money(s.I, true)}. Chưa tính thuế, khấu hao, lãi vay.`;
+    } else {
+      R('cumK').textContent = `Lời tích lũy sau ${yrsT} năm`;
+      R('cum').textContent = money(cumGain, true);
+      R('cumW').textContent = 'Chưa có tiền đầu tư nên chưa trừ tiền máy.';
+    }
+    R('cum').classList.toggle('neg', s.I > 0 ? cumGain < s.I : cumGain < 0);
     const icon = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8.5 6.5 12 13 4"/></svg>';
     const lines = [
       `Hiện nay mỗi tháng bạn mất khoảng <b>${kg(lostKg)}</b> hàng, thiệt hại khoảng <b>${money(lostKg * g)}</b>.`,
-      `Nếu dùng iERA và đạt <b>${lim('K', s.K)}%</b> mức bạn kỳ vọng, bạn giữ lại khoảng <b>${money(r.loss)}</b> mỗi tháng.`,
+      `Nếu dùng iERA và đạt <b>${lim('K', s.K)}%</b> mức bạn kỳ vọng, bạn giữ lại khoảng <b>${money(r.loss)}</b> mỗi tháng nhờ giảm hao hụt${s.O ? `, còn <b>${money(r.net)}</b> sau khi trừ ${s.oAuto ? 'tiền điện ước tính' : 'chi phí vận hành'}` : ''}.`,
     ];
     if (r.price) lines.push(`Nếu hàng giữ màu, giữ vị và bán được giá cao hơn như bạn nhập, thêm khoảng <b>${money(r.price)}</b> mỗi tháng.`);
     if (r.payback) lines.push(`Theo ước tính, sau khoảng <b>${months(r.payback)}</b> phần lời đủ bù tiền đầu tư máy.`);
@@ -1751,7 +1795,7 @@ Hoàn vốn = Tiền đầu tư ÷ Lợi mỗi tháng
     const W = Math.max(260, svg.clientWidth || 360), H = 210, padL = 58, padR = 12, padT = 12, padB = 26;
     svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
     const net = Math.max(0, r.net);
-    const horizon = r.payback ? Math.min(60, Math.max(12, Math.ceil(r.payback * 1.8 / 6) * 6)) : 36;
+    const horizon = lim('Y', s.Y) * 12; // số năm khách chọn ở mục "Giả định tính toán"
     const maxY = Math.max(net * horizon, s.I * 1.15, 1e6);
     const step = niceStep(maxY, 4), top = Math.ceil(maxY / step) * step;
     const x = m => padL + (W - padL - padR) * m / horizon;
@@ -1762,8 +1806,8 @@ Hoàn vốn = Tiền đầu tư ÷ Lợi mỗi tháng
       g += `<line x1="${padL}" x2="${W - padR}" y1="${y(v)}" y2="${y(v)}" stroke="${c('--sep')}"/>`;
       g += `<text x="${padL - 8}" y="${y(v) + 4}" text-anchor="end">${v ? money(v, true) : '0'}</text>`;
     }
-    const tick = horizon <= 24 ? 6 : 12;
-    for (let m = 0; m <= horizon; m += tick) g += `<text x="${x(m)}" y="${H - 6}" text-anchor="middle">${m ? m + ' th' : 'Nay'}</text>`;
+    const tick = horizon <= 12 ? 3 : horizon <= 36 ? 6 : horizon <= 72 ? 12 : 24;
+    for (let m = 0; m <= horizon; m += tick) g += `<text x="${x(m)}" y="${H - 6}" text-anchor="middle">${m ? (horizon > 36 ? m / 12 + ' năm' : m + ' th') : 'Nay'}</text>`;
     g += `<path d="M${x(0)},${y(0)} L${x(horizon)},${y(net * horizon)} L${x(horizon)},${y(0)} Z" fill="${c('--gain')}" fill-opacity=".14"/>`;
     g += `<line x1="${x(0)}" y1="${y(0)}" x2="${x(horizon)}" y2="${y(net * horizon)}" stroke="${c('--gain')}" stroke-width="2.5" stroke-linecap="round"/>`;
     if (s.I > 0) {
@@ -1777,8 +1821,8 @@ Hoàn vốn = Tiền đầu tư ÷ Lợi mỗi tháng
     }
     svg.innerHTML = g;
     R('chartSub').textContent = s.I > 0
-      ? 'Đường xanh là tiền bạn giữ lại được, cộng dồn. Khi chạm đường nét đứt là đã thu hồi đủ tiền máy.'
-      : `Tiền bạn giữ lại được, cộng dồn trong ${horizon} tháng.`;
+      ? `Đường xanh là tiền bạn giữ lại được, cộng dồn trong ${lim('Y', s.Y)} năm. Khi chạm đường nét đứt là đã thu hồi đủ tiền máy.`
+      : `Tiền bạn giữ lại được, cộng dồn trong ${lim('Y', s.Y)} năm.`;
   }
   if ('ResizeObserver' in window) new ResizeObserver(() => drawChart(calc())).observe(R('chart'));
 
@@ -1906,7 +1950,7 @@ Hoàn vốn = Tiền đầu tư ÷ Lợi mỗi tháng
         cell('Máy quan tâm', m ? m.name : '—'),
         cell('Số máy tính trong bảng', pl ? pl.n : 1, 'máy', pl && pl.cap ? `Công suất khoảng ${kg(pl.cap)}/tháng mỗi máy` : (lim('M', s.M) > 0 ? 'Khách tự chọn' : 'Chưa rõ công suất')),
         cell('Tổng tiền đầu tư', s.I > 0 ? s.I : 'Chưa có báo giá', s.I > 0 ? 'đ' : '', s.iAuto && quote() ? `Báo giá tham khảo ngày ${PRICE_LIST.dateText}: ${quote().v.name}${quote().acc.length ? ' + ' + quote().acc.map(k => ACC_LABEL[k]).join(', ') : ''}${quote().n > 1 ? ' × ' + quote().n + ' máy' : ''}. Chưa gồm khay, lắp đặt, vận chuyển, thuế` : ''),
-        cell('Chi phí vận hành tăng thêm', s.O > 0 ? s.O : 'Chưa nhập', s.O > 0 ? 'đ/tháng' : '', 'Điện, bảo trì, nhân công, khay'),
+        cell('Chi phí vận hành tăng thêm', s.O > 0 ? s.O : 'Chưa nhập', s.O > 0 ? 'đ/tháng' : '', s.oAuto ? 'Tiền điện ước tính theo giá điện, giờ chạy, ngày chạy; chưa gồm bảo trì, nhân công' : 'Khách nhập: điện, bảo trì, nhân công, khay'),
         cell('Giá điện, giờ chạy, ngày chạy', `${nf.format(lim('P', s.P))} đ/kWh · ${lim('H', s.H)} giờ/ngày · ${lim('N', s.N)} ngày/tháng`, '', 'Dùng cho ước tính tiền điện'),
       ] },
       { group: 'Giả định tính toán', rows: [
