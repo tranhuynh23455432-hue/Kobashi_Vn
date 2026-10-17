@@ -1,0 +1,1617 @@
+<!--
+  KOBASHI · Công cụ tính lợi ích iERA −65°C (bản nhúng website)
+  Dán TOÀN BỘ đoạn mã này vào khối "HTML tùy chỉnh" của trang web.
+  Mọi CSS/JS đều nằm gọn trong #iera-roi, không ảnh hưởng phần còn lại của trang.
+  Cấu hình (số điện thoại, Zalo, nơi nhận thông tin khách) nằm ở đầu phần <script>.
+-->
+<style>
+/* ===== Nhận diện KOBASHI · iERA (đồng bộ với phần "ECO Series – Các model" của trang) =====
+   Xanh KOBASHI #005BAC · Xanh băng iERA #56B9C9 · Chữ nâu xám #776C66 / #231815 · Nền #F7F8F7 · Font Be Vietnam Pro */
+#iera-roi {
+  --brand: #005BAC; --brand-dk: #00437F; --navy: #0A2647;
+  --bg: #F7F8F7; --card: #FFFFFF; --fg: #231815; --fg2: #776C66; --fg3: #B3AAA4; --fg3t: #8C817B;
+  --sep: rgba(119,108,102,.16); --line: rgba(119,108,102,.22); --fill: rgba(119,108,102,.08);
+  --tint: var(--brand); --tint-ink: #FFFFFF; --tint-soft: rgba(0,91,172,.07); --ring: rgba(0,91,172,.16);
+  --ice: #56B9C9; --ice-soft: rgba(86,185,201,.14);
+  --gain: #12805C; --warn: #A15C00; --warn-soft: #FFF5E6; --loss: #D3262D;
+  --bar: rgba(255,255,255,.9);
+  --shadow: 0 1px 2px rgba(71,63,59,.05);
+  --shadow-lg: 0 20px 46px rgba(71,63,59,.14);
+  --font: "Be Vietnam Pro", "Noto Sans", -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  --font-round: var(--font);
+  --r-card: 16px; --r-ctl: 10px;
+  --kb-strip: linear-gradient(90deg, #5DB443 0 14.28%, #E3262B 0 28.57%, #F5D400 0 42.85%, #5CC3DA 0 57.14%, #9A5BB5 0 71.42%, #F08A24 0 85.71%, #005BAC 0);
+  --sticky-top: 90px; /* chiều cao menu cố định của website, chỉnh nếu cần */
+  --pad-x: 16px; --pad-y: 24px;
+  position: relative; background: var(--card); color: var(--fg);
+  font: 16px/1.5 var(--font); letter-spacing: 0; -webkit-font-smoothing: antialiased;
+  border: 1px solid rgba(119,108,102,.1); border-radius: 20px; box-shadow: var(--shadow-lg);
+  max-width: 1180px; margin: 0 auto; text-align: left;
+}
+#iera-roi::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 4px; border-radius: 20px 20px 0 0; background: var(--kb-strip); z-index: 1; }
+@media (min-width: 640px) { #iera-roi { --pad-x: 32px; --pad-y: 30px; } }
+
+/* Gỡ style của theme website khỏi các phần tử bên trong */
+#iera-roi *, #iera-roi *::before, #iera-roi *::after { box-sizing: border-box; }
+#iera-roi [hidden] { display: none !important; }
+#iera-roi h2, #iera-roi h3, #iera-roi p, #iera-roi ul, #iera-roi li, #iera-roi label, #iera-roi output, #iera-roi details, #iera-roi summary { margin: 0; padding: 0; font-family: inherit; color: inherit; text-transform: none; letter-spacing: inherit; }
+#iera-roi p { color: inherit; }
+#iera-roi ul { list-style: none; }
+#iera-roi button, #iera-roi input, #iera-roi select, #iera-roi textarea, #iera-roi a.btn {
+  font: inherit; color: inherit; margin: 0; text-transform: none; letter-spacing: inherit; box-shadow: none;
+  line-height: normal; height: auto; min-width: 0; max-width: none; text-shadow: none; vertical-align: middle;
+}
+#iera-roi button { cursor: pointer; -webkit-tap-highlight-color: transparent; background: none; border: 0; border-radius: 0; padding: 0; }
+#iera-roi input[type=text], #iera-roi input[type=tel], #iera-roi textarea { border: 0; background: transparent; padding: 0; border-radius: 0; outline: none; }
+#iera-roi svg { display: inline-block; max-width: none; }
+#iera-roi :focus-visible { outline: 3px solid var(--ring); outline-offset: 2px; border-radius: 8px; }
+#iera-roi .num { font-variant-numeric: tabular-nums; }
+#iera-roi [tabindex="-1"]:focus { outline: none; }
+
+/* Đầu khối */
+#iera-roi .head { display: grid; gap: 8px; padding: calc(var(--pad-y) + 4px) var(--pad-x) 20px; border-bottom: 1px solid var(--sep); }
+#iera-roi .brand { display: flex; align-items: center; gap: 10px; color: var(--fg2); font-size: 12px; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; }
+#iera-roi .brand b { color: var(--fg); font-weight: 800; }
+#iera-roi .brand .x { color: var(--ice); }
+#iera-roi .strip { display: flex; gap: 2px; }
+#iera-roi .strip i { width: 8px; height: 8px; border-radius: 2px; display: block; }
+#iera-roi .temp { margin-left: auto; padding: 4px 10px; border-radius: 999px; background: var(--fg); color: #fff; font-size: 12px; font-weight: 800; letter-spacing: .02em; white-space: nowrap; }
+#iera-roi .title { font-size: clamp(26px, 4.4vw, 34px); line-height: 1.2; font-weight: 800; color: var(--brand); text-wrap: balance; }
+#iera-roi .lede { color: var(--fg2); max-width: 70ch; font-size: 15px; }
+#iera-roi .head > .notice, #iera-roi .head > .boot { margin: 6px 0 0; }
+
+#iera-roi .notice { display: flex; gap: 10px; align-items: flex-start; background: var(--warn-soft); border: 1px solid rgba(161,92,0,.18); border-left: 3px solid #F08A24; border-radius: var(--r-ctl); padding: 10px 14px; font-size: 14px; color: #5E3A0A; }
+#iera-roi .notice b { color: #4A2C05; }
+#iera-roi .notice svg { flex: none; color: #F08A24; margin-top: 2px; }
+
+/* Bố cục 2 cột như thẻ thông số ECO Series: trái nhập số liệu, phải kết quả trên nền xám nhạt */
+#iera-roi .cols { display: grid; align-items: start; }
+#iera-roi .wizard { padding: var(--pad-y) var(--pad-x); }
+#iera-roi .result { padding: var(--pad-y) var(--pad-x); }
+@media (min-width: 920px) {
+  #iera-roi .cols { grid-template-columns: minmax(0, 1.08fr) minmax(0, 1fr); }
+  #iera-roi .cols::before { content: ""; grid-column: 2; grid-row: 1; align-self: stretch; background: var(--bg); border-left: 1px solid var(--sep); border-radius: 0 0 20px 0; }
+  #iera-roi .wizard { grid-column: 1; grid-row: 1; }
+  #iera-roi .result { grid-column: 2; grid-row: 1; position: sticky; top: var(--sticky-top); padding-left: 28px; padding-right: 28px; }
+  #iera-roi .mobile-only { display: none !important; }
+}
+@media (max-width: 919px) {
+  #iera-roi[data-view="result"] .wizard { display: none; }
+  #iera-roi[data-view="form"] .result { display: none; }
+  #iera-roi .result { background: var(--bg); border-radius: 0 0 20px 20px; }
+}
+
+/* Thanh bước */
+#iera-roi .progress { display: grid; gap: 10px; }
+#iera-roi .stepcount { font-size: 12px; color: var(--ice); font-weight: 800; letter-spacing: .2em; text-transform: uppercase; }
+#iera-roi .steps { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 8px; }
+#iera-roi .steps button { position: relative; min-height: 44px; padding: 6px 2px 12px; font-size: 14px; font-weight: 600; color: var(--fg3t); display: flex; align-items: center; justify-content: flex-start; gap: 8px; text-align: left; transition: color .2s; }
+#iera-roi .steps button::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 3px; border-radius: 3px; background: var(--fill); transition: background .25s; }
+#iera-roi .steps .n { flex: none; width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; font-size: 12px; font-weight: 800; border: 1.5px solid var(--line); color: var(--fg2); background: #fff; transition: all .2s; }
+#iera-roi .steps button.done { color: var(--fg2); }
+#iera-roi .steps button.done::after { background: var(--ice); }
+#iera-roi .steps button.done .n { background: var(--ice); border-color: var(--ice); color: #fff; }
+#iera-roi .steps button[aria-current="step"] { color: var(--fg); font-weight: 800; }
+#iera-roi .steps button[aria-current="step"]::after { background: var(--brand); }
+#iera-roi .steps button[aria-current="step"] .n { background: var(--brand); border-color: var(--brand); color: #fff; box-shadow: 0 0 0 4px var(--ring); }
+@media (hover: hover) { #iera-roi .steps button:hover { color: var(--fg); } }
+@media (max-width: 560px) { #iera-roi .steps { display: flex; } #iera-roi .steps button { flex: 1 1 0; min-width: 0; justify-content: center; } #iera-roi .steps .t { display: none; white-space: nowrap; } #iera-roi .steps button[aria-current="step"] { flex: 2.4 1 0; } #iera-roi .steps button[aria-current="step"] .t { display: inline; } }
+
+/* Các bước */
+#iera-roi .wizard { display: grid; gap: 18px; min-width: 0; align-content: start; }
+#iera-roi .pane { display: grid; gap: 16px; animation: iera-in .32s cubic-bezier(.16,1,.3,1) both; }
+@keyframes iera-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+#iera-roi .q { font-size: clamp(21px, 3vw, 25px); line-height: 1.3; font-weight: 800; color: var(--fg); text-wrap: balance; }
+#iera-roi .q + p { margin-top: -8px; color: var(--fg2); font-size: 15px; }
+#iera-roi .group { background: var(--card); border: 1px solid var(--sep); border-radius: var(--r-card); box-shadow: var(--shadow); overflow: hidden; }
+#iera-roi .group-h { font-size: 11px; text-transform: uppercase; letter-spacing: .12em; color: var(--fg2); margin: 0 0 -8px 2px; font-weight: 800; }
+#iera-roi .group-f { font-size: 13px; color: var(--fg3t); margin: -6px 2px 0; padding-left: 12px; border-left: 2px solid var(--ice); }
+#iera-roi .cell { padding: 16px 18px; display: grid; gap: 10px; }
+#iera-roi .cell + .cell { border-top: 1px solid var(--sep); }
+
+#iera-roi .choices { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 10px; }
+@media (min-width: 560px) { #iera-roi .choices { grid-template-columns: repeat(4, minmax(0,1fr)); } }
+#iera-roi .choice { position: relative; border: 1px solid var(--line); background: var(--card); border-radius: 14px; padding: 14px 12px 14px; min-height: 104px; display: grid; gap: 10px; align-content: start; justify-items: start; text-align: left; transition: border-color .2s, background .2s, transform .1s, box-shadow .2s; }
+#iera-roi .choice::after { content: ""; position: absolute; left: 12px; right: 12px; bottom: -1px; height: 2px; border-radius: 2px; background: transparent; transition: background .2s; }
+#iera-roi .choice:active { transform: scale(.98); }
+#iera-roi .choice svg { width: 38px; height: 38px; padding: 7px; border-radius: 10px; background: var(--bg); color: var(--fg2); transition: background .2s, color .2s; }
+#iera-roi .choice span { font-weight: 700; font-size: 14.5px; line-height: 1.3; color: var(--fg); }
+#iera-roi .choice[aria-pressed="true"] { border-color: var(--brand); background: var(--tint-soft); box-shadow: 0 0 0 1px var(--brand); }
+#iera-roi .choice[aria-pressed="true"] svg { background: var(--brand); color: #fff; }
+@media (hover: hover) { #iera-roi .choice:hover { border-color: var(--ice); box-shadow: 0 10px 24px rgba(71,63,59,.1); } #iera-roi .choice[aria-pressed="true"]:hover { border-color: var(--brand); } }
+
+#iera-roi .label { font-weight: 700; font-size: 15.5px; display: block; color: var(--fg); line-height: 1.4; }
+#iera-roi .label small { display: block; font-weight: 400; color: var(--fg3t); font-size: 13.5px; margin-top: 3px; line-height: 1.5; }
+#iera-roi .numrow { display: grid; grid-template-columns: 46px minmax(0,1fr) 46px; gap: 8px; align-items: center; }
+#iera-roi .box { display: flex; align-items: baseline; gap: 8px; background: var(--card); border: 1px solid var(--line); border-radius: var(--r-ctl); padding: 8px 14px; min-height: 56px; min-width: 0; transition: border-color .15s, box-shadow .15s; }
+#iera-roi .box:focus-within { border-color: var(--brand); box-shadow: 0 0 0 4px var(--ring); }
+#iera-roi .box input { width: 100%; font-family: var(--font-round); font-size: 26px; font-weight: 700; color: var(--fg); font-variant-numeric: tabular-nums; }
+#iera-roi .box input::placeholder { color: var(--fg3); font-weight: 500; }
+#iera-roi .box .unit { color: var(--fg3t); font-size: 13px; font-weight: 600; white-space: nowrap; }
+#iera-roi .pm { width: 46px; height: 46px; border-radius: var(--r-ctl); border: 1px solid var(--line); background: var(--card); font-size: 22px; font-weight: 500; line-height: 1; color: var(--brand); display: grid; place-items: center; transition: background .15s, border-color .15s; }
+#iera-roi .pm:active { background: var(--tint-soft); }
+@media (hover: hover) { #iera-roi .pm:hover { border-color: var(--brand); background: var(--tint-soft); } }
+#iera-roi .readout { font-size: 14px; color: var(--fg2); min-height: 1.4em; }
+#iera-roi .readout b { color: var(--fg); font-weight: 700; }
+#iera-roi .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+#iera-roi .chip { background: var(--card); border: 1px solid var(--line); border-radius: 999px; padding: 6px 14px; min-height: 36px; font-size: 14px; font-weight: 600; color: var(--fg2); transition: all .15s; }
+#iera-roi .chip[aria-pressed="true"] { background: var(--brand); border-color: var(--brand); color: var(--tint-ink); box-shadow: 0 6px 14px rgba(0,91,172,.22); }
+@media (hover: hover) { #iera-roi .chip:hover { border-color: var(--brand); color: var(--brand); } #iera-roi .chip[aria-pressed="true"]:hover { color: #fff; } }
+
+#iera-roi .pct-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+#iera-roi .pct-val { font-family: var(--font-round); font-size: 30px; font-weight: 800; font-variant-numeric: tabular-nums; color: var(--fg); }
+#iera-roi .pct-val.loss { color: var(--loss); }
+#iera-roi .pct-val.gain { color: var(--gain); }
+#iera-roi input[type=range] { -webkit-appearance: none; appearance: none; width: 100%; height: 40px; background: transparent; border: 0; padding: 0; margin: 0; cursor: pointer; }
+#iera-roi input[type=range]::-webkit-slider-runnable-track { height: 6px; border-radius: 3px; background: linear-gradient(to right, var(--track) var(--p, 0%), var(--fill) var(--p, 0%)); }
+#iera-roi input[type=range]::-moz-range-track { height: 6px; border-radius: 3px; background: var(--fill); }
+#iera-roi input[type=range]::-moz-range-progress { height: 6px; border-radius: 3px; background: var(--track); }
+#iera-roi input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 24px; height: 24px; margin-top: -9px; border-radius: 50%; background: #fff; border: 3px solid var(--track); box-shadow: 0 3px 8px rgba(71,63,59,.22); }
+#iera-roi input[type=range]::-moz-range-thumb { width: 18px; height: 18px; border: 3px solid var(--track); border-radius: 50%; background: #fff; box-shadow: 0 3px 8px rgba(71,63,59,.22); }
+#iera-roi .ticks { display: flex; justify-content: space-between; font-size: 11.5px; color: var(--fg3t); margin-top: -6px; font-variant-numeric: tabular-nums; }
+
+#iera-roi .dots { display: grid; grid-template-columns: repeat(20, minmax(0,1fr)); gap: 3px; }
+#iera-roi .dots i { aspect-ratio: 1; border-radius: 3px; background: var(--fill); display: block; }
+#iera-roi .dots i.lost { background: var(--loss); }
+#iera-roi .dots i.saved { background: var(--gain); }
+#iera-roi .legend { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 12.5px; color: var(--fg2); }
+#iera-roi .legend span::before { content: ""; display: inline-block; width: 9px; height: 9px; border-radius: 2px; margin-right: 6px; background: var(--c); }
+
+#iera-roi .row { display: flex; align-items: center; gap: 12px; justify-content: space-between; min-height: 44px; }
+#iera-roi .row .label { flex: 1; min-width: 0; }
+#iera-roi .switch { position: relative; width: 48px; height: 28px; flex: none; display: block; }
+#iera-roi .switch input { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; margin: 0; cursor: pointer; z-index: 1; }
+#iera-roi .switch span { position: absolute; inset: 0; border-radius: 999px; background: rgba(119,108,102,.24); transition: background .2s; }
+#iera-roi .switch span::after { content: ""; position: absolute; top: 3px; left: 3px; width: 22px; height: 22px; border-radius: 50%; background: #fff; box-shadow: 0 2px 6px rgba(0,0,0,.18); transition: transform .22s cubic-bezier(.3,.7,.4,1); }
+#iera-roi .switch input:checked + span { background: var(--brand); }
+#iera-roi .switch input:checked + span::after { transform: translateX(20px); }
+#iera-roi .switch input:focus-visible + span { outline: 3px solid var(--ring); outline-offset: 2px; }
+
+#iera-roi .model { position: relative; display: grid; grid-template-columns: 22px minmax(0,1fr); gap: 12px; align-items: start; padding: 14px 18px; text-align: left; width: 100%; transition: background .15s; }
+#iera-roi .model + .model { border-top: 1px solid var(--sep); }
+#iera-roi .model .radio { width: 20px; height: 20px; border-radius: 50%; border: 1.5px solid var(--fg3); margin-top: 2px; display: grid; place-items: center; background: #fff; }
+#iera-roi .model[aria-checked="true"] { background: var(--tint-soft); }
+#iera-roi .model[aria-checked="true"]::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--brand); }
+#iera-roi .model[aria-checked="true"] .radio { border-color: var(--brand); background: var(--brand); }
+#iera-roi .model[aria-checked="true"] .radio::after { content: ""; width: 8px; height: 8px; border-radius: 50%; background: #fff; }
+#iera-roi .model b { font-size: 16px; font-weight: 800; color: var(--fg); }
+#iera-roi .model .tag { display: inline-block; margin-left: 8px; padding: 1px 8px; border-radius: 999px; background: var(--ice-soft); color: #2B8797; font-size: 11px; font-weight: 800; letter-spacing: .02em; vertical-align: 2px; }
+#iera-roi .model .d { display: block; margin-top: 3px; font-size: 13.5px; color: var(--fg2); }
+@media (hover: hover) { #iera-roi .model:hover { background: var(--tint-soft); } }
+
+#iera-roi .inline-btn { color: var(--brand); font-weight: 700; padding: 6px 0; font-size: 14px; justify-self: start; min-height: 36px; text-decoration: underline; text-decoration-color: rgba(0,91,172,.3); text-underline-offset: 4px; }
+@media (hover: hover) { #iera-roi .inline-btn:hover { text-decoration-color: currentColor; } }
+#iera-roi .hint { font-size: 13px; color: var(--fg3t); }
+#iera-roi .err { color: var(--loss); font-size: 13.5px; font-weight: 600; }
+
+/* Nút */
+#iera-roi .nav { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; padding-top: 4px; }
+#iera-roi .btn { border-radius: var(--r-ctl); min-height: 50px; padding: 0 22px; font-size: 15px; font-weight: 700; letter-spacing: .01em; display: inline-flex; align-items: center; justify-content: center; gap: 8px; text-align: center; line-height: 1.25; text-decoration: none; border: 1px solid transparent; transition: transform .1s, background .15s, border-color .15s, box-shadow .15s, color .15s; }
+#iera-roi .btn:active { transform: scale(.98); }
+#iera-roi .btn-primary { background: var(--brand); color: var(--tint-ink); box-shadow: 0 8px 18px rgba(0,91,172,.24); }
+#iera-roi .btn-gray { background: var(--card); color: var(--brand); border-color: var(--line); }
+@media (hover: hover) {
+  #iera-roi .btn-primary:hover { background: var(--brand-dk); color: #fff; }
+  #iera-roi .btn-gray:hover { border-color: var(--brand); background: var(--tint-soft); }
+}
+#iera-roi .btn[disabled] { opacity: .4; pointer-events: none; box-shadow: none; }
+#iera-roi .nav .btn-primary { flex: 1; }
+#iera-roi .nav .btn-primary::after { content: ""; width: 7px; height: 7px; border-right: 2px solid currentColor; border-top: 2px solid currentColor; transform: rotate(45deg); margin-left: 2px; }
+@media (max-width: 919px) {
+  /* Dính đáy màn hình khi khối đang hiển thị, không đè lên phần khác của website */
+  #iera-roi .nav { position: sticky; bottom: 0; z-index: 5; margin: 0 calc(-1 * var(--pad-x)) calc(-1 * var(--pad-y)); padding: 10px var(--pad-x) calc(12px + env(safe-area-inset-bottom, 0px)); background: var(--bar); -webkit-backdrop-filter: saturate(180%) blur(16px); backdrop-filter: saturate(180%) blur(16px); border-top: 1px solid var(--sep); border-radius: 0 0 20px 20px; }
+  #iera-roi[data-view="result"] .nav { display: none; }
+}
+#iera-roi details.adv summary { list-style: none; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 16px 18px; font-weight: 700; font-size: 15px; color: var(--fg); min-height: 54px; }
+#iera-roi details.adv summary::-webkit-details-marker { display: none; }
+#iera-roi details.adv summary::after, #iera-roi details.card summary::after { content: ""; flex: none; width: 8px; height: 8px; border-right: 2px solid var(--fg2); border-bottom: 2px solid var(--fg2); transform: rotate(45deg); margin: -4px 4px 0 0; transition: transform .2s; }
+#iera-roi details.adv[open] summary::after, #iera-roi details[open].card summary::after { transform: rotate(-135deg); margin-top: 4px; }
+#iera-roi details.adv[open] summary { border-bottom: 1px solid var(--sep); }
+#iera-roi .mini { width: 100%; display: flex; justify-content: space-between; align-items: baseline; font-size: 13px; color: var(--fg2); padding: 0 2px 2px; }
+#iera-roi .mini b { color: var(--gain); font-size: 17px; font-weight: 800; font-family: var(--font-round); }
+#iera-roi .mini b.neg { color: var(--loss); }
+
+/* Mức đạt được (kịch bản), báo giá, cảnh báo công suất */
+#iera-roi .seg { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 4px; background: rgba(119,108,102,.1); padding: 4px; border-radius: 12px; }
+#iera-roi .seg button { border-radius: 9px; min-height: 48px; padding: 4px 6px; color: var(--fg2); font-size: 14px; font-weight: 600; display: grid; justify-items: center; align-content: center; line-height: 1.25; transition: background .2s, color .2s; }
+#iera-roi .seg button small { font-size: 11.5px; color: var(--fg3t); font-weight: 500; }
+#iera-roi .seg button[aria-pressed="true"] { background: var(--card); color: var(--brand); font-weight: 800; box-shadow: 0 2px 8px rgba(71,63,59,.14); }
+#iera-roi .seg button[aria-pressed="true"] small { color: var(--fg2); }
+#iera-roi .box.text input { font-family: var(--font); font-size: 18px; font-weight: 700; }
+#iera-roi .subhead { font-size: 14px; font-weight: 700; color: var(--fg); }
+#iera-roi .subhead small { display: block; font-weight: 400; color: var(--fg3t); font-size: 13px; margin-top: 2px; }
+#iera-roi .optrow { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 44px; }
+#iera-roi .optrow span.t { flex: 1; min-width: 0; font-size: 15px; font-weight: 600; }
+#iera-roi .optrow span.t small { display: block; color: var(--fg3t); font-size: 12.5px; font-weight: 400; }
+#iera-roi .qrows { display: grid; gap: 6px; background: var(--bg); border: 1px solid var(--sep); border-radius: var(--r-ctl); padding: 12px 14px; font-size: 14px; color: var(--fg2); }
+#iera-roi .qrows div { display: flex; justify-content: space-between; gap: 12px; }
+#iera-roi .qrows div b { font-variant-numeric: tabular-nums; white-space: nowrap; color: var(--fg); }
+#iera-roi .qrows .tot { border-top: 1px solid var(--line); padding-top: 8px; margin-top: 2px; font-weight: 800; font-size: 16px; color: var(--fg); }
+#iera-roi .qrows .tot b { color: var(--brand); }
+#iera-roi .boot { background: var(--ice-soft); color: #23707D; border-radius: var(--r-ctl); padding: 10px 14px; font-size: 14px; font-weight: 600; }
+#iera-roi .boot.err { background: rgba(211,38,45,.08); color: var(--loss); border: 1px solid rgba(211,38,45,.25); }
+#iera-roi .boot.ok { display: none; }
+#iera-roi .seg.two { grid-template-columns: repeat(2, minmax(0,1fr)); }
+#iera-roi .seg-note { font-size: 12.5px; color: var(--fg3t); margin-top: -6px; }
+#iera-roi .warn { background: var(--warn-soft); border: 1px solid rgba(161,92,0,.18); border-left: 3px solid #F08A24; border-radius: var(--r-ctl); padding: 10px 14px; font-size: 13.5px; color: #5E3A0A; }
+
+/* Kết quả */
+#iera-roi .result { display: grid; gap: 14px; min-width: 0; align-content: start; }
+#iera-roi .back { color: var(--brand); font-size: 15px; font-weight: 700; padding: 6px 0; display: inline-flex; align-items: center; gap: 6px; justify-self: start; min-height: 44px; }
+
+/* Thẻ kết quả chính: nền xanh đêm "băng giá" của iERA −65°C */
+#iera-roi .hero {
+  --fg: #FFFFFF; --fg2: rgba(255,255,255,.74); --gain: #5FD4A8; --ice: #8FDCE8; --loss: #FF9C9C; --fill: rgba(255,255,255,.14); --sep: rgba(255,255,255,.16);
+  position: relative; overflow: hidden; color: var(--fg); border-radius: 18px; padding: 22px 22px 20px; display: grid; gap: 6px;
+  background: radial-gradient(120% 90% at 100% 0%, rgba(86,185,201,.38), transparent 55%), linear-gradient(140deg, #0A2647 0%, #00437F 58%, #005BAC 100%);
+  box-shadow: 0 18px 40px rgba(0,67,127,.28);
+}
+#iera-roi .hero::after { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 3px; background: var(--kb-strip); opacity: .9; }
+#iera-roi .hero > * { position: relative; }
+#iera-roi .hero .k { font-size: 11.5px; color: #8FDCE8; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; }
+#iera-roi .hero .v { font-family: var(--font-round); font-size: clamp(34px, 6.4vw, 48px); line-height: 1.08; font-weight: 800; letter-spacing: -.02em; color: #fff; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; margin: 2px 0; }
+#iera-roi .hero .v.neg { color: var(--loss); }
+#iera-roi .hero .sub { font-size: 13.5px; color: var(--fg2); }
+#iera-roi .hero .range { font-size: 13px; color: var(--fg2); }
+#iera-roi .stack { display: flex; height: 8px; border-radius: 4px; overflow: hidden; background: var(--fill); margin-top: 12px; }
+#iera-roi .stack i { display: block; height: 100%; transition: width .4s cubic-bezier(.3,.7,.4,1); }
+#iera-roi .stack-legend { display: grid; gap: 6px; margin-top: 8px; }
+#iera-roi .stack-legend div { display: flex; justify-content: space-between; gap: 10px; font-size: 14px; color: var(--fg2); }
+#iera-roi .stack-legend span::before { content: ""; display: inline-block; width: 9px; height: 9px; border-radius: 2px; margin-right: 8px; background: var(--c); }
+#iera-roi .stack-legend b { font-weight: 700; color: var(--fg); font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+#iera-roi .tiles { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 12px; }
+#iera-roi .tile { background: var(--card); border: 1px solid var(--sep); border-radius: var(--r-card); box-shadow: 0 14px 30px rgba(71,63,59,.08); padding: 14px 16px 16px; display: grid; gap: 4px; align-content: start; min-width: 0; }
+#iera-roi .tile .k { font-size: 10.5px; color: var(--fg3t); font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+#iera-roi .tile .v { font-family: var(--font-round); font-size: 22px; line-height: 1.2; font-weight: 800; color: var(--fg); font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+#iera-roi .tile .s { font-size: 12px; color: var(--fg3t); }
+#iera-roi .tile.accent { border-top: 3px solid var(--ice); }
+#iera-roi .tile.accent .v { color: var(--brand); }
+
+#iera-roi .card { background: var(--card); border: 1px solid var(--sep); border-radius: var(--r-card); box-shadow: var(--shadow); padding: 16px 18px; display: grid; gap: 10px; }
+#iera-roi .card h3 { font-size: 15px; font-weight: 800; color: var(--fg); display: flex; align-items: center; gap: 8px; }
+#iera-roi .card h3::before { content: ""; width: 3px; height: 15px; border-radius: 2px; background: var(--ice); }
+#iera-roi .card > p.sub { font-size: 13px; color: var(--fg3t); }
+#iera-roi .chart { width: 100%; height: 210px; display: block; }
+#iera-roi .chart text { font: 600 10.5px var(--font); fill: var(--fg3t); }
+#iera-roi .plain { display: grid; gap: 10px; }
+#iera-roi .plain li { display: grid; grid-template-columns: 22px minmax(0,1fr); gap: 10px; font-size: 14.5px; color: var(--fg2); line-height: 1.55; }
+#iera-roi .plain li svg { margin-top: 3px; padding: 2px; width: 18px; height: 18px; border-radius: 50%; background: var(--ice-soft); color: #2B8797; }
+#iera-roi details.card summary { list-style: none; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-weight: 800; font-size: 15px; color: var(--fg); min-height: 28px; }
+#iera-roi details.card summary::-webkit-details-marker { display: none; }
+#iera-roi .formula { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 12.5px; color: var(--fg); background: var(--bg); border: 1px solid var(--sep); border-radius: 10px; padding: 12px; overflow-x: auto; white-space: pre; line-height: 1.6; }
+#iera-roi .notcounted { font-size: 13px; color: var(--fg3t); }
+
+/* Form nhận tư vấn */
+#iera-roi .lead { position: relative; overflow: hidden; background: radial-gradient(90% 80% at 0% 100%, rgba(86,185,201,.32), transparent 60%), linear-gradient(135deg, #005BAC 0%, #00437F 100%); color: #fff; border-radius: 18px; padding: 22px 20px 20px; display: grid; gap: 12px; box-shadow: 0 18px 40px rgba(0,67,127,.24); }
+#iera-roi .lead::before { content: "Cấp đông thử miễn phí"; justify-self: start; padding: 3px 10px; border-radius: 999px; background: #F5D400; color: #231815; font-size: 11px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+#iera-roi .lead h3 { font-size: 20px; line-height: 1.3; font-weight: 800; text-wrap: balance; color: #fff; }
+#iera-roi .lead p { color: rgba(255,255,255,.84); font-size: 14px; }
+#iera-roi .lead form { display: grid; gap: 10px; }
+#iera-roi .lead .in { display: grid; gap: 4px; background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.18); border-radius: var(--r-ctl); padding: 9px 14px; transition: border-color .15s, background .15s; }
+#iera-roi .lead .in:focus-within { border-color: #fff; background: rgba(255,255,255,.16); }
+#iera-roi .lead .in span { font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: rgba(255,255,255,.72); }
+#iera-roi .lead .in input { color: #fff; font-size: 16px; font-weight: 600; width: 100%; }
+#iera-roi .lead .in input::placeholder { color: rgba(255,255,255,.45); font-weight: 400; }
+#iera-roi .lead .check { display: flex; gap: 10px; align-items: center; font-size: 14.5px; font-weight: 600; min-height: 44px; cursor: pointer; }
+#iera-roi .lead .check input { width: 20px; height: 20px; accent-color: #F5D400; flex: none; }
+#iera-roi .lead .hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+#iera-roi .lead .btn-white { background: #fff; color: var(--brand); box-shadow: 0 8px 20px rgba(10,38,71,.25); }
+#iera-roi .lead .btn-ghost { background: rgba(255,255,255,.12); border-color: rgba(255,255,255,.28); color: #fff; }
+@media (hover: hover) { #iera-roi .lead .btn-white:hover { background: #F2F8FD; } #iera-roi .lead .btn-ghost:hover { background: rgba(255,255,255,.2); } }
+#iera-roi .lead .in select { color: #fff; font-size: 16px; font-weight: 600; width: 100%; -webkit-appearance: none; appearance: none; border: 0; border-radius: 0; padding: 0 22px 0 0; cursor: pointer; background: transparent url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m1 1.5 5 5 5-5'/%3E%3C/svg%3E") no-repeat right center; }
+#iera-roi .lead .in select option { color: #231815; background: #fff; }
+#iera-roi .lead .more { display: grid; gap: 10px; }
+#iera-roi .lead .more summary { cursor: pointer; font-size: 14px; font-weight: 700; min-height: 36px; display: flex; align-items: center; list-style: none; }
+#iera-roi .lead .more summary::-webkit-details-marker { display: none; }
+#iera-roi .lead .more summary::after { content: "›"; margin-left: 8px; font-size: 20px; transition: transform .2s; }
+#iera-roi .lead .more[open] summary::after { transform: rotate(90deg); }
+#iera-roi .lead .acts { display: flex; flex-wrap: wrap; gap: 10px; }
+#iera-roi .lead .acts .btn { flex: 1 1 140px; min-height: 46px; }
+#iera-roi .lead .ferr { color: #FFD3D3; font-size: 14px; font-weight: 600; }
+#iera-roi .lead .phone { font-family: var(--font-round); font-size: 26px; font-weight: 800; letter-spacing: .02em; user-select: all; }
+#iera-roi .lead small { color: rgba(255,255,255,.7); font-size: 12px; }
+#iera-roi .lead .ok { display: grid; gap: 8px; }
+#iera-roi .lead .ok b { font-size: 19px; }
+
+#iera-roi .actions { display: flex; flex-wrap: wrap; gap: 10px; }
+#iera-roi .actions .btn { flex: 1 1 180px; min-height: 48px; font-size: 14px; }
+#iera-roi .actions .btn-primary { flex-basis: 100%; }
+#iera-roi .toast { position: fixed; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom, 0px)); transform: translate(-50%, 20px); background: var(--navy); color: #fff; padding: 10px 18px; border-radius: 999px; font-size: 14px; font-weight: 700; box-shadow: 0 10px 30px rgba(10,38,71,.3); opacity: 0; pointer-events: none; transition: opacity .2s, transform .2s; z-index: 99999; max-width: calc(100% - 32px); text-align: center; }
+#iera-roi .toast.show { opacity: 1; transform: translate(-50%, 0); }
+#iera-roi textarea.fallback { width: 100%; min-height: 160px; font: 13px ui-monospace, Menlo, monospace; border-radius: 10px; border: 1px solid var(--line); background: var(--card); padding: 10px; }
+
+/* Bảng đánh giá chi tiết (xem trước, in, xuất file) */
+#iera-roi .rep { position: fixed; inset: 0; z-index: 99998; background: rgba(10,38,71,.62); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); padding: 12px; display: grid; grid-template-rows: auto auto minmax(0,1fr); gap: 10px; }
+#iera-roi .rep-bar, #iera-roi .rep-form { width: 100%; max-width: 900px; margin: 0 auto; background: var(--card); border-radius: 14px; padding: 10px 12px; }
+#iera-roi .rep-bar { position: relative; overflow: hidden; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding-top: 13px; }
+#iera-roi .rep-bar::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 3px; background: var(--kb-strip); }
+#iera-roi .rep-bar h3 { flex: 1 1 180px; font-size: 16px; font-weight: 800; color: var(--fg); }
+#iera-roi .rep-bar .btn { min-height: 42px; padding: 0 16px; font-size: 14px; }
+#iera-roi .rep-form { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px; }
+#iera-roi .rep-form label { display: grid; gap: 2px; background: var(--bg); border: 1px solid var(--sep); border-radius: 10px; padding: 6px 10px; }
+#iera-roi .rep-form label:focus-within { border-color: var(--brand); }
+#iera-roi .rep-form label span { font-size: 11px; font-weight: 700; color: var(--fg3t); letter-spacing: .04em; text-transform: uppercase; }
+#iera-roi .rep-form input { width: 100%; font-size: 14px; font-weight: 600; color: var(--fg); }
+#iera-roi .rep-frame { display: block; width: 100%; height: 100%; max-width: 900px; margin: 0 auto; border: 0; border-radius: 14px; background: #fff; }
+@media (prefers-reduced-motion: reduce) { #iera-roi *, #iera-roi *::before, #iera-roi *::after { animation: none !important; transition: none !important; } }
+</style>
+
+<section id="iera-roi" data-view="form" aria-label="Tính lợi ích máy cấp đông iERA">
+  <div class="head">
+    <div class="brand">
+      <span><b>KOBASHI</b> <span class="x">×</span> iERA ECO Series</span>
+      <span class="temp">−65°C</span>
+    </div>
+    <h2 class="title">Máy iERA giúp bạn lời thêm bao nhiêu?</h2>
+    <p class="lede">Trả lời 4 câu hỏi đơn giản. Chưa chắc số nào thì cứ giữ số gợi ý, chuyên viên KOBASHI sẽ cùng bạn chỉnh lại.</p>
+    <div class="boot" data-el="boot" role="status">Đang khởi động công cụ tính…<noscript> Trình duyệt của bạn đang tắt JavaScript nên công cụ không chạy được. Hãy bật JavaScript hoặc gọi KOBASHI để được tư vấn trực tiếp.</noscript></div>
+    <div class="notice" data-el="notice" role="status">
+      <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 1.5a8.5 8.5 0 1 1 0 17 8.5 8.5 0 0 1 0-17Zm0 12a1.1 1.1 0 1 0 0 2.2 1.1 1.1 0 0 0 0-2.2Zm0-8.2c-.7 0-1.1.5-1.1 1.1l.3 5.2c0 .5.4.8.8.8s.8-.3.8-.8l.3-5.2c0-.6-.4-1.1-1.1-1.1Z"/></svg>
+      <div><b>Đang dùng số ví dụ.</b> Hãy thay bằng số liệu thật của bạn để có kết quả đúng.</div>
+    </div>
+  </div>
+
+  <div class="cols">
+    <div class="wizard">
+      <div class="progress">
+        <div class="stepcount" data-el="stepcount">Bước 1 / 4</div>
+        <div class="steps" data-el="steps" role="group" aria-label="Các bước">
+          <button type="button" data-go="1"><span class="n">1</span><span class="t">Sản phẩm</span></button>
+          <button type="button" data-go="2"><span class="n">2</span><span class="t">Giá bán</span></button>
+          <button type="button" data-go="3"><span class="n">3</span><span class="t">Hao hụt</span></button>
+          <button type="button" data-go="4"><span class="n">4</span><span class="t">Đầu tư</span></button>
+        </div>
+      </div>
+
+      <div class="pane" data-step="1">
+        <h3 class="q">Bạn cấp đông sản phẩm gì?</h3>
+        <div class="choices" role="group" aria-label="Loại sản phẩm">
+          <button type="button" class="choice" data-type="seafood"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 16c4-6 10-8 16-6 3 1 5 3 7 6-2 3-4 5-7 6-6 2-12 0-16-6Z"/><path d="M4 16 1 11v10l3-5Z"/><circle cx="22" cy="15" r="1.2" fill="currentColor"/></svg><span>Thủy hải sản</span></button>
+          <button type="button" class="choice" data-type="meat"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 9c4-5 14-5 18 1 3 5 0 12-7 13-4 1-6 3-9 3-4 0-6-3-5-7 1-3 0-6 3-10Z"/><circle cx="18" cy="15" r="3"/></svg><span>Thịt</span></button>
+          <button type="button" class="choice" data-type="produce"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 26C6 13 13 6 27 5c0 14-7 21-20 21Z"/><path d="M6 26 18 14"/></svg><span>Nông sản, rau quả</span></button>
+          <button type="button" class="choice" data-type="food"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 15h24c0 6-5 11-12 11S4 21 4 15Z"/><path d="M11 10c0-2 2-2 2-4M17 10c0-2 2-2 2-4"/></svg><span>Bánh, món chế biến</span></button>
+        </div>
+        <div class="group">
+          <div class="cell">
+            <label class="label" for="iera-in-name">Tên sản phẩm của bạn<small>Không bắt buộc. Đang để sẵn một ví dụ, bạn xóa đi và nhập sản phẩm của mình.</small></label>
+            <div class="box text"><input type="text" id="iera-in-name" maxlength="60" autocomplete="off" placeholder="Ví dụ: Sầu riêng, Hàu, Tôm thẻ..."></div>
+            <div class="subhead">Ví dụ nhanh<small>Bấm để điền sẵn số liệu thị trường tham khảo của sản phẩm đó.</small></div>
+            <div class="chips" data-el="prods"></div>
+            <p class="readout" data-ro="prod"></p>
+          </div>
+        </div>
+        <div class="group">
+          <div class="cell field" data-key="A">
+            <label class="label" for="iera-in-A">Mỗi tháng bạn cấp đông khoảng bao nhiêu?<small>Tính sản phẩm chủ lực</small></label>
+            <div class="numrow">
+              <button type="button" class="pm" data-delta="-" aria-label="Giảm">−</button>
+              <div class="box"><input type="text" id="iera-in-A" inputmode="numeric" autocomplete="off"><span class="unit">kg / tháng</span></div>
+              <button type="button" class="pm" data-delta="+" aria-label="Tăng">+</button>
+            </div>
+            <p class="readout" data-ro="A"></p>
+            <div class="chips">
+              <button type="button" class="chip" data-set="1000">1 tấn</button>
+              <button type="button" class="chip" data-set="3000">3 tấn</button>
+              <button type="button" class="chip" data-set="5000">5 tấn</button>
+              <button type="button" class="chip" data-set="10000">10 tấn</button>
+              <button type="button" class="chip" data-set="30000">30 tấn</button>
+              <button type="button" class="chip" data-set="50000">50 tấn</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pane" data-step="2" hidden>
+        <h3 class="q">Giá bán và giá mua của bạn?</h3>
+        <p>Giá bán xuất xưởng và giá mua nguyên liệu (giá vốn) trung bình cho mỗi ki-lô-gam.</p>
+        <div class="group">
+          <div class="cell field" data-key="B">
+            <label class="label" for="iera-in-B">Giá bán trung bình</label>
+            <div class="numrow">
+              <button type="button" class="pm" data-delta="-" aria-label="Giảm">−</button>
+              <div class="box"><input type="text" id="iera-in-B" inputmode="numeric" autocomplete="off"><span class="unit">đ / kg</span></div>
+              <button type="button" class="pm" data-delta="+" aria-label="Tăng">+</button>
+            </div>
+            <p class="readout" data-ro="B"></p>
+          </div>
+          <div class="cell field" data-key="V">
+            <label class="label" for="iera-in-V">Giá mua / giá vốn nguyên liệu<small>Giá bạn mua hoặc làm ra mỗi ki-lô-gam hàng trước khi cấp đông. Để trống nếu chưa muốn nhập.</small></label>
+            <div class="numrow">
+              <button type="button" class="pm" data-delta="-" aria-label="Giảm">−</button>
+              <div class="box"><input type="text" id="iera-in-V" inputmode="numeric" autocomplete="off" placeholder="Chưa nhập"><span class="unit">đ / kg</span></div>
+              <button type="button" class="pm" data-delta="+" aria-label="Tăng">+</button>
+            </div>
+            <p class="readout" data-ro="V"></p>
+            <p class="err" data-el="errV" hidden>Giá mua đang cao hơn hoặc bằng giá bán, bạn kiểm tra lại giúp.</p>
+          </div>
+          <div class="cell" data-el="cellMode">
+            <div class="label">Hàng hao hụt giữ lại được, bạn sẽ<small>Cách tính giá trị của hàng giữ lại.</small></div>
+            <div class="seg two" role="group" aria-label="Cách tính hàng giữ lại">
+              <button type="button" data-mode="cost"><span>Đỡ phải mua thêm</span><small>tính theo giá mua</small></button>
+              <button type="button" data-mode="sell"><span>Bán thêm được</span><small>tính theo giá bán</small></button>
+            </div>
+            <p class="readout" data-ro="mode"></p>
+          </div>
+        </div>
+        <div class="group">
+          <div class="cell">
+            <div class="row">
+              <label class="label" for="iera-sw-E">Hàng ngon hơn thì bán được giá cao hơn?<small>Ví dụ: hàng xuất khẩu, hàng loại 1, nhà hàng cao cấp</small></label>
+              <span class="switch"><input type="checkbox" id="iera-sw-E" role="switch"><span></span></span>
+            </div>
+          </div>
+          <div class="cell field" data-key="E" data-el="cellE" hidden>
+            <label class="label" for="iera-in-E">Mỗi kg bán thêm được</label>
+            <div class="numrow">
+              <button type="button" class="pm" data-delta="-" aria-label="Giảm">−</button>
+              <div class="box"><input type="text" id="iera-in-E" inputmode="numeric" autocomplete="off"><span class="unit">đ / kg</span></div>
+              <button type="button" class="pm" data-delta="+" aria-label="Tăng">+</button>
+            </div>
+            <p class="readout" data-ro="E"></p>
+          </div>
+        </div>
+        <p class="group-f">Không chắc thì để tắt. Kết quả sẽ thận trọng hơn.</p>
+      </div>
+
+      <div class="pane" data-step="3" hidden>
+        <h3 class="q">Hiện nay bạn đang mất bao nhiêu hàng?</h3>
+        <p>Gồm hàng chảy nước, bị loại bỏ, bị trả lại, bán giảm giá.</p>
+        <div class="group">
+          <div class="cell">
+            <div class="pct-head"><label class="label" for="iera-in-C">Hao hụt hiện tại</label><output class="pct-val loss num" data-out="C" for="iera-in-C"></output></div>
+            <input type="range" id="iera-in-C" min="0" max="50" step="0.5" style="--track: var(--loss)">
+            <div class="ticks"><span>0%</span><span>10%</span><span>20%</span><span>30%</span><span>40%</span><span>50%</span></div>
+            <p class="readout" data-ro="C"></p>
+          </div>
+          <div class="cell">
+            <div class="pct-head"><label class="label" for="iera-in-D">Hao hụt khi dùng iERA</label><output class="pct-val gain num" data-out="D" for="iera-in-D"></output></div>
+            <input type="range" id="iera-in-D" min="0" max="50" step="0.5" style="--track: var(--gain)">
+            <div class="ticks"><span>0%</span><span>10%</span><span>20%</span><span>30%</span><span>40%</span><span>50%</span></div>
+            <p class="readout" data-ro="D"></p>
+            <p class="err" data-el="errD" hidden>Số này phải nhỏ hơn hao hụt hiện tại.</p>
+          </div>
+          <div class="cell">
+            <div class="pct-head"><label class="label" for="iera-in-S">Hao hụt nào vẫn bán được?<small>Trong số hàng hao hụt, bao nhiêu phần không mất hẳn mà bán rẻ hơn.</small></label><output class="pct-val num" data-out="S" for="iera-in-S"></output></div>
+            <input type="range" id="iera-in-S" min="0" max="100" step="5" style="--track: var(--tint)">
+            <div class="ticks"><span>0% (mất hẳn)</span><span>50%</span><span>100%</span></div>
+          </div>
+          <div class="cell" data-el="cellG">
+            <div class="pct-head"><label class="label" for="iera-in-G">Hàng đó bị bán rẻ hơn khoảng</label><output class="pct-val num" data-out="G" for="iera-in-G"></output></div>
+            <input type="range" id="iera-in-G" min="0" max="100" step="5" style="--track: var(--tint)">
+            <div class="ticks"><span>0%</span><span>50%</span><span>100% (mất hẳn)</span></div>
+            <p class="readout" data-ro="G"></p>
+          </div>
+          <div class="cell">
+            <div class="label">Hình dung trên 100 kg hàng</div>
+            <div class="dots" data-el="dots" aria-hidden="true"></div>
+            <div class="legend"><span style="--c: var(--loss)">Vẫn mất khi dùng iERA</span><span style="--c: var(--gain)">iERA giữ lại được</span><span style="--c: var(--fill)">Hàng tốt</span></div>
+          </div>
+        </div>
+        <p class="group-f">Số "khi dùng iERA" chính xác nhất là lấy từ buổi cấp đông thử miễn phí trên chính sản phẩm của bạn.</p>
+      </div>
+
+      <div class="pane" data-step="4" hidden>
+        <h3 class="q">Bạn dự định đầu tư máy nào?</h3>
+        <p>Chưa có báo giá cũng không sao, bạn vẫn xem được kết quả.</p>
+        <p class="group-h">Dòng máy ECO Series</p>
+        <div class="group" role="radiogroup" aria-label="Chọn máy" data-el="models"></div>
+        <p class="warn" data-el="capWarn" hidden></p>
+        <div class="group" data-el="quote" hidden>
+          <div class="cell">
+            <div class="subhead">Báo giá tham khảo của KOBASHI<small data-el="quoteName"></small></div>
+            <div class="chips" data-el="variants" hidden></div>
+            <div data-el="opts"></div>
+            <div class="qrows" data-el="qrows"></div>
+            <p class="hint" data-el="qfoot"></p>
+            <button type="button" class="inline-btn" data-el="useQuote" hidden>Dùng giá tham khảo này làm tiền đầu tư</button>
+          </div>
+        </div>
+        <div class="group">
+          <div class="cell field" data-key="I">
+            <label class="label" for="iera-in-I">Tổng tiền đầu tư<small>Theo báo giá của KOBASHI, nên gồm vận chuyển, lắp đặt, VAT. Để trống nếu chưa có.</small></label>
+            <div class="numrow">
+              <button type="button" class="pm" data-delta="-" aria-label="Giảm">−</button>
+              <div class="box"><input type="text" id="iera-in-I" inputmode="numeric" autocomplete="off" placeholder="Chưa có"><span class="unit">đ</span></div>
+              <button type="button" class="pm" data-delta="+" aria-label="Tăng">+</button>
+            </div>
+            <p class="readout" data-ro="I"></p>
+          </div>
+          <div class="cell field" data-key="O">
+            <label class="label" for="iera-in-O">Chi phí vận hành tăng thêm mỗi tháng<small>Điện, bảo trì, nhân công, khay. Không bắt buộc, có số này thì kết quả sát thực tế hơn.</small></label>
+            <div class="numrow">
+              <button type="button" class="pm" data-delta="-" aria-label="Giảm">−</button>
+              <div class="box"><input type="text" id="iera-in-O" inputmode="numeric" autocomplete="off" placeholder="0"><span class="unit">đ / tháng</span></div>
+              <button type="button" class="pm" data-delta="+" aria-label="Tăng">+</button>
+            </div>
+            <p class="readout" data-ro="O"></p>
+            <button type="button" class="inline-btn" data-el="estO">Ước tính giúp tôi tiền điện</button>
+            <p class="hint" data-el="estNote" hidden></p>
+          </div>
+        </div>
+        <details class="group adv">
+          <summary>Giả định tính toán (bạn tự chỉnh được)</summary>
+          <div class="cell field" data-key="K">
+            <label class="label" for="iera-in-K">Mức đạt được so với số bạn nhập<small>Thấp hơn 100% nghĩa là bạn tính thận trọng, phòng khi thực tế chưa đạt như kỳ vọng.</small></label>
+            <div class="numrow">
+              <button type="button" class="pm" data-delta="-" aria-label="Giảm">−</button>
+              <div class="box"><input type="text" id="iera-in-K" inputmode="numeric" autocomplete="off"><span class="unit">%</span></div>
+              <button type="button" class="pm" data-delta="+" aria-label="Tăng">+</button>
+            </div>
+            <p class="readout" data-ro="K"></p>
+          </div>
+          <div class="cell field" data-key="M">
+            <label class="label" for="iera-in-M">Số máy<small>Để trống để công cụ tự tính theo sản lượng. Nhập số nếu bạn đã biết cần mấy máy.</small></label>
+            <div class="numrow">
+              <button type="button" class="pm" data-delta="-" aria-label="Giảm">−</button>
+              <div class="box"><input type="text" id="iera-in-M" inputmode="numeric" autocomplete="off" placeholder="Tự động"><span class="unit">máy</span></div>
+              <button type="button" class="pm" data-delta="+" aria-label="Tăng">+</button>
+            </div>
+            <p class="readout" data-ro="M"></p>
+          </div>
+          <div class="cell field" data-key="T">
+            <label class="label" for="iera-in-T">Mỗi khay chứa khoảng<small>Để kiểm tra một máy cấp đông được bao nhiêu hàng mỗi tháng. Chưa biết thì để trống, chuyên viên KOBASHI sẽ cùng bạn xác định.</small></label>
+            <div class="numrow">
+              <button type="button" class="pm" data-delta="-" aria-label="Giảm">−</button>
+              <div class="box"><input type="text" id="iera-in-T" inputmode="numeric" autocomplete="off" placeholder="Chưa biết"><span class="unit">kg / khay</span></div>
+              <button type="button" class="pm" data-delta="+" aria-label="Tăng">+</button>
+            </div>
+          </div>
+          <div class="cell field" data-key="R">
+            <label class="label" for="iera-in-R">Số mẻ cấp đông mỗi ngày<small>Máy theo mẻ (ECO 1000B, 1000C, 2000). Hầm liên tục ECO 7000 không dùng mục này.</small></label>
+            <div class="numrow">
+              <button type="button" class="pm" data-delta="-" aria-label="Giảm">−</button>
+              <div class="box"><input type="text" id="iera-in-R" inputmode="numeric" autocomplete="off" placeholder="Chưa biết"><span class="unit">mẻ / ngày</span></div>
+              <button type="button" class="pm" data-delta="+" aria-label="Tăng">+</button>
+            </div>
+          </div>
+          <div class="cell field" data-key="P">
+            <label class="label" for="iera-in-P">Giá điện<small>Dùng cho nút "Ước tính giúp tôi tiền điện". Xem trên hóa đơn điện của xưởng (chưa gồm VAT).</small></label>
+            <div class="numrow">
+              <button type="button" class="pm" data-delta="-" aria-label="Giảm">−</button>
+              <div class="box"><input type="text" id="iera-in-P" inputmode="numeric" autocomplete="off"><span class="unit">đ / kWh</span></div>
+              <button type="button" class="pm" data-delta="+" aria-label="Tăng">+</button>
+            </div>
+          </div>
+          <div class="cell field" data-key="H">
+            <label class="label" for="iera-in-H">Giờ máy chạy mỗi ngày</label>
+            <div class="numrow">
+              <button type="button" class="pm" data-delta="-" aria-label="Giảm">−</button>
+              <div class="box"><input type="text" id="iera-in-H" inputmode="numeric" autocomplete="off"><span class="unit">giờ / ngày</span></div>
+              <button type="button" class="pm" data-delta="+" aria-label="Tăng">+</button>
+            </div>
+          </div>
+          <div class="cell field" data-key="N">
+            <label class="label" for="iera-in-N">Số ngày chạy mỗi tháng</label>
+            <div class="numrow">
+              <button type="button" class="pm" data-delta="-" aria-label="Giảm">−</button>
+              <div class="box"><input type="text" id="iera-in-N" inputmode="numeric" autocomplete="off"><span class="unit">ngày / tháng</span></div>
+              <button type="button" class="pm" data-delta="+" aria-label="Tăng">+</button>
+            </div>
+          </div>
+          <div class="cell field" data-key="Y">
+            <label class="label" for="iera-in-Y">Tính lợi nhuận tích lũy trong<small>Từ 1 đến 10 năm.</small></label>
+            <div class="numrow">
+              <button type="button" class="pm" data-delta="-" aria-label="Giảm">−</button>
+              <div class="box"><input type="text" id="iera-in-Y" inputmode="numeric" autocomplete="off"><span class="unit">năm</span></div>
+              <button type="button" class="pm" data-delta="+" aria-label="Tăng">+</button>
+            </div>
+            <p class="readout" data-ro="Y"></p>
+          </div>
+        </details>
+      </div>
+
+      <div class="nav">
+        <button type="button" class="mini mobile-only" data-el="mini"><span>Ước tính lời thêm mỗi tháng</span><b class="num" data-el="miniV"></b></button>
+        <button type="button" class="btn btn-gray" data-el="prev">Quay lại</button>
+        <button type="button" class="btn btn-primary" data-el="next">Tiếp tục</button>
+      </div>
+    </div>
+
+    <div class="result" data-el="result" aria-live="polite">
+      <button type="button" class="back mobile-only" data-el="backEdit">
+        <svg width="12" height="20" viewBox="0 0 12 20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 2 2 10l8 8"/></svg>
+        Sửa số liệu
+      </button>
+
+      <p class="warn" data-el="capWarn2" hidden></p>
+
+      <div class="seg" data-el="scen" role="group" aria-label="Mức đạt được so với số bạn nhập">
+        <button type="button" data-k="0.5"><span>Thận trọng</span><small>đạt 50%</small></button>
+        <button type="button" data-k="0.75"><span>Kỳ vọng</span><small>đạt 75%</small></button>
+        <button type="button" data-k="1"><span>Tối đa</span><small>đạt 100%</small></button>
+      </div>
+      <p class="seg-note">Mức đạt được so với số hao hụt và giá bán bạn đã nhập. Số chính xác nhất lấy từ buổi cấp đông thử.</p>
+
+      <div class="hero">
+        <div class="k">Mỗi tháng bạn giữ lại thêm khoảng</div>
+        <div class="v" data-r="month"></div>
+        <div class="sub" data-r="monthW"></div>
+        <div class="range" data-r="range"></div>
+        <div class="stack" aria-hidden="true"><i data-r="barLoss" style="background: var(--gain)"></i><i data-r="barPrice" style="background: var(--ice)"></i></div>
+        <div class="stack-legend">
+          <div><span style="--c: var(--gain)">Nhờ giảm hao hụt</span><b data-r="loss"></b></div>
+          <div data-r="legPrice"><span style="--c: var(--ice)">Nhờ bán được giá cao hơn</span><b data-r="price"></b></div>
+          <div data-r="legOpex"><span style="--c: var(--loss)">Trừ tiền điện, bảo trì</span><b data-r="opex"></b></div>
+        </div>
+      </div>
+
+      <div class="tiles">
+        <div class="tile"><span class="k">Mỗi năm</span><span class="v" data-r="year"></span><span class="s">đồng giữ lại mỗi năm</span></div>
+        <div class="tile accent"><span class="k" data-r="pbK"></span><span class="v" data-r="pb"></span><span class="s" data-r="pbW"></span></div>
+      </div>
+
+      <div class="card">
+        <h3>Tiền tích lũy theo thời gian</h3>
+        <p class="sub" data-r="chartSub"></p>
+        <svg class="chart" data-r="chart" role="img" aria-label="Biểu đồ tiền tích lũy"></svg>
+      </div>
+
+      <div class="card">
+        <h3>Nói đơn giản</h3>
+        <ul class="plain" data-r="plain"></ul>
+      </div>
+
+      <details class="card">
+        <summary>Xem cách tính</summary>
+        <div class="formula" data-r="formula"></div>
+        <p class="notcounted">Đây là số ước tính từ dữ liệu bạn nhập, không phải cam kết. Kết quả thực tế được xác nhận bằng cấp đông thử trên sản phẩm của bạn.</p>
+        <p class="notcounted">Chưa tính: khấu hao, lãi vay, thuế, giá trị theo thời gian của đồng tiền. Cũng chưa tính các lợi ích khó đo như tiết kiệm nhân công, bán trái vụ, mở rộng sang thị trường xuất khẩu, tiền thuê cấp đông ngoài (nếu bạn đang thuê).</p>
+      </details>
+
+      <div class="lead" data-el="lead">
+        <h3>Nhận báo cáo chi tiết và lịch cấp đông thử miễn phí</h3>
+        <p>Để lại số điện thoại, chuyên viên KOBASHI sẽ gọi lại trong giờ làm việc, gửi bản tính này và hẹn ngày test trên chính sản phẩm của bạn.</p>
+        <form data-el="form" novalidate>
+          <label class="in"><span>Họ và tên</span><input type="text" name="name" autocomplete="name" placeholder="Nguyễn Văn A"></label>
+          <label class="in"><span>Số điện thoại / Zalo *</span><input type="tel" name="phone" autocomplete="tel" inputmode="tel" placeholder="09xx xxx xxx" required></label>
+          <label class="in"><span>Công ty</span><input type="text" name="company" autocomplete="organization" placeholder="Không bắt buộc"></label>
+          <details class="more">
+            <summary>Thêm thông tin để tư vấn đúng máy (không bắt buộc)</summary>
+            <label class="in"><span>Tỉnh / thành</span><input type="text" name="province" autocomplete="address-level1" placeholder="Ví dụ: Hà Nội"></label>
+            <label class="in"><span>Hiện đang cấp đông bằng</span><select name="freezer"><option value="">Chọn</option><option>Tủ / kho cấp đông thông thường</option><option>Cấp đông IQF, băng chuyền</option><option>Thuê cấp đông bên ngoài</option><option>Chưa cấp đông</option></select></label>
+            <label class="in"><span>Thị trường</span><select name="market"><option value="">Chọn</option><option>Trong nước</option><option>Xuất khẩu</option><option>Cả hai</option></select></label>
+            <label class="in"><span>Dự định đầu tư máy</span><select name="timeline"><option value="">Chọn</option><option value="3m">Trong 3 tháng tới</option><option value="6m">Trong 3–6 tháng</option><option value="12m">Trong 6–12 tháng</option><option value="info">Đang tìm hiểu</option></select></label>
+            <label class="in"><span>Vai trò của bạn</span><select name="role"><option value="">Chọn</option><option>Chủ doanh nghiệp / Giám đốc</option><option>Quản lý / Mua hàng</option><option>Kỹ thuật / Vận hành</option><option>Khác</option></select></label>
+          </details>
+          <label class="check"><input type="checkbox" name="trial"> Tôi muốn đặt lịch cấp đông thử miễn phí</label>
+          <label class="hp" aria-hidden="true">Website<input type="text" name="website" tabindex="-1" autocomplete="off"></label>
+          <p class="ferr" data-el="ferr" hidden></p>
+          <button type="submit" class="btn btn-white">Gửi cho KOBASHI</button>
+          <small>Khi gửi, bạn đồng ý để KOBASHI lưu thông tin này và liên hệ tư vấn. KOBASHI không chia sẻ thông tin cho bên thứ ba.</small>
+        </form>
+        <div class="ok" data-el="ok" hidden>
+          <b>Đã nhận thông tin của bạn.</b>
+          <p>KOBASHI sẽ liên hệ trong giờ làm việc. Cần gấp, bạn gọi trực tiếp số dưới đây.</p>
+        </div>
+        <div class="phone num" data-el="phone"></div>
+        <div class="acts">
+          <a class="btn btn-ghost" data-el="call" href="#">Gọi ngay</a>
+          <a class="btn btn-ghost" data-el="zalo" href="#" target="_blank" rel="noopener">Nhắn Zalo</a>
+        </div>
+        <small data-el="contact"></small>
+      </div>
+
+      <div class="actions">
+        <button type="button" class="btn btn-primary" data-el="copySum">Sao chép kết quả để gửi Zalo</button>
+        <button type="button" class="btn btn-gray" data-el="exportRep">Xuất bảng chi tiết (PDF, Excel)</button>
+        <button type="button" class="btn btn-gray" data-el="reset">Làm lại từ đầu</button>
+      </div>
+      <textarea class="fallback" data-el="fallback" readonly hidden aria-label="Nội dung kết quả"></textarea>
+    </div>
+  </div>
+  <div class="rep" data-el="repModal" role="dialog" aria-modal="true" aria-labelledby="iera-rep-title" hidden>
+    <div class="rep-bar">
+      <h3 id="iera-rep-title">Bảng đánh giá chi tiết</h3>
+      <button type="button" class="btn btn-primary" data-el="repPrint">In / Lưu PDF</button>
+      <button type="button" class="btn btn-gray" data-el="repCsv">Tải Excel (CSV)</button>
+      <button type="button" class="btn btn-gray" data-el="repClose">Đóng</button>
+    </div>
+    <div class="rep-form">
+      <label><span>Công ty / đơn vị</span><input type="text" name="rep-company" autocomplete="organization" placeholder="Tên công ty"></label>
+      <label><span>Người liên hệ</span><input type="text" name="rep-contact" autocomplete="name" placeholder="Họ và tên"></label>
+      <label><span>Số điện thoại / Zalo</span><input type="tel" name="rep-phone" autocomplete="tel" placeholder="09xx xxx xxx"></label>
+      <label><span>Người lập bảng (KOBASHI)</span><input type="text" name="rep-preparer" placeholder="Họ tên nhân viên"></label>
+    </div>
+    <iframe class="rep-frame" data-el="repFrame" title="Bản xem trước bảng đánh giá"></iframe>
+  </div>
+  <div class="toast" data-el="toast" role="status"></div>
+</section>
+
+<script>
+(() => {
+  /* ===== CẤU HÌNH — chỉnh tại đây ===== */
+  const CONFIG = {
+    phone: '0385 050 911',
+    zalo: 'https://zalo.me/0385050911',
+    email: 'info-vn@kobashidenko.com',
+    hours: 'Thứ 2 – Thứ 6, 9:00–17:00',
+    // Địa chỉ nhận thông tin khách (Google Apps Script web app, webhook CRM...). Để trống = chỉ hiện nút Gọi/Zalo.
+    leadEndpoint: '',
+    kwhPrice: 2500,          // giá điện giả định (đ/kWh), nên đối chiếu biểu giá điện sản xuất hiện hành
+    kgPerTray: 0,            // kg hàng trung bình mỗi khay (0 = để khách tự nhập). Điền khi có số từ các buổi cấp đông thử
+    batchesPerDay: 0,        // số mẻ cấp đông mỗi ngày của máy theo mẻ (0 = để khách tự nhập)
+    paybackGood: 24,         // bảng đánh giá: hoàn vốn trong số tháng này là tốt
+    paybackMax: 36,          // bảng đánh giá: hoàn vốn quá số tháng này là chưa hấp dẫn
+    hotPaybackMonths: 18,    // khách có hoàn vốn ngắn hơn mức này (và muốn cấp đông thử, sắp mua) được gắn nhãn "Nóng"
+  };
+  /* ==================================== */
+
+  const root = document.getElementById('iera-roi');
+  if (!root || root.dataset.ready) return;
+  root.dataset.ready = '1';
+  const $ = s => root.querySelector(s);
+  const $$ = s => [...root.querySelectorAll(s)];
+  const el = n => root.querySelector(`[data-el="${n}"]`);
+  const R = n => root.querySelector(`[data-r="${n}"]`);
+  const nf = new Intl.NumberFormat('vi-VN');
+  const nf1 = new Intl.NumberFormat('vi-VN', { maximumFractionDigits: 1 });
+  const narrow = () => matchMedia('(max-width: 919px)').matches;
+
+  // Đo lường cho Google Analytics 4 / Google Tag Manager / Facebook Pixel (nếu website có cài)
+  function track(name, params = {}) {
+    try {
+      window.dataLayer && window.dataLayer.push({ event: name, ...params });
+      typeof window.gtag === 'function' && window.gtag('event', name, params);
+      if (typeof window.fbq === 'function') name === 'iera_roi_lead' ? window.fbq('track', 'Lead', params) : window.fbq('trackCustom', name, params);
+    } catch {}
+  }
+
+  // Số ví dụ theo ngành (minh họa, khách thay bằng số thật)
+  // hasE luôn tắt mặc định: giá bán cao hơn là giả định chưa kiểm chứng, khách tự bật nếu có căn cứ.
+  const PRESETS = {
+    seafood: { label: 'Thủy hải sản', def: 'hau' },
+    meat:    { label: 'Thịt', def: 'bo' },
+    produce: { label: 'Nông sản, rau quả', def: 'sau-rieng' },
+    food:    { label: 'Bánh, món chế biến', def: 'cha-gio' },
+  };
+  // Sản phẩm ví dụ: số liệu thị trường tham khảo (A kg/tháng, B giá bán đ/kg, V giá mua đ/kg, C hao hụt hiện tại %, D hao hụt khi dùng iERA %, E chênh giá nếu bán được giá cao hơn đ/kg).
+  /*PRODUCTS-START*/
+  // Số liệu thị trường tham khảo, tìm và kiểm chứng chéo tháng 10/2026. Gần như toàn bộ có độ tin cậy thấp:
+  // giá bán và giá mua lấy từ chào giá, bảng giá, báo chí; hao hụt rã đông lấy từ nghiên cứu khoa học (nhiều nghiên cứu làm trên loài/sản phẩm gần giống).
+  // Mức giảm hao hụt khi dùng iERA được đặt thấp và thận trọng vì chưa có nghiên cứu ở −60°C cho từng sản phẩm. Sản lượng A là quy mô ví dụ, không phải số thống kê.
+  // E (chênh giá khi bán được giá cao hơn) là giả định minh họa bằng khoảng 5% giá bán, chưa có nguồn, và luôn tắt mặc định.
+  const PRODUCTS = [
+    { id: 'hau', cat: 'seafood', name: 'Hàu', A: 30000, B: 130000, V: 90000, C: 20, D: 17, E: 7000,
+      note: 'Giá bán 130.000 đ/kg thịt hàu đông lạnh theo chào giá sỉ TP.HCM (thitruongsi.com, 9–10/2026). Giá mua 90.000 đ/kg thịt hàu tươi đã bóc vỏ, dựa giá Đầm Nại 2020 và chào giá 2026, chưa có giá 2025–26 được xác nhận. Hao hụt rã đông của hàu đông lạnh thông thường 17–27% (Songsaeng 2010, Tsai 2022). Chưa có số đo hàu ở −60°C nên mức giảm xuống 17% chỉ là giả định thận trọng. Độ tin cậy: thấp.' },
+    { id: 'tom', cat: 'seafood', name: 'Tôm thẻ chân trắng', A: 30000, B: 200000, V: 130000, C: 5, D: 3.5, E: 10000,
+      note: 'Giá mua 130.000 đ/kg tôm thẻ size 40 nguyên con (thuysan247.com, 12/10/2026). Giá bán 200.000 đ/kg là ước tính thận trọng cho tôm nguyên con đông lạnh, thấp hơn giá xuất khẩu Mỹ 12,8–14,1 USD/kg (Q3/2025) vì đó là tôm bóc vỏ giá trị gia tăng. Hao hụt rã đông 1,5–5%; cấp đông bằng nitơ lỏng −95°C giảm khoảng 40% so với −35°C (Foods 2023). Độ tin cậy: trung bình.' },
+    { id: 'muc', cat: 'seafood', name: 'Mực ống', A: 30000, B: 290000, V: 220000, C: 5, D: 4.3, E: 15000,
+      note: 'Giá mua 220.000 đ/kg mực ống tươi loại 2 tại cảng Đà Nẵng (thuysanvietnam.com.vn, 23/09/2026, đang ở đợt giá tăng). Giá bán 290.000 đ/kg là giá sỉ mực IQF lô nhỏ (24hSeafood, chưa gồm VAT), không phải giá xuất khẩu, vốn thấp hơn nhiều (khoảng 112–160.000 đ/kg). Mức giảm hao hụt suy từ nghiên cứu tôm hùm đất, không phải mực. Độ tin cậy: thấp.' },
+    { id: 'bo', cat: 'meat', name: 'Thịt bò', A: 30000, B: 250000, V: 185000, C: 4, D: 3, E: 12000,
+      note: 'Giá mua 185.000 đ/kg thịt bò nhập khẩu đông lạnh, không gồm cắt thượng hạng (viroco.vn, chưa rõ ngày). Giá bán 250.000 đ/kg là ước tính, thấp hơn giá lẻ cắt cao cấp. Hao hụt rã đông bò −18°C khoảng 2,6–5,2% (Ren 2021); cấp đông rất nhanh cho kết quả tốt hơn nhưng không ổn định theo thời gian bảo quản, nên mức giảm 4%→3% là giả định thận trọng. Độ tin cậy: thấp.' },
+    { id: 'heo', cat: 'meat', name: 'Thịt heo', A: 30000, B: 110000, V: 90000, C: 3, D: 2, E: 5000,
+      note: 'Giá mua 90.000 đ/kg ba chỉ, nạc đùi là ước tính từ giá heo hơi khoảng 55.000 đ/kg (10/2026). Giá bán 110.000 đ/kg tham khảo giá lẻ thịt heo đông lạnh nhập khẩu (Znews, 8/10/2026). Hao hụt rã đông heo 1,2–4,4%; cấp đông nhanh −55°C giảm 30–40% so với −45°C (Ku 2014). Độ tin cậy: thấp.' },
+    { id: 'ga', cat: 'meat', name: 'Thịt gà', A: 30000, B: 58000, V: 44000, C: 6, D: 5, E: 3000,
+      note: 'Giá mua 44.000 đ/kg đùi, cánh gà là ước tính (gà thịt công nghiệp tại trại 25.000–37.000 đ/kg hơi, VnBusiness 9/9/2026). Giá bán 58.000 đ/kg tham khảo đùi gà đông lạnh nhập khẩu 45.000–58.000 đ/kg. Hao hụt rã đông gà 9,3% (−18°C) và 7,6% (nitơ lỏng −80°C) sau 180 ngày (Hu 2024); mức 6%→5% thấp hơn nghiên cứu để thận trọng. Độ tin cậy: thấp.' },
+    { id: 'sau-rieng', cat: 'produce', name: 'Sầu riêng', A: 30000, B: 110000, V: 75000, C: 8, D: 6, E: 5000,
+      note: 'Giá mua 75.000 đ/kg sầu riêng quả tươi (nông trại 45.000–80.000, tại kho 70.000–95.000, VnExpress 30/3/2026). Giá bán 110.000 đ/kg là giá xuất khẩu sầu riêng đông lạnh bình quân quý 1/2026 (4,3 USD/kg, cao hơn giá tươi 18–22%), gồm cả quả và múi. Chưa có nghiên cứu hao hụt sầu riêng ở −60°C; mức 8%→6% là giả định thận trọng. Độ tin cậy: thấp.' },
+    { id: 'xoai', cat: 'produce', name: 'Xoài', A: 30000, B: 58000, V: 45000, C: 10, D: 7, E: 3000,
+      note: 'Giá mua 45.000 đ/kg tính trên thịt xoài thành phẩm (xoài tươi khoảng 25.000–30.000 đ/kg quả, bảng giá 11/10/2026, tỷ lệ thịt quả khoảng 55%). Giá bán 58.000 đ/kg theo giá xuất khẩu xoài đông lạnh bình quân của Việt Nam khoảng 2,28 USD/kg. Hao hụt rã đông xoài cắt miếng 14,4% khi cấp đông khí −20°C và 8,4–8,7% khi ngâm dung dịch lạnh (Int J Food Sci Technol 2023); mức 10%→7% là giả định thận trọng. Độ tin cậy: thấp.' },
+    { id: 'mit', cat: 'produce', name: 'Mít', A: 30000, B: 70000, V: 43000, C: 5, D: 4.2, E: 4000,
+      note: 'Giá mua 43.000 đ/kg tính trên múi mít thành phẩm (mít Thái loại 1 khoảng 30.000 đ/kg quả, bán buôn 15.000 đ/kg, múi chỉ chiếm 25–35% khối lượng quả; Dân trí 13/10/2026). Giá bán 70.000 đ/kg là khoảng giữa giá xuất khẩu mít đông lạnh 1,6–4,7 USD/kg (Tridge 2024). Mức giảm hao hụt 5%→4,2% rất thận trọng. Độ tin cậy: thấp.' },
+    { id: 'thanh-long', cat: 'produce', name: 'Thanh long', A: 30000, B: 46000, V: 33000, C: 10, D: 8, E: 2000,
+      note: 'Giá bán 46.000 đ/kg theo chào giá FOB thanh long đông lạnh dạng hạt lựu (khoảng 1,75–1,9 USD/kg). Giá mua 33.000 đ/kg tính trên thịt quả (thanh long ruột đỏ 20.000–24.000 đ/kg quả tươi, FreshPlaza 13/10/2026, giả định thịt quả khoảng 65%). Hao hụt 10%→8% là giả định, chưa có nghiên cứu riêng cho thanh long. Độ tin cậy: thấp.' },
+    { id: 'cha-gio', cat: 'food', name: 'Chả giò', A: 30000, B: 100000, V: 60000, C: 5, D: 3.5, E: 5000,
+      note: 'Giá mua 60.000 đ/kg là ước tính nguyên liệu (tham khảo giá heo hơi khoảng 55.000 đ/kg, 10/2026). Giá bán 100.000 đ/kg suy từ giá lẻ chả giò thịt heo 118.000–200.000 đ/kg tại Bách Hóa Xanh sau khi trừ biên bán lẻ. Hao hụt 5%→3,5% chỉ là giả định theo hướng của các nghiên cứu cấp đông nhanh, chưa có số riêng cho chả giò. Độ tin cậy: thấp.' },
+    { id: 'banh-bao', cat: 'food', name: 'Bánh bao', A: 30000, B: 100000, V: 45000, C: 6, D: 4, E: 5000,
+      note: 'Giá bán 100.000 đ/kg theo chào giá sỉ bánh bao (thitruongsi.com, 10/2026, khoảng 102.000 đ/kg). Giá mua 45.000 đ/kg là ước tính nguyên liệu (bột và nhân thịt). Hao hụt rã đông thịt heo −18°C tăng từ 3,9% lên 13,9% sau 6 tháng, còn ở −50°C chỉ 4–5% (Foods/PMC 2021); mức 6%→4% là giả định thận trọng cho bánh bao. Độ tin cậy: thấp.' },
+  ];
+  /*PRODUCTS-END*/
+  const productOf = id => PRODUCTS.find(x => x.id === id);
+  const productVals = p => ({ type: p.cat, prod: p.id, name: p.name, A: p.A, B: p.B, V: p.V, C: p.C, D: p.D, E: p.E, hasE: false });
+  // Thông số từ catalogue iERA −65 2026 (VN)
+  // Công suất cấp đông của 1 máy (kg/tháng) được tính theo 2 cách, ưu tiên cách 1:
+  //   1) cap: số cố định kg/tháng do kỹ thuật cung cấp (để null nếu chưa có).
+  //   2) trays × kg mỗi khay (T) × số mẻ mỗi ngày (R) × ngày chạy mỗi tháng (N), với T và B do khách nhập
+  //      ở mục "Giả định tính toán", hoặc đặt sẵn bằng CONFIG.kgPerTray / CONFIG.batchesPerDay.
+  // Chưa có cả hai thì công cụ không kiểm tra công suất. Số khay lấy từ catalogue; ECO 7000 là hầm liên tục nên không có khay.
+  // kwh thực chất là công suất điện kW ghi ở mục "Điện năng" của catalogue (ECO 7000 = 60 kW × 2).
+  // Bảng giá tham khảo "Bán trực tiếp" của KOBASHI (đơn vị VND, đã quy đổi từ JPY). Cập nhật khi có bảng giá mới:
+  // đổi date, validDays, jpyVnd và các trường price / variants / accessories trong MODELS bên dưới.
+  const PRICE_LIST = { date: '2026-08-10', validDays: 30, jpyVnd: 170, dateText: '10/08/2026' };
+  const ACC_LABEL = { cart: 'Xe đẩy', rack: 'Giá / kệ', rail: 'Ray / thanh ray' };
+  const MODELS = [
+    { id: 'eco1000b', name: 'ECO 1000B', tag: 'Nhỏ gọn', desc: 'Liền khối, theo mẻ · 30 khay · công suất điện 8 kW', kwh: 8, trays: 30, cap: null, quoteName: 'KOB-1000 B', price: 3284400000, accessories: { cart: 49300000, rack: 49300000, rail: 13430000 } },
+    { id: 'eco1000c', name: 'ECO 1000C', tag: 'Nhỏ gọn', desc: 'Tách rời, theo mẻ · 30 khay · công suất điện 8 kW', kwh: 8, trays: 30, cap: null, quoteName: 'KOB-1000 C', price: 3362600000, accessories: { cart: 49300000, rack: 49300000, rail: 13430000 } },
+    { id: 'eco2000',  name: 'ECO 2000',  tag: 'Phổ biến', desc: 'Tách rời, theo mẻ · 72 khay · công suất điện 15 kW', kwh: 15, trays: 72, cap: null, variants: [{ id: 'std', name: 'KOB-2000', price: 3968650000 }, { id: 'pass', name: 'KOB-2000 2 cửa (pass-through)', price: 3479900000 }], accessories: { cart: 56100000, rack: 60520000, rail: 18020000 } },
+    { id: 'eco7000',  name: 'ECO 7000',  tag: 'Nhà máy lớn', desc: 'Hầm liên tục, băng chuyền · công suất điện 60 kW × 2', kwh: 120, trays: null, cap: null, quoteName: 'KOB-hầm 7m', price: 22267450000, accessories: null, custom: true },
+    { id: 'advice',   name: 'Chưa biết, nhờ tư vấn', tag: '', desc: 'Chuyên viên KOBASHI chọn máy theo sản lượng của bạn' },
+  ];
+  const STEP = { A: 500, B: 5000, V: 5000, E: 1000, I: 50000000, O: 500000, K: 5, P: 100, H: 1, N: 1, M: 1, Y: 1, T: 5, R: 1 };
+  const NUM_KEYS = Object.keys(STEP);
+  // S = % hao hụt vẫn bán được (giảm giá), G = % bị bán rẻ hơn của phần đó, k = mức đạt được so với số khách nhập
+  // Các giả định khách tự chỉnh được (mục "Giả định tính toán" ở bước 4):
+  //   K = mức đạt được (%), P = giá điện (đ/kWh), H = giờ chạy/ngày, N = ngày chạy/tháng,
+  //   M = số máy (0 = tự tính theo công suất), Y = số năm tính lời tích lũy
+  // V = giá mua / giá vốn nguyên liệu (đ/kg). mode = cách tính hàng giữ lại được: 'cost' (đỡ phải mua thêm, theo giá mua) hoặc 'sell' (bán thêm, theo giá bán)
+  const DEFAULT = { ...productVals(productOf(PRESETS.seafood.def)), mode: 'cost', iAuto: true, variant: 'std', opts: { cart: false, rack: false, rail: false }, S: 30, G: 40, K: 75, P: CONFIG.kwhPrice, H: 8, N: 26, M: 0, Y: 5, T: CONFIG.kgPerTray, R: CONFIG.batchesPerDay, I: 0, O: 0, model: 'eco2000', step: 1, edited: false };
+  const KEY = 'kobashi-iera-roi-v4';
+  // Giới hạn [nhỏ nhất, lớn nhất] của từng giả định. Gõ vượt mức lớn nhất sẽ bị chặn ngay, mức nhỏ nhất áp dụng khi tính và khi rời ô nhập.
+  const LIMITS = { K: [10, 100], P: [0, 20000], H: [1, 24], N: [1, 31], M: [0, 100], Y: [1, 10], T: [0, 300], R: [0, 24] };
+  const capOf = m => {
+    if (m.cap) return m.cap;
+    const t = lim('T', s.T), r = lim('R', s.R);
+    return m.trays && t > 0 && r > 0 ? m.trays * t * r * lim('N', s.N) : null;
+  };
+  const lim = (key, v) => LIMITS[key] ? Math.min(LIMITS[key][1], Math.max(LIMITS[key][0], v)) : v;
+  const kEff = () => lim('K', s.K) / 100;
+  const scenName = () => { const K = lim('K', s.K); return K === 50 ? 'thận trọng' : K === 75 ? 'kỳ vọng' : K === 100 ? 'tối đa' : 'tự chọn'; };
+
+  let s = load() || { ...DEFAULT, opts: { ...DEFAULT.opts } };
+  s.step = 1;
+  s.opts = { ...DEFAULT.opts, ...(s.opts || {}) };
+  // Đọc trạng thái đã lưu và loại bỏ giá trị hỏng hoặc từ phiên bản cũ, tránh làm công cụ không khởi động được
+  function load() {
+    try {
+      const v = JSON.parse(localStorage.getItem(KEY));
+      if (!v || typeof v.A !== 'number') return null;
+      const m = { ...DEFAULT, ...v };
+      NUM_KEYS.concat(['S', 'G']).forEach(k => { if (typeof m[k] !== 'number' || !isFinite(m[k])) m[k] = DEFAULT[k]; });
+      if (!PRESETS[m.type]) m.type = DEFAULT.type;
+      if (!MODELS.some(x => x.id === m.model)) m.model = DEFAULT.model;
+      if (m.mode !== 'cost' && m.mode !== 'sell') m.mode = DEFAULT.mode;
+      if (typeof m.name !== 'string') m.name = DEFAULT.name;
+      if (!m.opts || typeof m.opts !== 'object') m.opts = { ...DEFAULT.opts };
+      return m;
+    } catch { return null; }
+  }
+  function save() { try { localStorage.setItem(KEY, JSON.stringify(s)); } catch {} }
+
+  // ---------- Đọc số thành chữ ----------
+  function money(n, short) {
+    const a = Math.abs(n), sign = n < 0 ? '−' : '';
+    if (a >= 1e9) return sign + nf1.format(a / 1e9) + (short ? ' tỷ' : ' tỷ đồng');
+    if (a >= 1e6) return sign + nf1.format(a / 1e6) + (short ? ' triệu' : ' triệu đồng');
+    if (a >= 1e3) return sign + nf.format(Math.round(a / 1e3)) + (short ? ' nghìn' : ' nghìn đồng');
+    return sign + nf.format(Math.round(a)) + (short ? ' đ' : ' đồng');
+  }
+  const vnd = n => (n < 0 ? '−' : '') + nf.format(Math.round(Math.abs(n))) + ' đ';
+  const kg = n => n >= 1000 ? nf1.format(n / 1000) + ' tấn' : nf.format(Math.round(n)) + ' kg';
+  function months(m) {
+    if (m < 1) return 'chưa đến 1 tháng';
+    const r = Math.ceil(m), y = Math.floor(r / 12), mo = r % 12;
+    return y ? y + ' năm' + (mo ? ' ' + mo + ' tháng' : '') : r + ' tháng';
+  }
+
+  // ---------- Công thức ----------
+  // Lợi mỗi tháng = [A × g × (C − D) + A × (1 − D) × E] × k − chi phí vận hành
+  //   h = hệ số giá trị phần hao hụt = (1 − S) + S × G  (hàng bán giảm giá chỉ mất phần chênh giá, không mất cả giá)
+  //   E chỉ tính trên phần hàng bán được A × (1 − D)
+  //   k = mức đạt được so với số khách nhập (thận trọng 50%, kỳ vọng 75%, tối đa 100%)
+  // Giá trị của mỗi kg hao hụt giữ lại được (g). Phần mất hẳn (1 − S) tính theo:
+  //   - mode 'cost' (mặc định, khi đã nhập giá mua V): đỡ phải mua thêm nguyên liệu, tính theo giá mua V;
+  //   - mode 'sell' hoặc chưa nhập V: bán thêm được, tính theo giá bán B.
+  // Phần bán giảm giá S chỉ mất mức chênh giá G × B.
+  const useCost = () => s.mode === 'cost' && s.V > 0;
+  const lossPerKg = () => (1 - s.S / 100) * (useCost() ? s.V : s.B) + (s.S / 100) * (s.G / 100) * s.B;
+  function calc(k = kEff()) {
+    const E = s.hasE ? s.E : 0;
+    const loss = s.A * lossPerKg() * Math.max(0, s.C - s.D) / 100 * k;
+    const price = s.A * (1 - s.D / 100) * E * k;
+    const net = loss + price - s.O;
+    const payback = s.I > 0 && net > 0 ? s.I / net : null;
+    return { loss, price, net, payback };
+  }
+
+  // Số máy và kiểm tra công suất. need = số máy cần theo công suất (1 nếu chưa có dữ liệu công suất),
+  // n = số máy khách chọn (M > 0) hoặc need, short = số máy đang tính chưa đủ công suất.
+  function plan(m) {
+    if (!m) return null;
+    const cap = capOf(m);
+    const need = cap ? Math.max(1, Math.ceil(s.A / cap)) : 1;
+    const n = lim('M', s.M) > 0 ? lim('M', s.M) : need;
+    return { cap, need, n, short: !!cap && n * cap < s.A, fit: cap ? MODELS.find(x => { const c = capOf(x); return c && c >= s.A; }) : null };
+  }
+
+  // Báo giá tham khảo theo bảng giá: giá máy (theo cấu hình) + phụ kiện đã chọn, nhân số máy
+  function priceExpired() {
+    const d = new Date(PRICE_LIST.date + 'T00:00:00');
+    d.setDate(d.getDate() + PRICE_LIST.validDays);
+    return new Date() > d;
+  }
+  function quote() {
+    const m = MODELS.find(x => x.id === s.model);
+    if (!m || !(m.price || m.variants)) return null;
+    const v = m.variants ? (m.variants.find(x => x.id === s.variant) || m.variants[0]) : { name: m.quoteName, price: m.price };
+    const n = plan(m).n, acc = Object.keys(m.accessories || {}).filter(k => s.opts[k]);
+    const accSum = acc.reduce((sum, k) => sum + m.accessories[k], 0);
+    return { m, v, n, acc, accSum, unit: v.price + accSum, total: n * (v.price + accSum) };
+  }
+
+  // ---------- Nhập liệu ----------
+  NUM_KEYS.forEach(key => {
+    const input = $('#iera-in-' + key), cell = input.closest('.field');
+    input.addEventListener('input', () => {
+      // Giữ nguyên vị trí con trỏ theo số chữ số đứng trước nó, để sửa số ở giữa không bị nhảy về cuối
+      const digitsBefore = input.value.slice(0, input.selectionStart ?? input.value.length).replace(/\D/g, '').length;
+      const d = input.value.replace(/\D/g, '').slice(0, 13);
+      s[key] = d ? (LIMITS[key] ? Math.min(LIMITS[key][1], +d) : +d) : 0;
+      if (key === 'I') s.iAuto = false;
+      const txt = d ? nf.format(s[key]) : '';
+      if (input.value !== txt) {
+        input.value = txt;
+        let pos = 0, seen = 0;
+        while (pos < txt.length && seen < digitsBefore) { if (/\d/.test(txt[pos])) seen++; pos++; }
+        try { input.setSelectionRange(pos, pos); } catch {}
+      }
+      touched(); render(false);
+    });
+    // Rời ô nhập: đưa số về trong giới hạn cho phép và hiện đúng số đang được dùng để tính
+    input.addEventListener('change', () => {
+      if (LIMITS[key] && (s[key] || LIMITS[key][0] > 0)) s[key] = lim(key, s[key]);
+      input.value = s[key] ? nf.format(s[key]) : '';
+      render();
+    });
+    cell.querySelectorAll('.pm').forEach(b => b.addEventListener('click', () => {
+      const d = b.dataset.delta === '+' ? STEP[key] : -STEP[key];
+      s[key] = lim(key, Math.max(0, Math.round((s[key] + d) / STEP[key]) * STEP[key]));
+      if (key === 'I') s.iAuto = false;
+      touched(); render();
+    }));
+    cell.querySelectorAll('.chip').forEach(c => c.addEventListener('click', () => { s[key] = +c.dataset.set; touched(); render(); }));
+  });
+  ['C', 'D', 'S', 'G'].forEach(key => $('#iera-in-' + key).addEventListener('input', e => { s[key] = +e.target.value; touched(); render(false); }));
+  $$('[data-mode]').forEach(b => b.addEventListener('click', () => { s.mode = b.dataset.mode; touched(); render(); }));
+  $$('[data-k]').forEach(b => b.addEventListener('click', () => { s.K = Math.round(+b.dataset.k * 100); render(); }));
+  $('#iera-sw-E').addEventListener('change', e => { s.hasE = e.target.checked; touched(); render(); });
+
+  function applyProduct(p) { Object.assign(s, productVals(p)); }
+  $$('.choice').forEach(b => b.addEventListener('click', () => {
+    s.type = b.dataset.type;
+    if (!s.edited) applyProduct(productOf(PRESETS[s.type].def));
+    render();
+  }));
+  el('prods').addEventListener('click', e => {
+    const b = e.target.closest('[data-prod]');
+    if (!b) return;
+    applyProduct(productOf(b.dataset.prod));
+    render();
+  });
+  $('#iera-in-name').addEventListener('input', e => { s.name = e.target.value.slice(0, 60); s.prod = (PRODUCTS.find(x => x.name === s.name) || {}).id || ''; render(false); });
+  el('variants').addEventListener('click', e => { const b = e.target.closest('[data-variant]'); if (b) { s.variant = b.dataset.variant; render(); } });
+  el('opts').addEventListener('change', e => { const c = e.target.closest('[data-opt]'); if (c) { s.opts[c.dataset.opt] = c.checked; render(); } });
+  el('useQuote').addEventListener('click', () => { s.iAuto = true; render(); });
+
+  el('models').innerHTML = MODELS.map(m => `
+    <button type="button" class="model" role="radio" data-model="${m.id}">
+      <span class="radio" aria-hidden="true"></span>
+      <span><b>${m.name}</b>${m.tag ? `<span class="tag">${m.tag}</span>` : ''}<span class="d">${m.desc}</span></span>
+    </button>`).join('');
+  $$('.model').forEach(b => b.addEventListener('click', () => { s.model = b.dataset.model; render(); }));
+  el('models').addEventListener('keydown', e => {
+    if (!['ArrowDown', 'ArrowUp'].includes(e.key)) return;
+    e.preventDefault();
+    const i = MODELS.findIndex(m => m.id === s.model);
+    s.model = MODELS[(i + (e.key === 'ArrowDown' ? 1 : -1) + MODELS.length) % MODELS.length].id;
+    render(); root.querySelector(`[data-model="${s.model}"]`).focus();
+  });
+
+  // Ước tính tiền điện (field `kwh` trong MODELS thực ra là công suất điện kW): công suất × số máy × giờ/ngày × ngày/tháng × mức sử dụng × giá điện.
+  // Giờ chạy, ngày chạy, giá điện, số máy lấy từ mục "Giả định tính toán" (khách chỉnh được).
+  // Mức sử dụng = sản lượng / công suất tối đa (tối thiểu 25%); chưa có công suất máy thì tính 100%.
+  el('estO').addEventListener('click', () => {
+    const m = MODELS.find(x => x.id === s.model && x.kwh) || MODELS[2];
+    const p = plan(m), n = p.n, u = p.cap ? Math.min(1, Math.max(0.25, s.A / (p.cap * n))) : 1;
+    const h = lim('H', s.H), d = lim('N', s.N), price = lim('P', s.P);
+    const kwhMonth = Math.round(m.kwh * n * h * d * u);
+    s.O = Math.round(kwhMonth * price / 10000) * 10000;
+    el('estNote').hidden = false;
+    el('estNote').textContent = `${n > 1 ? n + ' máy ' : ''}${m.name}: ${m.kwh} kW × ${h} giờ/ngày × ${d} ngày${u < 1 ? ' × ' + Math.round(u * 100) + '% mức sử dụng' : ''} ≈ ${nf.format(kwhMonth)} kWh, giá điện ${nf.format(price)} đ/kWh, chưa gồm VAT. Đây chỉ là tiền điện, chưa có bảo trì và nhân công. Bạn chỉnh giờ chạy, giá điện ở mục "Giả định tính toán", hoặc sửa thẳng số tiền theo hóa đơn thực tế.`;
+    touched(); render();
+  });
+
+  function touched() {
+    if (!s.edited) track('iera_roi_start');
+    s.edited = true;
+  }
+
+  // ---------- Điều hướng ----------
+  function go(step) {
+    s.step = Math.min(narrow() ? 5 : 4, Math.max(1, step));
+    root.dataset.view = s.step === 5 ? 'result' : 'form';
+    render();
+    track('iera_roi_step', { step: s.step });
+    if (s.step === 5) track('iera_roi_result', resultParams());
+  }
+  function scrollToTop() {
+    const top = root.getBoundingClientRect().top;
+    if (top < 0) root.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
+  }
+  $$('[data-go]').forEach(b => b.addEventListener('click', () => go(+b.dataset.go)));
+  // Đưa focus vào màn hình vừa mở để người dùng bàn phím / đọc màn hình không bị mất vị trí khi nút bị ẩn đi
+  function focusView() {
+    const t = s.step === 5 ? el('result') : root.querySelector('.pane:not([hidden]) .q');
+    if (!t) return;
+    t.tabIndex = -1;
+    t.focus({ preventScroll: true });
+  }
+  el('prev').addEventListener('click', () => { go(s.step - 1); focusView(); scrollToTop(); });
+  el('next').addEventListener('click', () => {
+    if (s.step < 4) { go(s.step + 1); focusView(); return scrollToTop(); }
+    if (narrow()) { go(5); focusView(); return scrollToTop(); }
+    track('iera_roi_result', resultParams());
+    el('lead').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  });
+  el('mini').addEventListener('click', () => { go(5); focusView(); scrollToTop(); });
+  el('backEdit').addEventListener('click', () => { go(4); focusView(); scrollToTop(); });
+  el('reset').addEventListener('click', () => { s = { ...DEFAULT, opts: { ...DEFAULT.opts } }; el('estNote').hidden = true; go(1); scrollToTop(); toast('Đã đặt lại số ví dụ'); });
+
+  // ---------- Hiển thị ----------
+  function render(syncInputs = true) {
+    const qt = quote();
+    if (s.iAuto) s.I = qt ? qt.total : 0; // chưa chọn máy cụ thể thì chưa có báo giá
+    const r = calc();
+    if (syncInputs) NUM_KEYS.forEach(k => { const i = $('#iera-in-' + k); if (document.activeElement !== i) i.value = s[k] ? nf.format(s[k]) : ''; });
+
+    const cur = Math.min(s.step, 4);
+    $$('.pane').forEach(p => p.hidden = +p.dataset.step !== cur);
+    $$('[data-go]').forEach(b => {
+      const n = +b.dataset.go;
+      n === cur ? b.setAttribute('aria-current', 'step') : b.removeAttribute('aria-current');
+      b.classList.toggle('done', n < s.step);
+    });
+    el('stepcount').textContent = `Bước ${cur} / 4`;
+    el('prev').disabled = s.step <= 1;
+    el('next').textContent = s.step < 4 ? 'Tiếp tục' : 'Xem kết quả';
+    el('notice').hidden = s.edited;
+    $$('.choice').forEach(b => b.setAttribute('aria-pressed', b.dataset.type === s.type));
+    // Tên sản phẩm và ví dụ nhanh theo nhóm
+    const ni = $('#iera-in-name');
+    if (document.activeElement !== ni) ni.value = s.name || '';
+    el('prods').innerHTML = PRODUCTS.filter(x => x.cat === s.type).map(x => `<button type="button" class="chip" data-prod="${x.id}" aria-pressed="${x.name === s.name}">${x.name}</button>`).join('');
+    const exProd = productOf(s.prod);
+    root.querySelector('[data-ro="prod"]').innerHTML = exProd && exProd.name === s.name && exProd.note ? `<b>Số liệu tham khảo ${exProd.name} (tháng 10/2026):</b> ${exProd.note} Đây là số ví dụ, hãy thay bằng số của chính doanh nghiệp.` : '';
+    renderQuote(qt);
+    $$('.model').forEach(b => { const on = b.dataset.model === s.model; b.setAttribute('aria-checked', on); b.tabIndex = on ? 0 : -1; });
+    root.querySelectorAll('[data-key="A"] .chip').forEach(c => c.setAttribute('aria-pressed', +c.dataset.set === s.A));
+
+    const ro = (k, h) => root.querySelector(`[data-ro="${k}"]`).innerHTML = h;
+    ro('A', s.A ? `Tức là khoảng <b>${kg(s.A)}</b> mỗi tháng, <b>${kg(s.A * 12)}</b> mỗi năm.` : 'Nhập số ki-lô-gam, ví dụ 3.000.');
+    ro('B', s.B ? `Đọc là <b>${money(s.B)}</b> một ki-lô-gam. Hàng mỗi tháng trị giá <b>${money(s.A * s.B)}</b>.` : 'Nhập giá, ví dụ 250.000.');
+    ro('E', s.E ? `Thêm <b>${money(s.E)}</b> mỗi kg, tức <b>${money(s.A * s.E)}</b> mỗi tháng.` : '');
+    $('#iera-sw-E').checked = s.hasE;
+    el('cellE').hidden = !s.hasE;
+
+    ['C', 'D', 'S', 'G'].forEach(k => {
+      const rg = $('#iera-in-' + k);
+      rg.value = s[k];
+      rg.style.setProperty('--p', (s[k] / +rg.max * 100) + '%');
+      rg.setAttribute('aria-valuetext', nf1.format(s[k]) + ' phần trăm');
+      root.querySelector(`[data-out="${k}"]`).textContent = nf1.format(s[k]) + '%';
+    });
+    const lostKg = s.A * s.C / 100, lostKgD = s.A * s.D / 100;
+    const g = lossPerKg();
+    el('cellG').hidden = s.S === 0;
+    el('errV').hidden = !(s.V > 0 && s.V >= s.B);
+    $$('[data-mode]').forEach(b => b.setAttribute('aria-pressed', b.dataset.mode === (useCost() ? 'cost' : 'sell')));
+    ro('V', s.V > 0 && s.B > s.V ? `Đọc là <b>${money(s.V)}</b> một ki-lô-gam. Lãi gộp khoảng <b>${nf1.format((s.B - s.V) / s.B * 100)}%</b> giá bán, tức <b>${money(s.B - s.V)}</b> mỗi kg.` : (s.V > 0 ? `Đọc là <b>${money(s.V)}</b> một ki-lô-gam.` : 'Chưa nhập giá mua: công cụ tính hàng giữ lại được theo giá bán.'));
+    ro('mode', useCost()
+      ? 'Phù hợp nếu bạn chỉ bán đủ đơn hàng: hàng giữ lại giúp bạn đỡ phải mua thêm nguyên liệu. Cách tính này thận trọng hơn.'
+      : (s.V > 0 ? 'Phù hợp nếu bạn bán hết mọi lượng hàng có: hàng giữ lại được bán thêm. Bạn đã bỏ tiền mua rồi nên phần này tính theo giá bán.' : 'Nhập giá mua ở trên để dùng cách tính thận trọng hơn.'));
+    ro('G', `Mỗi kg hao hụt tính trung bình giá trị <b>${money(g)}</b>${useCost() ? ' (theo giá mua, phần bán giảm giá theo mức giảm)' : ' (theo giá bán)'}.`);
+    ro('C', `Cứ 100 kg thì mất <b>${nf1.format(s.C)} kg</b>. Mỗi tháng mất <b>${kg(lostKg)}</b>, thiệt hại khoảng <b>${money(lostKg * g)}</b>.`);
+    ro('D', `Chỉ còn mất <b>${kg(lostKgD)}</b> mỗi tháng. Giữ lại được <b>${kg(Math.max(0, lostKg - lostKgD))}</b> hàng.`);
+    el('errD').hidden = s.D <= s.C;
+
+    const dots = el('dots');
+    if (!dots.children.length) dots.innerHTML = '<i></i>'.repeat(100);
+    const nLost = Math.round(s.D), nSaved = Math.max(0, Math.round(s.C) - nLost);
+    [...dots.children].forEach((d, i) => { d.className = i < nLost ? 'lost' : i < nLost + nSaved ? 'saved' : ''; });
+
+    ro('I', s.I ? `Đọc là <b>${money(s.I)}</b>.${s.iAuto && qt ? ' Đang lấy theo báo giá tham khảo ở trên, bạn có thể gõ số khác.' : ''}` : 'Chưa có báo giá: kết quả sẽ cho biết máy giá bao nhiêu thì hoàn vốn trong 2 năm.');
+    ro('O', s.O ? `Đọc là <b>${money(s.O)}</b> mỗi tháng, sẽ được trừ vào phần lời.` : '');
+
+    // Công suất máy so với sản lượng
+    const mdl = MODELS.find(x => x.id === s.model), pl = plan(mdl);
+    let capMsg = '';
+    if (pl && (pl.short || (lim('M', s.M) === 0 && pl.need > 1))) {
+      const fit = pl.fit ? `, hoặc chọn ${pl.fit.name}` : '';
+      const have = pl.short ? `${pl.n > 1 ? pl.n + ' máy' : 'một máy'} ${mdl.name} chỉ đáp ứng khoảng ${kg(pl.n * pl.cap)}` : `một máy ${mdl.name} chỉ đáp ứng khoảng ${kg(pl.cap)} mỗi tháng`;
+      capMsg = `Với ${kg(s.A)} mỗi tháng, ${have}. Cần khoảng ${pl.need} máy${fit}. Hãy nhập tổng tiền đầu tư cho cả cấu hình, hoặc nhờ chuyên viên KOBASHI tư vấn.`;
+    }
+    ['capWarn', 'capWarn2'].forEach(n => { el(n).hidden = !capMsg; el(n).textContent = capMsg; });
+    ro('M', lim('M', s.M) > 0 ? `Bạn đang tính theo <b>${lim('M', s.M)} máy</b>${pl && pl.need > 1 ? `, theo công suất cần khoảng ${pl.need} máy` : ''}.` : (pl && pl.need > 1 ? `Đang để tự động: công cụ tính <b>${pl.need} máy</b> theo sản lượng.` : 'Để trống: công cụ tự tính số máy theo sản lượng và công suất máy.'));
+    ro('K', `Công cụ đang tính <b>${lim('K', s.K)}%</b> mức lời theo số bạn nhập. 50% là thận trọng, 75% là kỳ vọng, 100% là đạt đúng như bạn nhập.`);
+    ro('Y', s.I > 0 ? `Dùng cho dòng "sau ${lim('Y', s.Y)} năm" ở mục "Nói đơn giản".` : 'Dòng này chỉ hiện khi bạn nhập tổng tiền đầu tư ở trên.');
+
+    // Kết quả
+    const neg = r.net <= 0;
+    const miniMoney = money(r.net, true);
+    el('miniV').textContent = (neg ? '' : '+') + miniMoney + (miniMoney.endsWith('đ') ? '' : ' đ');
+    el('miniV').classList.toggle('neg', neg);
+    R('month').textContent = (neg ? '' : '+') + vnd(r.net);
+    R('month').classList.toggle('neg', neg);
+    R('monthW').textContent = neg ? 'Với số liệu hiện tại, iERA chưa tạo ra phần lời. Hãy kiểm tra lại hai mức hao hụt.' : `Đọc là ${money(r.net)} mỗi tháng (mức ${scenName()}, ${lim('K', s.K)}%).` + (s.O ? '' : ' Chưa trừ chi phí vận hành (điện, bảo trì, nhân công): nhập ở bước 4 hoặc bấm "Ước tính giúp tôi tiền điện".');
+    const lo = calc(0.5), hi = calc(1);
+    R('range').textContent = hi.net > 0 ? `Tùy mức đạt được: từ ${money(lo.net, true)} (thận trọng) đến ${money(hi.net, true)} (tối đa) mỗi tháng.` : '';
+    $$('[data-k]').forEach(b => b.setAttribute('aria-pressed', Math.round(+b.dataset.k * 100) === lim('K', s.K)));
+    const tot = Math.max(1, r.loss + r.price);
+    R('barLoss').style.width = (r.loss / tot * 100) + '%';
+    R('barPrice').style.width = (r.price / tot * 100) + '%';
+    R('loss').textContent = '+' + money(r.loss);
+    R('price').textContent = '+' + money(r.price);
+    R('legPrice').hidden = !r.price;
+    R('opex').textContent = '−' + money(s.O);
+    R('legOpex').hidden = !s.O;
+    R('year').textContent = money(r.net * 12, true);
+
+    if (r.payback) { R('pbK').textContent = 'Hoàn vốn sau'; R('pb').textContent = months(r.payback); R('pbW').textContent = `≈ ${nf1.format(r.payback)} tháng` + (lo.payback && kEff() > 0.5 ? ` · thận trọng: ${months(lo.payback)}` : ''); }
+    else if (!neg) { R('pbK').textContent = 'Hoàn vốn trong 2 năm nếu máy dưới'; R('pb').textContent = money(r.net * 24, true); R('pbW').textContent = 'đồng (chưa có báo giá)'; }
+    else { R('pbK').textContent = 'Hoàn vốn'; R('pb').textContent = 'Chưa tính được'; R('pbW').textContent = 'Cần phần lời lớn hơn 0'; }
+
+    const icon = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8.5 6.5 12 13 4"/></svg>';
+    const lines = [
+      `Hiện nay mỗi tháng bạn mất khoảng <b>${kg(lostKg)}</b> hàng, thiệt hại khoảng <b>${money(lostKg * g)}</b>.`,
+      `Nếu dùng iERA và đạt <b>${lim('K', s.K)}%</b> mức bạn kỳ vọng, bạn giữ lại khoảng <b>${money(r.loss)}</b> mỗi tháng.`,
+    ];
+    if (r.price) lines.push(`Nếu hàng giữ màu, giữ vị và bán được giá cao hơn như bạn nhập, thêm khoảng <b>${money(r.price)}</b> mỗi tháng.`);
+    if (r.payback) lines.push(`Theo ước tính, sau khoảng <b>${months(r.payback)}</b> phần lời đủ bù tiền đầu tư máy.`);
+    else if (!neg) lines.push(`Trong 2 năm, phần lời này đủ bù cho một khoản đầu tư khoảng <b>${money(r.net * 24)}</b>.`);
+    const yrs = lim('Y', s.Y);
+    const needKg = breakEvenKg(r);
+    if (needKg && (!r.payback || r.payback > CONFIG.paybackMax)) {
+      lines.push(`Chỉ tính phần giảm hao hụt (và giá bán cao hơn nếu bạn bật) thì lợi ích chưa bù nhanh tiền máy. Với các số này, cần cấp đông khoảng <b>${kg(needKg)}</b> mỗi tháng (hiện ${kg(s.A)}) để hoàn vốn trong ${CONFIG.paybackMax} tháng. Lợi ích thực tế còn đến từ bán được giá cao hơn, thị trường xuất khẩu, tiết kiệm thuê cấp đông và nhân công, mà công cụ chưa tính.`);
+    }
+    if (s.I > 0 && r.net > 0 && r.payback >= yrs * 12) lines.push(`Sau ${yrs} năm phần lời tích lũy vẫn chưa bù hết tiền đầu tư (còn thiếu khoảng <b>${money(s.I - r.net * yrs * 12)}</b>).`);
+    if (r.payback && r.payback < yrs * 12) lines.push(`Sau ${yrs} năm, trừ tiền máy, phần lời tích lũy khoảng <b>${money(r.net * yrs * 12 - s.I)}</b> (chưa tính thuế, khấu hao, lãi vay).`);
+    R('plain').innerHTML = lines.map(l => `<li>${icon}<span>${l}</span></li>`).join('');
+
+    const E = s.hasE ? s.E : 0;
+    R('formula').textContent =
+`Lợi mỗi tháng = [A × g × (C − D) + A × (1 − D) × E] × k − chi phí vận hành
+  A = ${nf.format(s.A)} kg     B (giá bán) = ${nf.format(s.B)} đ/kg${s.V ? '     V (giá mua) = ' + nf.format(s.V) + ' đ/kg' : ''}
+  C = ${nf1.format(s.C)}%       D = ${nf1.format(s.D)}%       E = ${nf.format(E)} đ/kg
+  g = giá trị mỗi kg hao hụt giữ lại = (1 − S) × ${useCost() ? 'V' : 'B'} + S × G × B = ${nf.format(Math.round(g))} đ/kg
+      (S = ${s.S}% hao hụt bán giảm giá, G = ${s.G}% giá bị giảm; ${useCost() ? 'phần mất hẳn tính theo giá mua: đỡ phải mua thêm nguyên liệu' : 'phần mất hẳn tính theo giá bán: bán thêm được'})
+  k = ${lim('K', s.K)}% (mức ${scenName()})
+  = [${nf.format(s.A)} × ${nf.format(Math.round(g))} × ${nf1.format(Math.max(0, s.C - s.D))}% + ${nf.format(s.A)} × ${nf1.format(100 - s.D)}% × ${nf.format(E)}] × ${lim('K', s.K)}% − ${nf.format(s.O)}
+  = ${nf.format(Math.round(r.net))} đ` + (s.I ? `
+
+Hoàn vốn = Tiền đầu tư ÷ Lợi mỗi tháng
+  = ${nf.format(s.I)} ÷ ${nf.format(Math.round(r.net))}
+  ≈ ${r.payback ? nf1.format(r.payback) + ' tháng' : 'không tính được'}` : '');
+
+    drawChart(r);
+    save();
+  }
+
+  // ---------- Báo giá tham khảo (bước 4) ----------
+  function renderQuote(qt) {
+    el('quote').hidden = !qt;
+    if (!qt) return;
+    const m = qt.m, optsEl = el('opts');
+    el('quoteName').textContent = `Theo bảng giá bán trực tiếp ngày ${PRICE_LIST.dateText}, đơn vị đồng`;
+    const varEl = el('variants');
+    varEl.hidden = !m.variants;
+    if (m.variants) varEl.innerHTML = m.variants.map(v => `<button type="button" class="chip" data-variant="${v.id}" aria-pressed="${v.id === qt.v.id}">${v.name}</button>`).join('');
+    if (optsEl.dataset.for !== m.id) {
+      optsEl.dataset.for = m.id;
+      optsEl.innerHTML = Object.keys(m.accessories || {}).map(k => `<label class="optrow"><span class="t">${ACC_LABEL[k]}<small>${vnd(m.accessories[k])}, tính riêng</small></span><span class="switch"><input type="checkbox" data-opt="${k}" role="switch"><span></span></span></label>`).join('');
+    }
+    optsEl.querySelectorAll('[data-opt]').forEach(c => { c.checked = !!s.opts[c.dataset.opt]; });
+    const rows = [`<div><span>${qt.v.name}</span><b>${vnd(qt.v.price)}</b></div>`];
+    qt.acc.forEach(k => rows.push(`<div><span>${ACC_LABEL[k]}</span><b>${vnd(m.accessories[k])}</b></div>`));
+    if (qt.n > 1) rows.push(`<div><span>Số máy</span><b>× ${qt.n}</b></div>`);
+    rows.push(`<div class="tot"><span>Tổng tham khảo</span><b>${vnd(qt.total)}</b></div>`);
+    el('qrows').innerHTML = rows.join('');
+    const expired = priceExpired();
+    el('qfoot').innerHTML = `Quy đổi tỷ giá 1 JPY ≈ ${PRICE_LIST.jpyVnd} VND, hiệu lực ${PRICE_LIST.validDays} ngày kể từ ${PRICE_LIST.dateText}${expired ? '. <b>Bảng giá này đã quá hiệu lực, hãy liên hệ KOBASHI để có giá mới</b>' : ''}. Chưa gồm khay nhôm lớn và bộ khay chuyên dụng chống dính, chi phí lắp đặt thiết bị, thi công điện và các hạng mục khác, chi phí vận chuyển, thuế và phí nhập khẩu.${m.custom ? ' Hầm liên tục có thể thiết kế theo đơn hàng riêng.' : ''} Giá thực tế theo báo giá của KOBASHI tại thời điểm mua.`;
+    el('useQuote').hidden = s.iAuto;
+  }
+
+  // ---------- Biểu đồ ----------
+  function niceStep(max, count) {
+    const raw = max / count, p = Math.pow(10, Math.floor(Math.log10(raw))), n = raw / p;
+    return (n <= 1 ? 1 : n <= 2 ? 2 : n <= 2.5 ? 2.5 : n <= 5 ? 5 : 10) * p;
+  }
+  function drawChart(r) {
+    const svg = R('chart');
+    const W = Math.max(260, svg.clientWidth || 360), H = 210, padL = 58, padR = 12, padT = 12, padB = 26;
+    svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+    const net = Math.max(0, r.net);
+    const horizon = r.payback ? Math.min(60, Math.max(12, Math.ceil(r.payback * 1.8 / 6) * 6)) : 36;
+    const maxY = Math.max(net * horizon, s.I * 1.15, 1e6);
+    const step = niceStep(maxY, 4), top = Math.ceil(maxY / step) * step;
+    const x = m => padL + (W - padL - padR) * m / horizon;
+    const y = v => padT + (H - padT - padB) * (1 - v / top);
+    const cs = getComputedStyle(root), c = k => cs.getPropertyValue(k).trim();
+    let g = '';
+    for (let v = 0; v <= top + step * 1e-6; v += step) {
+      g += `<line x1="${padL}" x2="${W - padR}" y1="${y(v)}" y2="${y(v)}" stroke="${c('--sep')}"/>`;
+      g += `<text x="${padL - 8}" y="${y(v) + 4}" text-anchor="end">${v ? money(v, true) : '0'}</text>`;
+    }
+    const tick = horizon <= 24 ? 6 : 12;
+    for (let m = 0; m <= horizon; m += tick) g += `<text x="${x(m)}" y="${H - 6}" text-anchor="middle">${m ? m + ' th' : 'Nay'}</text>`;
+    g += `<path d="M${x(0)},${y(0)} L${x(horizon)},${y(net * horizon)} L${x(horizon)},${y(0)} Z" fill="${c('--gain')}" fill-opacity=".14"/>`;
+    g += `<line x1="${x(0)}" y1="${y(0)}" x2="${x(horizon)}" y2="${y(net * horizon)}" stroke="${c('--gain')}" stroke-width="2.5" stroke-linecap="round"/>`;
+    if (s.I > 0) {
+      g += `<line x1="${padL}" x2="${W - padR}" y1="${y(s.I)}" y2="${y(s.I)}" stroke="${c('--tint')}" stroke-width="1.5" stroke-dasharray="5 4"/>`;
+      g += `<text x="${W - padR}" y="${y(s.I) - 6}" text-anchor="end" style="fill:${c('--tint')};font-weight:600">Tiền máy</text>`;
+      if (r.payback && r.payback <= horizon) {
+        const px = x(r.payback), py = y(s.I), end = px > W * .6;
+        g += `<circle cx="${px}" cy="${py}" r="6" fill="${c('--card')}" stroke="${c('--gain')}" stroke-width="3"/>`;
+        g += `<text x="${px + (end ? -10 : 10)}" y="${py + 18}" text-anchor="${end ? 'end' : 'start'}" style="fill:${c('--fg')};font-weight:600">Hòa vốn · ${months(r.payback)}</text>`;
+      }
+    }
+    svg.innerHTML = g;
+    R('chartSub').textContent = s.I > 0
+      ? 'Đường xanh là tiền bạn giữ lại được, cộng dồn. Khi chạm đường nét đứt là đã thu hồi đủ tiền máy.'
+      : `Tiền bạn giữ lại được, cộng dồn trong ${horizon} tháng.`;
+  }
+  if ('ResizeObserver' in window) new ResizeObserver(() => drawChart(calc())).observe(R('chart'));
+
+  // ---------- Liên hệ & thu thông tin khách ----------
+  el('phone').textContent = CONFIG.phone;
+  el('call').href = 'tel:' + CONFIG.phone.replace(/\s/g, '');
+  el('zalo').href = CONFIG.zalo;
+  el('contact').textContent = `${CONFIG.email} · ${CONFIG.hours}`;
+  el('call').addEventListener('click', () => track('iera_roi_call'));
+  el('zalo').addEventListener('click', () => track('iera_roi_zalo'));
+  if (!CONFIG.leadEndpoint) { el('form').hidden = true; root.querySelector('.lead h3').textContent = 'Kiểm chứng bằng chính sản phẩm của bạn, miễn phí'; root.querySelector('.lead > p').textContent = 'Mang mẫu hàng đến, KOBASHI cấp đông thử bằng iERA −65°C. Bạn tự rã đông, tự nếm, tự so sánh rồi mới quyết định.'; }
+
+  const prodLabel = () => (s.name.trim() ? `${s.name.trim()} (${PRESETS[s.type].label})` : PRESETS[s.type].label);
+  // Sản lượng (kg/tháng) cần để hoàn vốn trong paybackMax tháng, giữ nguyên các thông số còn lại: lời mỗi kg hàng × sản lượng − chi phí vận hành = tiền máy / số tháng
+  function breakEvenKg(r) {
+    const unit = s.A > 0 ? (r.loss + r.price) / s.A : 0;
+    return s.I > 0 && unit > 0 ? (s.I / CONFIG.paybackMax + s.O) / unit : null;
+  }
+  function resultParams() {
+    const r = calc();
+    return { product: s.type, monthly_gain: Math.round(r.net), payback_months: r.payback ? +r.payback.toFixed(1) : null, model: s.model, scenario: lim('K', s.K) };
+  }
+  // Phân loại khách để sale gọi theo thứ tự ưu tiên: Nóng = muốn thử, sắp mua, hoàn vốn đủ ngắn
+  function leadScore(f, r) {
+    const soon = f.timeline.value === '3m' || f.timeline.value === '6m';
+    const attractive = r.net > 0 && (!r.payback || r.payback <= CONFIG.hotPaybackMonths);
+    if (f.trial.checked && soon && attractive && s.I > 0) return 'Nóng';
+    return f.trial.checked || soon ? 'Ấm' : 'Lạnh';
+  }
+  function summary() {
+    const r = calc(), m = MODELS.find(x => x.id === s.model);
+    return [
+      'KOBASHI iERA −65°C · Ước tính lợi ích',
+      `Sản phẩm: ${prodLabel()}`,
+      `Sản lượng: ${nf.format(s.A)} kg/tháng · Giá bán: ${nf.format(s.B)} đ/kg` + (s.V ? ` · Giá mua: ${nf.format(s.V)} đ/kg (${useCost() ? 'hàng giữ lại tính theo giá mua' : 'hàng giữ lại tính theo giá bán'})` : ''),
+      `Hao hụt: ${nf1.format(s.C)}% → ${nf1.format(s.D)}% khi dùng iERA` + (s.S ? ` (trong đó ${s.S}% bán giảm giá ${s.G}%)` : ''),
+      s.hasE ? `Bán thêm nhờ chất lượng: ${nf.format(s.E)} đ/kg` : null,
+      `Máy: ${m ? m.name : '—'}${s.I ? ' · Đầu tư: ' + nf.format(s.I) + ' đ' : ''}`,
+      `Mức đạt được: ${scenName()} (${lim('K', s.K)}%)`,
+      s.O ? `Đã trừ chi phí vận hành: ${nf.format(s.O)} đ/tháng` : 'Chưa trừ chi phí vận hành (điện, bảo trì, nhân công)',
+      '',
+      `→ Lời thêm mỗi tháng: ${vnd(r.net)} (${money(r.net)}), khoảng ${money(calc(0.5).net, true)} đến ${money(calc(1).net, true)} tùy mức đạt được`,
+      `→ Mỗi năm: ${money(r.net * 12)}`,
+      r.payback ? `→ Hoàn vốn sau: ${months(r.payback)}` : null,
+      '',
+      `Số ước tính, không phải cam kết. Xác nhận bằng cấp đông thử MIỄN PHÍ: ${CONFIG.phone}`,
+    ].filter(v => v !== null).join('\n');
+  }
+
+  el('form').addEventListener('submit', async e => {
+    e.preventDefault();
+    const f = e.target, err = el('ferr'), btn = f.querySelector('button[type=submit]');
+    if (f.website.value) return; // chặn bot
+    const phone = f.phone.value.replace(/[^\d+]/g, '');
+    if (!/^(\+?84|0)\d{8,10}$/.test(phone)) { err.hidden = false; err.textContent = 'Số điện thoại chưa đúng. Ví dụ: 0912 345 678.'; f.phone.focus(); return; }
+    err.hidden = true; btn.disabled = true; btn.textContent = 'Đang gửi…';
+    const r = calc(), lo = calc(0.5), hi = calc(1), pick = n => f[n].value ? f[n].selectedOptions[0].text : '';
+    const data = {
+      time: new Date().toISOString(), name: f.name.value.trim(), phone, company: f.company.value.trim(),
+      trial: f.trial.checked ? 'Có' : 'Không', product: PRESETS[s.type].label, ten_san_pham: s.name.trim(), model: s.model,
+      A_kg_thang: s.A, B_gia: s.B, V_gia_mua: s.V || '', cach_tinh: useCost() ? 'Theo giá mua' : 'Theo giá bán', C_hao_hut: s.C, D_hao_hut_iera: s.D, E_chenh_gia: s.hasE ? s.E : 0,
+      S_ban_giam_gia: s.S, G_muc_giam: s.G, kich_ban: `${scenName()} (${lim('K', s.K)}%)`, so_may: plan(MODELS.find(x => x.id === s.model)) ? plan(MODELS.find(x => x.id === s.model)).n : '', gia_dien: lim('P', s.P),
+      dau_tu: s.I, chi_phi_van_hanh: s.O, loi_thang: Math.round(r.net), loi_thang_thap: Math.round(lo.net), loi_thang_cao: Math.round(hi.net),
+      hoan_von_thang: r.payback ? +r.payback.toFixed(1) : '',
+      tinh: f.province.value.trim(), dang_cap_dong: pick('freezer'), thi_truong: pick('market'), du_dinh_mua: pick('timeline'), vai_tro: pick('role'),
+      muc_do: leadScore(f, r),
+      page: location.href, summary: summary(),
+    };
+    try {
+      await fetch(CONFIG.leadEndpoint, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(data) });
+      f.hidden = true; el('ok').hidden = false;
+      track('iera_roi_lead', { ...resultParams(), trial: data.trial });
+    } catch {
+      err.hidden = false; err.textContent = 'Chưa gửi được do lỗi mạng. Bạn thử lại, hoặc gọi trực tiếp số bên dưới.';
+    } finally { btn.disabled = false; btn.textContent = 'Gửi cho KOBASHI'; }
+  });
+
+  function toast(t) {
+    const tEl = el('toast'); tEl.textContent = t; tEl.classList.add('show');
+    clearTimeout(toast.t); toast.t = setTimeout(() => tEl.classList.remove('show'), 1800);
+  }
+  el('copySum').addEventListener('click', async () => {
+    const text = summary();
+    track('iera_roi_copy');
+    try { await navigator.clipboard.writeText(text); toast('Đã sao chép, dán vào Zalo để gửi'); }
+    catch { const f = el('fallback'); f.hidden = false; f.value = text; f.focus(); f.select(); toast('Văn bản đã được chọn, bấm Sao chép'); }
+  });
+
+  // ---------- Xuất bảng chi tiết: xem trước dạng form A4, in / lưu PDF, tải Excel (CSV) ----------
+  // Logo KOBASHI và iERA (SVG nhúng sẵn để công cụ độc lập, không phụ thuộc đường dẫn ảnh của website)
+  const LOGOS = {
+    kobashi: 'data:image/svg+xml;base64,PHN2ZyBpZD0iX+ODrOOCpOODpOODvF8yIiBkYXRhLW5hbWU9IuODrOOCpOODpOODvCAyIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNDIuMTczMDcwOSAyNi44MTcyODA0Ij4gPGRlZnM+IDxzdHlsZT4gLmNscy0xIHsgZmlsbDogI2VmZWEzYTsgfSAuY2xzLTIgeyBmaWxsOiAjYWI1MzliOyB9IC5jbHMtMyB7IGZpbGw6ICMxNzQ5OWQ7IH0gLmNscy00IHsgZmlsbDogIzIzMTgxNTsgfSAuY2xzLTUgeyBmaWxsOiAjNzFjN2Q1OyB9IC5jbHMtNiB7IGZpbGw6ICM2YWI4MmQ7IH0gLmNscy03IHsgZmlsbDogI2VkOGYyNjsgfSAuY2xzLTggeyBmaWxsOiAjZTcxZTE5OyB9IDwvc3R5bGU+IDwvZGVmcz4gPGcgaWQ9Il/jg6zjgqTjg6Tjg7xfMS0yIiBkYXRhLW5hbWU9IuODrOOCpOODpOODvCAxIj4gPGc+IDxnPiA8cGF0aCBjbGFzcz0iY2xzLTQiIGQ9Ik00NS42MDc1MzI4LDE1LjA0NDQ2OTVsNC44NjkyMzcsMTAuOTU1NzY1NWgtMy4zODU3MTY5bC00LjE4NDI2MjUtOS4zNTgxODc0aC0zLjIzMzYxNjJ2OS4zNTgxODc0aC0zLjA0MzA1NThWLjg1NTIxM2gzLjA0MzA1NTh2MTIuOTcxOTY0N2gzLjExOTQ4ODZsMy43Mjc5NjA3LTYuNTQyNzYxaDMuNTM3ODE3NWwtNC40NTA5MDgxLDcuNzYwMDUyOFoiLz4gPHBhdGggY2xhc3M9ImNscy00IiBkPSJNNjIuNDU2NTU0NiwyNi4wMDAyMzVoLTkuODE0NDg5NVY3LjI4NDQxNjdoMTMuMjAwMTM2OHYxNS4zMzAxMDE2YzAsMS44NjQxNTQxLTEuNTIxOTEwNCwzLjM4NTcxNjgtMy4zODU2NDczLDMuMzg1NzE2OFpNNTUuNDU3MDA0NywxMC4xMzcyNTk3djEyLjk3MjAyMDNoNy41MzE5MzY4di0xMi45NzIwMjAzaC03LjUzMTkzNjhaIi8+IDxwYXRoIGNsYXNzPSJjbHMtNCIgZD0iTTgzLjAzMzA1MDIsMjIuNjE0NTE4M2MwLDEuODI2MTExNi0xLjQ0NTQ3NzYsMy4zMDk2MzE3LTMuMjMzMTk4OSwzLjM4NTcxNjhoLTkuNjI0MzQ2M1YuODE3MTg0NGgzLjA0MzA1NTh2Ni40NjcyMzIzaDkuODE0NDg5NXYxNS4zMzAxMDE2Wk03My4yMTg1NjA4LDEwLjA2MTE3NDZ2MTMuMjM4MjQ4NWg2Ljg0NzUxODh2LTEzLjIzODI0ODVoLTYuODQ3NTE4OFoiLz4gPHBhdGggY2xhc3M9ImNscy00IiBkPSJNMTAwLjE0ODE2MTIsMjIuNjE0NTE4M2MwLDEuODI2MTExNi0xLjQ0NTQwOCwzLjMwOTYzMTctMy4yMzMxMjk0LDMuMzg1NzE2OGgtOS41NDgyNjEydi0xMi4xNzMwNTczaDkuNzM4NDA0NHYtMy43NjYwMDMxaC05LjM5NjE2MDZ2LTIuNzc2NzU3OWgxMi40MzkxNDY4djE1LjMzMDEwMTZaTTkwLjI5NTc2ODMsMTYuNjA0MDc0N3Y2LjY5NTM0ODVoNi44MDk0MDY3di02LjY5NTM0ODVoLTYuODA5NDA2N1oiLz4gPHBhdGggY2xhc3M9ImNscy00IiBkPSJNMTA0LjQ4MTk1MTEsMjYuMDAwMjM1di0yLjc3Njg5N2gxMC4wODA1Nzg2di02LjIzODY0MjhoLTkuODUyMzkyOVY3LjI4NDQxNjdoMTIuOTcxOTUxMXYyLjc3Njc1NzloLTkuOTI5MDM0NHYzLjc2NjAwMzFoOS44NTI5NDkzdjguNzg3MzQwNmMwLDEuODY0MTU0MS0xLjUyMTkxMDQsMy4zODU3MTY4LTMuMzg1NzE2OSwzLjM4NTcxNjhoLTkuNzM4MzM0OFoiLz4gPHBhdGggY2xhc3M9ImNscy00IiBkPSJNMTM0Ljc5Njc4MTYsMjYuMDAwMjM1aC0yLjk2Njk3MDd2LTE1LjkzOTA2MDRoLTYuODA5NDc2M3YxNS45MzkwNjA0aC0zLjA0Mjk4NjJWLjgxNzE4NDRsMy4wNDI5ODYyLjAzODAyODZ2Ni40MjkyMDM3aDYuMzkxMjE2OWMxLjg2MzczNjksMCwzLjM4NTIzLDEuNTIxNDIzNSwzLjM4NTIzLDMuMzg1MTYwNHYxNS4zMzA2NTc5WiIvPiA8cGF0aCBjbGFzcz0iY2xzLTQiIGQ9Ik0xNDIuMTczMDcwOSwyLjY0MzM2NTZ2Mi44NTI4NDNoLTMuMDQyOTg2MnYtMi44NTI4NDNoMy4wNDI5ODYyWk0xNDIuMTczMDcwOSw3LjI4NDQxNjd2MTguNzE1ODE4M2gtMy4wNDI5ODYyVjcuMjg0NDE2N2gzLjA0Mjk4NjJaIi8+IDwvZz4gPGc+IDxwYXRoIGNsYXNzPSJjbHMtNCIgZD0iTTI2LjgxNzQzNzIsMTQuODY4ODYxOFYwaC0yLjE3NDY4NDN2Ni42NTM2ODk0aC0xLjMzMzAxOTFWLjAwMTczODdIMHYyLjE3NzMyN2g2LjEzODI3MjF2MS40NjM1NTk5TDAsNi45MTc1NTMxdjE5Ljg3OTAwMjFoMjMuMzA5NzMzOHYtNy41NzIzNDM4aDMuNTA3NzAzNHYtMi4xNzczMjdoLTMuNTA3NzAzNHYtOC4yMTY3NzJoMS4zMzMwMTkxdjYuMDM4NzQ5NWgyLjE3NDY4NDNaTTIxLjEzMzM2MjgsNi42NTM2ODk0aC02Ljg3MTc5MDdWMi4xNzk4MzA4aDYuODcxNzkwN3Y0LjQ3Mzg1ODdaTTEyLjA4NDM4NDEsMi4xNzkwNjU3djMuMjc1NzYybC0zLjc2ODkyNDEtMS45MDA0NzE5di0xLjM3NTI5MDFoMy43Njg5MjQxWk03LjMwOTM4NDMsNS40ODUwODA5bDYuNTk0OTkxMiwzLjMyNjA0NDlIMS4wNzYxMTAybDYuMjMzMjc0MS0zLjMyNjA0NDlaTTIuMTI0NTU3NSwxMC45ODgzMDAxaDkuODgxOTMzM3Y2LjA1ODU4NDJIMi4xMjQ1NTc1di02LjA1ODU4NDJaTTEyLjAwNTY1NjIsMjQuNjE5MzY3MkgyLjEyMzYzNjN2LTUuMzk1MTU1OWg5Ljg4MjAydjUuMzk1MTU1OVpNMjEuMTMzMzYyOCwyNC42MTkzNjcyaC02Ljk1MDQ0OTF2LTUuMzk1MTU1OWg2Ljk1MDQ0OTF2NS4zOTUxNTU5Wk0yMS4xMzMzNjI4LDE3LjA0Njg4NDNoLTYuOTUwNDQ5MXYtOC4yMTY3NzJoNi45NTA0NDkxdjguMjE2NzcyWiIvPiA8cmVjdCBjbGFzcz0iY2xzLTQiIHg9IjI0LjY0Mjc1MjkiIHk9IjI0LjY4MzM1MSIgd2lkdGg9IjIuMTc0Njg0MyIgaGVpZ2h0PSIyLjEzMzkyOTMiLz4gPHJlY3QgY2xhc3M9ImNscy0yIiB4PSIxNC4yNjE1NzIxIiB5PSIyLjE3OTgzMDgiIHdpZHRoPSI2Ljg3MTc5MDciIGhlaWdodD0iNC40NzM4NTg3Ii8+IDxwb2x5Z29uIGNsYXNzPSJjbHMtNiIgcG9pbnRzPSIxMi4wODQ1MjMyIDIuMTc5MjA0OCAxMi4wODQ1MjMyIDUuNDU0OTY2OCA4LjMxNTU5OTEgMy41NTQ1Nzg0IDguMzE1NTk5MSAyLjE3OTIwNDggMTIuMDg0NTIzMiAyLjE3OTIwNDgiLz4gPHBvbHlnb24gY2xhc3M9ImNscy04IiBwb2ludHM9IjcuMzA5MTc1NyA1LjQ4NTU2NzggMTMuOTA0MDk3NCA4LjgxMDc2NDQgMS4wNzU4MzIgOC44MTA3NjQ0IDcuMzA5MTc1NyA1LjQ4NTU2NzgiLz4gPHJlY3QgY2xhc3M9ImNscy0xIiB4PSIyLjEyNDU1NzUiIHk9IjEwLjk4ODMwMDEiIHdpZHRoPSI5Ljg4MTkzMzMiIGhlaWdodD0iNi4wNTg1ODQyIi8+IDxyZWN0IGNsYXNzPSJjbHMtNSIgeD0iMi4xMjM2MzYzIiB5PSIxOS4yMjQyMTE0IiB3aWR0aD0iOS44ODIwMiIgaGVpZ2h0PSI1LjM5NTE1NTkiLz4gPHJlY3QgY2xhc3M9ImNscy0zIiB4PSIxNC4xODI5MTM3IiB5PSIxOS4yMjQyMTE0IiB3aWR0aD0iNi45NTA0NDkxIiBoZWlnaHQ9IjUuMzk1MTU1OSIvPiA8cmVjdCBjbGFzcz0iY2xzLTciIHg9IjE0LjE4MjkxMzciIHk9IjguODMwMTEyNCIgd2lkdGg9IjYuOTUwNDQ5MSIgaGVpZ2h0PSI4LjIxNjc3MiIvPiA8L2c+IDwvZz4gPC9nPiA8L3N2Zz4=',
+    iera: 'data:image/svg+xml;base64,PHN2ZyBpZD0iX+ODrOOCpOODpOODvF8yIiBkYXRhLW5hbWU9IuODrOOCpOODpOODvCAyIiB2aWV3Qm94PSIwIDAgMjQwLjk0NDg4MTkgNjYuNTIxMzM4OCIgdmVyc2lvbj0iMS4xIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczpzdmc9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4gPGRlZnMgaWQ9ImRlZnMxNSI+IDxzdHlsZSBpZD0ic3R5bGUyIj4gLmNscy0xIHsgZmlsbDogdXJsKCNf5ZCN56ew5pyq6Kit5a6a44Kw44Op44OH44O844K344On44OzXzM0KTsgfSAuY2xzLTIgeyBmaWxsOiB1cmwoI1/lkI3np7DmnKroqK3lrprjgrDjg6njg4fjg7zjgrfjg6fjg7NfMTQpOyB9IC5jbHMtMyB7IGZpbGw6ICM3NzZjNjY7IH0gLmNscy00IHsgZmlsbDogdXJsKCNf5ZCN56ew5pyq6Kit5a6a44Kw44Op44OH44O844K344On44OzXzM0LTIpOyB9IC5jbHMtNSB7IGZpbGw6IG5vbmU7IHN0cm9rZTogIzc3NmM2Njsgc3Ryb2tlLW1pdGVybGltaXQ6IDEwOyBzdHJva2Utd2lkdGg6IC45NjYyOTg2cHg7IH0gPC9zdHlsZT4gPHJhZGlhbEdyYWRpZW50IGlkPSJf5ZCN56ew5pyq6Kit5a6a44Kw44Op44OH44O844K344On44OzXzM0IiBkYXRhLW5hbWU9IuWQjeensOacquioreWumuOCsOODqeODh+ODvOOCt+ODp+ODsyAzNCIgY3g9Ii0xNTYuNzk1MTA2IiBjeT0iMzExLjQxNjU3MTgiIGZ4PSItMTU2Ljc5NTEwNiIgZnk9IjMxMS40MTY1NzE4IiByPSI0My4wNDU2MzExIiBncmFkaWVudFRyYW5zZm9ybT0idHJhbnNsYXRlKDE3Mi4xMDE3NjU2IC0yMzQuMzE3NDcxKSBzY2FsZSguOCkiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj4gPHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjMDBhMGU5IiBpZD0ic3RvcDQiIC8+IDxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzFkMjA4OCIgaWQ9InN0b3A2IiAvPiA8L3JhZGlhbEdyYWRpZW50PiA8cmFkaWFsR3JhZGllbnQgaWQ9Il/lkI3np7DmnKroqK3lrprjgrDjg6njg4fjg7zjgrfjg6fjg7NfMTQiIGRhdGEtbmFtZT0i5ZCN56ew5pyq6Kit5a6a44Kw44Op44OH44O844K344On44OzIDE0IiBjeD0iLTE1Ni45NjI1MjE0IiBjeT0iMzExLjk2OTE5NDYiIGZ4PSItMTU2Ljk2MjUyMTQiIGZ5PSIzMTEuOTY5MTk0NiIgcj0iNDMuMTQxMjU0IiBncmFkaWVudFRyYW5zZm9ybT0idHJhbnNsYXRlKDE3Mi4xMDE3NjU2IC0yMzQuMzE3NDcxKSBzY2FsZSguOCkiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj4gPHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjZWFlNWUzIiBpZD0ic3RvcDkiIC8+IDxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI2E4OTk5MCIgaWQ9InN0b3AxMSIgLz4gPC9yYWRpYWxHcmFkaWVudD4gPHJhZGlhbEdyYWRpZW50IGlkPSJf5ZCN56ew5pyq6Kit5a6a44Kw44Op44OH44O844K344On44OzXzM0LTIiIGRhdGEtbmFtZT0i5ZCN56ew5pyq6Kit5a6a44Kw44Op44OH44O844K344On44OzIDM0IiBjeD0iLTcuMzcxNDA3NyIgY3k9IjQzLjU4MzAwNDIiIGZ4PSItNy4zNzE0MDc3IiBmeT0iNDMuNTgzMDA0MiIgcj0iMi4zMjY1ODc0IiBncmFkaWVudFRyYW5zZm9ybT0idHJhbnNsYXRlKDExLjA3MDQyMyAtMS40Mjc0OTg2KSBzY2FsZSguOTg3MTM3MykiIHhsaW5rOmhyZWY9IiNf5ZCN56ew5pyq6Kit5a6a44Kw44Op44OH44O844K344On44OzXzM0IiAvPiA8L2RlZnM+IDxnIGlkPSJf44Os44Kk44Ok44O8XzEtMiIgZGF0YS1uYW1lPSLjg6zjgqTjg6Tjg7wgMSI+IDxnIGlkPSJnNDgiPiA8ZyBpZD0iZzM3Ij4gPGcgaWQ9ImcyMSI+IDxwYXRoIGNsYXNzPSJjbHMtMSIgZD0ibSA4OC42OTcyOTUsNS4zMzMwMjU2IGMgMCwwIDIuNTIwMTg3LDEuNTkwODE1NSAyLjQ4NjY5LDUuNzc3MTYyNCAtMC4wNTg0Myw3LjMwMjMzOSAtMTAuMjE3MDE4LDEwLjI1MjA4NSAtMTYuMDYwMzE3LDEwLjI1MjA4NSAtMTMuMDExMTI4LDAgLTI3LjQxMDgyOSwtNy4xODY1NzUgLTM3LjI1MTc5MywtMTMuMzE0MjQxMSBDIDIxLjM1NTg3NywtMi4yMzU5MDkxIDEuNDAzNzQwNiwtNS4xNjQwNjU2IDAuMjczNDU5NCwxNC40NTkxODQgMC45MjY1MjY3LDEyLjMxNTc4OSAxLjQzMTY2NzksLTEuMjM4NDAyMSAxNy4xMDQ1MzUsMy41ODQwMjc5IDI1Ljc3MDU4Nyw2LjI1MDUyNTYgMzguNjk0NjkzLDE5LjI1OTAzNyA1MS43NTcwNDIsMjUuNDMwMjM5IDY0LjgxOTQxLDMxLjYwMTQ0MSA5MS4yNTQ2NDMsMzIuNjg3NzMzIDkyLjk4NDExMywxNi43MTk4NjUgOTMuNzIwOTAxLDkuOTE3MDc1OSA4OC42OTcyOTUsNS4zMzMwMjU2IDg4LjY5NzI5NSw1LjMzMzAyNTYgWiIgaWQ9InBhdGgxNyIgLz4gPHBhdGggY2xhc3M9ImNscy0yIiBkPSJtIDEwLjE0MTkyMiwwLjUyMzg3MDcgYyAwLDAgLTguMzMxMTI4LDMuMDg1NTg5MSAtOC4zMzExMjgsMTAuMzg4MTY2MyAwLDcuMzAyNTc4IDEwLjI4NTcyMywxMC45NDg1OTcgMTYuMTI5MDIyLDEwLjk0ODU5NyAxMy4wMTExMjcsMi40ZS01IDI3LjQwNTY0MiwtNy4xOTQ4NzggMzcuMjUxODE2LC0xMy4zMTQxNjk3IEMgNzEuNTg4NjU1LC0xLjY0NDE0NyA5MS45MzMyNCwtNC42NTgxNDM4IDkzLjA2MzQ5NywxNC45NjUxMSA5My4wNjE2NywxNC45NjE2MTMgOTEuNjMxODM5LC0wLjczOTkyMjEgNzUuOTU4OTcyLDQuMDgyNDg0IDY3LjI5Mjg5Niw2Ljc0ODk1NzkgNTQuMzY4Nzk0LDE5Ljc1NzQ2OSA0MS4zMDY0MjIsMjUuOTI4NjQ3IDI4LjI0NDA1MywzMi4wOTk4MjYgMy4zNDkyMjA1LDMyLjc2Nzc2NCAwLjM3MDUyNDEsMTYuOTg1MTI4IC0yLjI3ODE1NywyLjk1MTEzMjMgMTAuMTQxOTIyLDAuNTIzODcwNyAxMC4xNDE5MjIsMC41MjM4NzA3IFoiIGlkPSJwYXRoMTkiIC8+IDwvZz4gPGcgaWQ9ImczNSI+IDxnIGlkPSJnMzEiPiA8cGF0aCBjbGFzcz0iY2xzLTMiIGQ9Im0gNy41MjcxMzIxLDY1LjkzNzczNCB2IDAuMzg5MjgxIGMgMCwwLjEyOTc2IC0wLjA2NDU2NCwwLjE5NDMyNCAtMC4xOTQzMjQxLDAuMTk0MzI0IEggMC4yOTQwOTk4IGMgLTAuMTMwMzkzMywwIC0wLjE5NDk1NywtMC4wNjQ1NiAtMC4xOTQ5NTcsLTAuMTk0MzI0IHYgLTAuMzg5MjgxIGMgMCwtMC4xMjkxMjggMC4wNjQ1NjM3LC0wLjE5NDMyNCAwLjE5NDk1NywtMC4xOTQzMjQgaCAwLjE5NDMyNDEgYyAwLjM2MjY5NiwwIDAuNjQ3NTM1OCwtMC4xMTY0NjggMC44NTUxNTI0LC0wLjM1MDAzNyAwLjIwNzYxNjYsLTAuMjMyOTM2IDAuMzExNDI0OSwtMC41NDQzNiAwLjMxMTQyNDksLTAuOTMzMDA5IFYgNDcuNTA0MTY3IGMgMCwtMC40MTM5NjcgLTAuMTAzODA4MywtMC43MzE3MjIgLTAuMzExNDI0OSwtMC45NTI2MzEgQyAxLjEzNTk1OTcsNDYuMzMxODkzIDAuODUxMTE5OSw0Ni4yMjExMjIgMC40ODg0MjM5LDQ2LjIyMTEyMiBIIDAuMjk0MDk5OCBjIC0wLjEzMDM5MzMsMCAtMC4xOTQ5NTcsLTAuMDY0NTYgLTAuMTk0OTU3LC0wLjE5NDMyNCB2IC0wLjM4OTI4MSBjIDAsLTAuMTI5MTI4IDAuMDY0NTYzNywtMC4xOTQzMjUgMC4xOTQ5NTcsLTAuMTk0MzI1IGggNS42Nzc4MDcgdiAxOS4wMTcxNzIgYyAwLDAuMzg4NjQ4IDAuMTAzMTc1MywwLjcwMDA3MyAwLjMxMDc5MTksMC45MzMwMDkgMC4yMDc2MTY2LDAuMjMzNTY5IDAuNDkyNDU2NCwwLjM1MDAzNiAwLjg1NTc4NTQsMC4zNTAwMzYgaCAwLjE5NDMyNDEgYyAwLjEyOTc2MDQsMCAwLjE5NDMyNDEsMC4wNjUyIDAuMTk0MzIzOSwwLjE5NDMyNSB6IiBpZD0icGF0aDIzIiAvPiA8cGF0aCBjbGFzcz0iY2xzLTMiIGQ9Im0gMzQuNzUwMjIzLDM5LjQ5MjU3MiB2IDMuNzMzMzAxIGMgMCwwLjEzMDM5MyAtMC4wNjUyLDAuMTk0OTU3IC0wLjE5NDMyNSwwLjE5NDk1NyBIIDM0LjE2NzI1IGMgLTAuMTMwMzkzLDAgLTAuMTk0OTU3LC0wLjA2NDU2IC0wLjE5NDk1NywtMC4xOTQ5NTcgdiAtMC4wMzg2MSBjIDAsLTAuOTg0OTEzIC0wLjI3MjE4LC0xLjc1MDE4MiAtMC44MTY1NCwtMi4yOTQ1NDMgLTAuNTQ0MzYxLC0wLjU0NDM2IC0xLjMwOTYzMSwtMC44MTY1NCAtMi4yOTQ1NDMsLTAuODE2NTQgaCAtMi4zMzMxNTUgYyAtMC4zODkyODEsMCAtMC42ODA0NTEsMC4xMTY0NjcgLTAuODc1NDA4LDAuMzUwMDM2IC0wLjE5NDMyNCwwLjIzMjkzNiAtMC4yOTExNjksMC41NDQzNjEgLTAuMjkxMTY5LDAuOTMzMDA5IHYgMTAuODExODg2IGggMC44OTQzOTcgYyAwLjk4NDkxMywwIDEuNzUwMTgyLC0wLjI3ODUxIDIuMjk0NTQzLC0wLjgzNjE2MyAwLjU0NDM2LC0wLjU1NzY1MyAwLjgxNjU0LC0xLjMxNTk2IDAuODE2NTQsLTIuMjc1NTU0IHYgLTAuMDM4NjEgYyAwLC0wLjEyOTEyOCAwLjA2NDU2LC0wLjE5NDMyNCAwLjE5NDMyNSwtMC4xOTQzMjQgaCAwLjM4OTI4MSBjIDAuMTI5MTI3LDAgMC4xOTQzMjQsMC4wNjUyIDAuMTk0MzI0LDAuMTk0MzI0IHYgNy4wNzc5NTMgYyAwLDAuMTMwMzkzIC0wLjA2NTIsMC4xOTQzMjQgLTAuMTk0MzI0LDAuMTk0MzI0IGggLTAuMzg5MjgxIGMgLTAuMTI5NzYxLDAgLTAuMTk0MzI1LC0wLjA2MzkzIC0wLjE5NDMyNSwtMC4xOTQzMjQgdiAtMC4wMzg2MSBjIDAsLTAuOTg1NTQ2IC0wLjI3MjE4LC0xLjc1MDE4MiAtMC44MTY1NCwtMi4yOTQ1NDMgLTAuNTQ0MzYxLC0wLjU0NDM2IC0xLjMwOTYzMSwtMC44MTcxNzQgLTIuMjk0NTQzLC0wLjgxNzE3NCBoIC0wLjg5NDM5NyB2IDExLjUxMTk2IGMgMCwwLjM4ODY0OCAwLjA5Njg0LDAuNzAwMDczIDAuMjkxMTY5LDAuOTMzMDA4IDAuMTk0OTU3LDAuMjMzNTY5IDAuNDg2MTI3LDAuMzUwMDM3IDAuODc1NDA4LDAuMzUwMDM3IGggMi4zMzMxNTUgYyAwLjk4NDkxMiwwIDEuNzUwMTgyLC0wLjI3Nzg3NyAyLjI5NDU0MywtMC44MzYxNjMgMC41NDQzNiwtMC41NTcwMjEgMC44MTY1NCwtMS4zMTUzMjcgMC44MTY1NCwtMi4yNzQ5MjEgdiAtMC4wMzg2MSBjIDAsLTAuMTI5NzYgMC4wNjQ1NiwtMC4xOTQ5NTcgMC4xOTQ5NTcsLTAuMTk0OTU3IGggMC4zODg2NDggYyAwLjEyOTEyOCwwIDAuMTk0MzI1LDAuMDY1MiAwLjE5NDMyNSwwLjE5NDk1NyB2IDMuNzMzMzAxIGMgMCwwLjEyOTc2IC0wLjA2NTIsMC4xOTQzMjQgLTAuMTk0MzI1LDAuMTk0MzI0IEggMjEuMzMzMDAxIGMgLTAuMTI5NzYsMCAtMC4xOTQzMjQsLTAuMDY0NTYgLTAuMTk0MzI0LC0wLjE5NDMyNCB2IC0wLjM4OTI4MSBjIDAsLTAuMTI5MTI4IDAuMDY0NTYsLTAuMTk0MzI0IDAuMTk0MzI0LC0wLjE5NDMyNCBoIDAuMTk0OTU3IGMgMC4zODg2NDgsMCAwLjY4MDQ1MSwtMC4xMTY0NjggMC44NzQ3NzUsLTAuMzUwMDM3IDAuMTk0MzI0LC0wLjIzMjkzNiAwLjI5MTgwMywtMC41NDQzNiAwLjI5MTgwMywtMC45MzMwMDggViA0MS4zNTkyMjMgYyAwLC0wLjM4ODY0OCAtMC4wOTc0OCwtMC43MDAwNzMgLTAuMjkxODAzLC0wLjkzMzAwOSAtMC4xOTQzMjQsLTAuMjMzNTY5IC0wLjQ4NjEyNywtMC4zNTAwMzYgLTAuODc0Nzc1LC0wLjM1MDAzNiBoIC0wLjE5NDk1NyBjIC0wLjEyOTc2LDAgLTAuMTk0MzI0LC0wLjA2NDU2IC0wLjE5NDMyNCwtMC4xOTQzMjUgdiAtMC4zODkyODEgYyAwLC0wLjEyOTEyNyAwLjA2NDU2LC0wLjE5NDMyNCAwLjE5NDMyNCwtMC4xOTQzMjQgaCAxMy4yMjI4OTcgYyAwLjEyOTEyOCwwIDAuMTk0MzI1LDAuMDY1MiAwLjE5NDMyNSwwLjE5NDMyNCB6IiBpZD0icGF0aDI1IiAvPiA8cGF0aCBjbGFzcz0iY2xzLTMiIGQ9Im0gNjUuNzgzODM3LDY1LjkzNzczNCB2IDAuMzg5MjgxIGMgMCwwLjEyOTc2IC0wLjA2NTIsMC4xOTQzMjQgLTAuMTk0MzI0LDAuMTk0MzI0IGggLTcuMzg5Mzc4IGMgLTAuMTI5NzYsMCAtMC4xOTQzMjQsLTAuMDY0NTYgLTAuMTk0MzI0LC0wLjE5NDMyNCB2IC0wLjM4OTI4MSBjIDAsLTAuMTI5MTI4IDAuMDY0NTYsLTAuMTk0MzI0IDAuMTk0MzI0LC0wLjE5NDMyNCBoIDAuMTk0MzI0IGMgMC4yMzM1NjksMCAwLjQxNDYsLTAuMDcwODkgMC41NDQzNjEsLTAuMjEzOTQ3IDAuMTI5NzYsLTAuMTQxNzg3IDAuMTk0OTU3LC0wLjM0MzA3MyAwLjE5NDk1NywtMC42MDI1OTQgMCwtMC4yMDY5ODQgLTAuMDM5MjUsLTAuNDI3ODkzIC0wLjExNzEwMSwtMC42NjE0NjIgTCA1NC41ODMzMDIsNTMuNjQ4NDc4IHYgMTAuODExODg2IGMgMCwwLjM4ODY0OSAwLjA5NzQ4LDAuNzAwMDczIDAuMjkxODAzLDAuOTMzMDA5IDAuMTk0MzI0LDAuMjMzNTY5IDAuNDg2MTI3LDAuMzUwMDM3IDAuODc0Nzc1LDAuMzUwMDM3IGggMC4xOTQ5NTcgYyAwLjEyOTEyNywwIDAuMTk0MzI0LDAuMDY1MiAwLjE5NDMyNCwwLjE5NDMyNCB2IDAuMzg5MjgxIGMgMCwwLjEyOTc2IC0wLjA2NTIsMC4xOTQzMjQgLTAuMTk0MzI0LDAuMTk0MzI0IGggLTcuMzg5Mzc4IGMgLTAuMTI5NzYsMCAtMC4xOTQzMjQsLTAuMDY0NTYgLTAuMTk0MzI0LC0wLjE5NDMyNCB2IC0wLjM4OTI4MSBjIDAsLTAuMTI5MTI4IDAuMDY0NTYsLTAuMTk0MzI0IDAuMTk0MzI0LC0wLjE5NDMyNCBoIDAuMTk0MzI0IGMgMC4zODkyODEsMCAwLjY4MDQ1MSwtMC4xMTY0NjggMC44NzU0MDgsLTAuMzUwMDM3IDAuMTk0MzI0LC0wLjIzMjkzNiAwLjI5MTE2OSwtMC41NDQzNiAwLjI5MTE2OSwtMC45MzMwMDkgViA0MS4zNTkyMjMgYyAwLC0wLjM4ODY0OSAtMC4wOTY4NCwtMC43MDAwNzMgLTAuMjkxMTY5LC0wLjkzMzAwOSAtMC4xOTQ5NTcsLTAuMjMzNTY5IC0wLjQ4NjEyNywtMC4zNTAwMzcgLTAuODc1NDA4LC0wLjM1MDAzNyBoIC0wLjE5NDMyNCBjIC0wLjEyOTc2LDAgLTAuMTk0MzI0LC0wLjA2NDU2IC0wLjE5NDMyNCwtMC4xOTQzMjQgdiAtMC4zODkyODEgYyAwLC0wLjEyOTEyNyAwLjA2NDU2LC0wLjE5NDMyNCAwLjE5NDMyNCwtMC4xOTQzMjQgaCA3LjU4MzcwMiBjIDEuNzM2MjU3LDAgMy4yMTQyNTksMC4zMzA0MTQgNC40MzMzNzMsMC45OTE4NzYgMS4yMTg0ODIsMC42NjA4MjggMi4xMzg4MzEsMS41MjI5NDMgMi43NjEwNDgsMi41ODU3MTIgMC42MjIyMTYsMS4wNjM0MDIgMC45MzM2NDEsMi4yMDQwMjcgMC45MzM2NDEsMy40MjI1MDkgMCwxLjUwMzk1NCAtMC40NzM0NjcsMi45MDQxIC0xLjQxOTc2OCw0LjIwMDQzOCAtMC45NDYzMDEsMS4yOTYzMzcgLTIuMjc0OTIxLDIuMjA0MDI3IC0zLjk4NTg1OSwyLjcyMjQzNSBsIDUuMDk0MjAyLDExLjc4MzUwNyBjIDAuMzYyNjk2LDAuNDkyNDU2IDAuODQyNDkzLDAuNzM4Njg0IDEuNDM5MzkxLDAuNzM4Njg0IGggMC4xOTQzMjQgYyAwLjEyOTEyNywwIDAuMTk0MzI0LDAuMDY1MiAwLjE5NDMyNCwwLjE5NDMyNSB6IE0gNTQuNTgzMzAyLDQwLjA3NjE3NyB2IDEyLjc5NTAwNSBoIDEuMTY2NTc4IGMgMS4xOTI1MjksMCAyLjEzMjUsLTAuNjgxMDg0IDIuODE5OTE0LC0yLjA0MTk4NSAwLjY4Njc4LC0xLjM2MDkwMSAxLjAzMDQ4NywtMi45MzYzODIgMS4wMzA0ODcsLTQuNzI1MTc2IDAsLTEuNjU5MDM0IC0wLjI5ODEzMiwtMy4wNzgxNjkgLTAuODk0Mzk3LC00LjI1ODY3MiAtMC41OTY4OTgsLTEuMTc5MjM3IC0xLjQ1MjY4MywtMS43NjkxNzIgLTIuNTY2NzIzLC0xLjc2OTE3MiB6IiBpZD0icGF0aDI3IiAvPiA8cGF0aCBjbGFzcz0iY2xzLTMiIGQ9Im0gOTMuMTYyNjQsNjUuOTM3NzM0IHYgMC4zODkyODEgYyAwLDAuMTI5NzYgLTAuMDY1MiwwLjE5NDMyNCAtMC4xOTQzMjQsMC4xOTQzMjQgSCA4NS4xOTAyOSBjIC0wLjEyOTc2MSwwIC0wLjE5NDMyNCwtMC4wNjQ1NiAtMC4xOTQzMjQsLTAuMTk0MzI0IHYgLTAuMzg5MjgxIGMgMCwtMC4xMjkxMjggMC4wNjQ1NiwtMC4xOTQzMjQgMC4xOTQzMjQsLTAuMTk0MzI0IGggMC4yNzIxOCBjIDAuNTQ0MzYxLDAgMC44MTY1NDEsLTAuMzIzNDUyIDAuODE2NTQxLC0wLjk3MjI1NCAwLC0wLjE4MTAzMSAtMC4wMTMyOSwtMC4zMTA3OTIgLTAuMDM4NjEsLTAuMzg4NjQ4IEwgODUuNDYyNDcsNTkuOTg3NzQ2IGggLTQuNDcyNjE4IGwgLTAuODE2NTQxLDQuNDcyNjE5IGMgLTAuMDI1OTUsMC4xMjk3NiAtMC4wMzg2MSwwLjMxMDc5MiAtMC4wMzg2MSwwLjU0NDM2IDAsMC4yNTk1MjEgMC4wNTEyNywwLjQ0Njg4MiAwLjE1NTcxMiwwLjU2Mzk4MyAwLjEwMzE3NSwwLjExNjQ2OCAwLjI4NDg0LDAuMTc0NzAyIDAuNTQ0MzYsMC4xNzQ3MDIgaCAwLjE5NDMyNSBjIDAuMTI5MTI3LDAgMC4xOTQzMjQsMC4wNjUyIDAuMTk0MzI0LDAuMTk0MzI0IHYgMC4zODkyODEgYyAwLDAuMTI5NzYgLTAuMDY1MiwwLjE5NDMyNCAtMC4xOTQzMjQsMC4xOTQzMjQgaCAtMy41NzgyMjEgYyAtMC4xMjk3NjEsMCAtMC4xOTQzMjUsLTAuMDY0NTYgLTAuMTk0MzI1LC0wLjE5NDMyNCB2IC0wLjM4OTI4MSBjIDAsLTAuMTI5MTI4IDAuMDY0NTYsLTAuMTk0MzI0IDAuMTk0MzI1LC0wLjE5NDMyNCBoIDAuMTk0OTU3IGMgMC4zODg2NDgsMCAwLjcyNTM5MiwtMC4xMzYwOSAxLjAxMDg2NCwtMC40MDgyNzEgMC4yODQ4NCwtMC4yNzIxOCAwLjQ2NjUwNSwtMC42MTUyNTQgMC41NDQzNjEsLTEuMDMwNDg3IEwgODMuNTk1ODIsMzkuMjk4MjQ4IGggMy4yNjY3OTYgbCA0LjQ3MTk4NSwyNS4yNzg1ODQgYyAwLjEwMzgwOCwwLjM2MzMyOSAwLjI5MTgwMywwLjY0ODE2OSAwLjU2Mzk4MywwLjg1NTc4NiAwLjI3MjE4LDAuMjA3NjE2IDAuNTg5OTM1LDAuMzEwNzkyIDAuOTUzMjY0LDAuMzEwNzkyIGggMC4xMTY0NjcgYyAwLjEyOTEyOCwwIDAuMTk0MzI1LDAuMDY1MiAwLjE5NDMyNSwwLjE5NDMyNCB6IE0gODUuMzA2NzU4LDU5LjAxNTQ5MyA4My4yMDcxNzIsNDcuMTkyNzQyIDgxLjE0NTU2NCw1OS4wMTU0OTMgWiIgaWQ9InBhdGgyOSIgLz4gPC9nPiA8cGF0aCBpZD0iY2lyY2xlMzMiIGNsYXNzPSJjbHMtNCIgc3R5bGU9ImZpbGw6dXJsKCNfJUU1JTkwJThEJUU3JUE3JUIwJUU2JTlDJUFBJUU4JUE4JUFEJUU1JUFFJTlBJUUzJTgyJUIwJUUzJTgzJUE5JUUzJTgzJTg3JUUzJTgzJUJDJUUzJTgyJUI3JUUzJTgzJUE3JUUzJTgzJUIzXzM0LTIpIiBkPSJNIDYuMDkwNDkyNyw0MS41OTQ5MSBBIDIuMjk2NjYxMSwyLjI5NjY2MTEgMCAwIDEgMy43OTM4MzE2LDQzLjg5MTU3MSAyLjI5NjY2MTEsMi4yOTY2NjExIDAgMCAxIDEuNDk3MTcwNCw0MS41OTQ5MSAyLjI5NjY2MTEsMi4yOTY2NjExIDAgMCAxIDMuNzkzODMxNiwzOS4yOTgyNDkgMi4yOTY2NjExLDIuMjk2NjYxMSAwIDAgMSA2LjA5MDQ5MjcsNDEuNTk0OTEgWiIgLz4gPC9nPiA8L2c+IDxwYXRoIGlkPSJsaW5lMzkiIGNsYXNzPSJjbHMtNSIgc3R5bGU9ImZpbGw6bm9uZTtzdHJva2U6Izc3NmM2NjtzdHJva2Utd2lkdGg6MC45NjYyOTlweDtzdHJva2UtbWl0ZXJsaW1pdDoxMCIgZD0iTSAxMDkuNzkyOTgsMCBWIDY2LjUyMTMzOSIgLz4gPGcgaWQ9Im1pbnVzNjUtbWFyayIgZGF0YS1uYW1lPSJtaW51cyA2NSBjZWxzaXVzIj4gPGcgYXJpYS1sYWJlbD0i4oiSNjUiIGlkPSJ0ZXh0NDEiIHN0eWxlPSJmb250LXdlaWdodDo4MDA7Zm9udC1zaXplOjM5cHg7Zm9udC1mYW1pbHk6J0RlamFWdSBTYW5zIENvbmRlbnNlZCcsICdEZWphVnUgU2FucycsIEFyaWFsLCBIZWx2ZXRpY2EsIHNhbnMtc2VyaWY7ZmlsbDojNzc2YzY2Ij4gPHBhdGggZD0ibSAxMjYuNzMyMzIsMzEuMzI3MzQzIGggMjQuNDEzMDkgdiA0LjQ5NDE0MSBoIC0yNC40MTMwOSB6IiBpZD0icGF0aDU2IiAvPiA8cGF0aCBkPSJtIDE2OS4zODg1NywzMS43NjUzMzEgcSAtMS45MjMzNCwwIC0yLjg5NDUzLDEuMjU2ODM2IC0wLjk1MjE1LDEuMjM3NzkzIC0wLjk1MjE1LDMuNzMyNDIyIDAsMi40OTQ2MjkgMC45NTIxNSwzLjc1MTQ2NSAwLjk3MTE5LDEuMjM3NzkzIDIuODk0NTMsMS4yMzc3OTMgMS45NDIzOSwwIDIuODk0NTMsLTEuMjM3NzkzIDAuOTcxMiwtMS4yNTY4MzYgMC45NzEyLC0zLjc1MTQ2NSAwLC0yLjQ5NDYyOSAtMC45NzEyLC0zLjczMjQyMiAtMC45NTIxNCwtMS4yNTY4MzYgLTIuODk0NTMsLTEuMjU2ODM2IHogbSA5LjA2NDQ2LC0xMy42NTM4MDggdiA1LjI1NTg1OSBxIC0xLjgwOTA5LC0wLjg1NjkzNCAtMy40MDg3LC0xLjI1NjgzNiAtMS41OTk2LC0wLjQxODk0NSAtMy4xMjMwNCwtMC40MTg5NDUgLTMuMjc1MzksMCAtNS4xMDM1MiwxLjgyODEyNSAtMS44MjgxMiwxLjgwOTA4MiAtMi4xMzI4MSw1LjM4OTE2IDEuMjU2ODQsLTAuOTMzMTA2IDIuNzIzMTQsLTEuMzkwMTM3IDEuNDY2MzEsLTAuNDc2MDc0IDMuMTk5MjIsLTAuNDc2MDc0IDQuMzYwODQsMCA3LjAyNjg2LDIuNTUxNzU4IDIuNjg1MDYsMi41NTE3NTggMi42ODUwNiw2LjY4NDA4MiAwLDQuNTcwMzEyIC0yLjk4OTc1LDcuMzMxNTQzIC0yLjk4OTc1LDIuNzQyMTg3IC04LjAxNzA5LDIuNzQyMTg3IC01LjU0MTUsMCAtOC41ODgzOCwtMy43MzI0MjIgLTMuMDI3ODMsLTMuNzUxNDY0IC0zLjAyNzgzLC0xMC42MjU5NzYgMCwtNy4wNDU4OTkgMy41NDE5OSwtMTEuMDYzOTY1IDMuNTYxMDQsLTQuMDM3MTA5IDkuNzUsLTQuMDM3MTA5IDEuOTYxNDMsMCAzLjgwODYsMC4zMDQ2ODcgMS44NDcxNiwwLjMwNDY4OCAzLjY1NjI1LDAuOTE0MDYzIHoiIGlkPSJwYXRoNTgiIC8+IDxwYXRoIGQ9Im0gMTg2LjU0NjI5LDE3LjM2ODg0NyBoIDE4LjIyNDEyIHYgNS4zODkxNiBoIC0xMi4zNzc5MyB2IDQuMzk4OTI2IHEgMC44Mzc4OSwtMC4yMjg1MTYgMS42NzU3OCwtMC4zNDI3NzQgMC44NTY5MywtMC4xMzMzIDEuNzcxLC0wLjEzMzMgNS4xOTg3MywwIDguMDkzMjYsMi42MDg4ODYgMi44OTQ1MywyLjU4OTg0NCAyLjg5NDUzLDcuMjM2MzI4IDAsNC42MDgzOTkgLTMuMTYxMTMsNy4yMTcyODYgLTMuMTQyMDksMi42MDg4ODYgLTguNzQwNzMsMi42MDg4ODYgLTIuNDE4NDUsMCAtNC43OTg4MiwtMC40NzYwNzQgLTIuMzYxMzMsLTAuNDU3MDMxIC00LjcwMzYyLC0xLjQwOTE4IHYgLTUuNzcwMDE5IHEgMi4zMjMyNCwxLjMzMzAwOCA0LjM5ODkzLDEuOTk5NTEyIDIuMDk0NzIsMC42NjY1MDQgMy45NDE4OSwwLjY2NjUwNCAyLjY2NjAyLDAgNC4xODk0NiwtMS4yOTQ5MjIgMS41NDI0OCwtMS4zMTM5NjUgMS41NDI0OCwtMy41NDE5OTMgMCwtMi4yNDcwNyAtMS41NDI0OCwtMy41NDE5OTIgLTEuNTIzNDQsLTEuMjk0OTIyIC00LjE4OTQ2LC0xLjI5NDkyMiAtMS41ODA1NiwwIC0zLjM3MDYsMC40MTg5NDYgLTEuNzkwMDQsMC4zOTk5MDIgLTMuODQ2NjgsMS4yNTY4MzYgeiIgaWQ9InBhdGg2MCIgLz4gPC9nPiA8ZyBhcmlhLWxhYmVsPSLCsCIgaWQ9InRleHQ0MyIgc3R5bGU9ImZvbnQtd2VpZ2h0OjgwMDtmb250LXNpemU6MjQuNXB4O2ZvbnQtZmFtaWx5OidEZWphVnUgU2FucyBDb25kZW5zZWQnLCAnRGVqYVZ1IFNhbnMnLCBBcmlhbCwgSGVsdmV0aWNhLCBzYW5zLXNlcmlmO2ZpbGw6Izc3NmM2NiI+IDxwYXRoIGQ9Im0gMjEwLjcyNTAxLDI2LjI4NjkxNSBxIC0wLjg2MTMzLDAgLTEuNDU5NDgsMC41OTgxNDQgLTAuNTk4MTQsMC41OTgxNDUgLTAuNTk4MTQsMS40NTk0NzMgMCwwLjg2MTMyOCAwLjU4NjE4LDEuNDQ3NTEgMC41OTgxNSwwLjU4NjE4MSAxLjQ3MTQ0LDAuNTg2MTgxIDAuODYxMzIsMCAxLjQ1OTQ3LC0wLjU4NjE4MSAwLjU5ODE0LC0wLjU5ODE0NSAwLjU5ODE0LC0xLjQ0NzUxIDAsLTAuODYxMzI4IC0wLjYxMDEsLTEuNDU5NDczIC0wLjU5ODE1LC0wLjU5ODE0NCAtMS40NDc1MSwtMC41OTgxNDQgeiBtIDAsLTEuOTM3OTg4IHEgMC43ODk1NSwwIDEuNTE5MjgsMC4zMTEwMzUgMC43Mjk3NCwwLjI5OTA3MiAxLjMwMzk2LDAuODYxMzI4IDAuNTYyMjUsMC41NzQyMTkgMC44NDkzNiwxLjI5MTk5MiAwLjI5OTA4LDAuNzE3NzczIDAuMjk5MDgsMS41MzEyNSAwLDAuODAxNTE0IC0wLjI5OTA4LDEuNTMxMjUgLTAuMjg3MTEsMC43MTc3NzMgLTAuODI1NDQsMS4yNTYxMDQgLTAuNTc0MjEsMC41NzQyMTggLTEuMzE1OTEsMC44ODUyNTMgLTAuNzQxNywwLjI5OTA3MyAtMS41NTUxOCwwLjI5OTA3MyAtMS42ODY3NywwIC0yLjgzNTIsLTEuMTM2NDc1IC0xLjEzNjQ4LC0xLjE0ODQzNyAtMS4xMzY0OCwtMi44MzUyMDUgMCwtMS42ODY3NjggMS4xNDg0NCwtMi44MzUyMDUgMS4xNjA0LC0xLjE2MDQgMi44NDcxNywtMS4xNjA0IHoiIGlkPSJwYXRoNjMiIC8+IDwvZz4gPGcgYXJpYS1sYWJlbD0iQyIgaWQ9InRleHQ0NSIgc3R5bGU9ImZvbnQtd2VpZ2h0OjgwMDtmb250LXNpemU6MjcuNXB4O2ZvbnQtZmFtaWx5OidEZWphVnUgU2FucyBDb25kZW5zZWQnLCAnRGVqYVZ1IFNhbnMnLCBBcmlhbCwgSGVsdmV0aWNhLCBzYW5zLXNlcmlmO2ZpbGw6Izc3NmM2NiI+IDxwYXRoIGQ9Im0gMjM3LjAyMjg2LDQyLjY5ODkyNSBxIC0xLjQyMzM0LDAuNzM4NTI1IC0yLjk2NzUzLDEuMTE0NTAyIC0xLjU0NDE5LDAuMzc1OTc3IC0zLjIyMjY2LDAuMzc1OTc3IC01LjAwODU0LDAgLTcuOTM1NzksLTIuNzkyOTY5IC0yLjkyNzI0LC0yLjgwNjM5NyAtMi45MjcyNCwtNy42MDAwOTggMCwtNC44MDcxMjkgMi45MjcyNCwtNy42MDAwOTggMi45MjcyNSwtMi44MDYzOTYgNy45MzU3OSwtMi44MDYzOTYgMS42Nzg0NywwIDMuMjIyNjYsMC4zNzU5NzcgMS41NDQxOSwwLjM3NTk3NiAyLjk2NzUzLDEuMTE0NTAyIHYgNC4xNDkxNjkgcSAtMS40MzY3NywtMC45ODAyMjQgLTIuODMzMjUsLTEuNDM2NzY3IC0xLjM5NjQ5LC0wLjQ1NjU0MyAtMi45NDA2OCwtMC40NTY1NDMgLTIuNzY2MTEsMCAtNC4zNTA1OCwxLjc3MjQ2MSAtMS41ODQ0OCwxLjc3MjQ2MSAtMS41ODQ0OCw0Ljg4NzY5NSAwLDMuMTAxODA3IDEuNTg0NDgsNC44NzQyNjggMS41ODQ0NywxLjc3MjQ2MSA0LjM1MDU4LDEuNzcyNDYxIDEuNTQ0MTksMCAyLjk0MDY4LC0wLjQ1NjU0MyAxLjM5NjQ4LC0wLjQ1NjU0MyAyLjgzMzI1LC0xLjQzNjc2OCB6IiBpZD0icGF0aDY2IiAvPiA8L2c+IDwvZz4gPC9nPiA8L2c+IDwvc3ZnPg==',
+  };
+
+  const esc = v => String(v == null ? '' : v).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const cell = (label, raw, unit = '', note = '') => ({ label, raw, unit, note });
+  const shown = v => typeof v === 'number' ? (Number.isInteger(v) ? nf.format(v) : nf1.format(v)) : v;
+  const csvNum = v => typeof v === 'number' ? (Number.isInteger(v) ? String(v) : String(+v.toFixed(1)).replace('.', ',')) : v;
+  const STATUS = { ok: 'Đạt', warn: 'Lưu ý', bad: 'Chưa đạt' };
+
+  // Toàn bộ nội dung bảng chi tiết, dùng chung cho bản in và file Excel
+  function reportData() {
+    const r = calc(), lo = calc(0.5);
+    const m = MODELS.find(x => x.id === s.model), pl = plan(m), g = lossPerKg();
+    const K = lim('K', s.K), yrs = lim('Y', s.Y), cost = useCost();
+    const planKg = s.A * Math.max(0, s.C - s.D) / 100; // hao hụt giảm được theo số khách nhập
+
+    const inputs = [
+      { group: 'Sản phẩm và sản lượng', rows: [
+        cell('Tên sản phẩm', s.name.trim() || 'Chưa nhập'),
+        cell('Nhóm sản phẩm', PRESETS[s.type].label),
+        cell('Sản lượng cấp đông', s.A, 'kg/tháng', `${kg(s.A * 12)} mỗi năm`),
+        cell('Giá bán trung bình', s.B, 'đ/kg'),
+        cell('Giá mua / giá vốn nguyên liệu', s.V > 0 ? s.V : 'Chưa nhập', s.V > 0 ? 'đ/kg' : '', s.V > 0 && s.B > 0 ? `Lãi gộp khoảng ${nf1.format((s.B - s.V) / s.B * 100)}% giá bán` : ''),
+      ] },
+      { group: 'Hao hụt', rows: [
+        cell('Hao hụt hiện tại', s.C, '%', `${kg(s.A * s.C / 100)} mỗi tháng`),
+        cell('Hao hụt khi dùng iERA (khách ước tính)', s.D, '%', `${kg(s.A * s.D / 100)} mỗi tháng`),
+        cell('Phần hao hụt vẫn bán được (giảm giá)', s.S, '%', s.S ? `Bán rẻ hơn khoảng ${s.G}% giá bán` : ''),
+        cell('Cách tính hàng giữ lại được', cost ? 'Đỡ phải mua thêm nguyên liệu (theo giá mua)' : 'Bán thêm được (theo giá bán)'),
+        cell('Bán được giá cao hơn nhờ chất lượng', s.hasE ? s.E : 'Không tính', s.hasE ? 'đ/kg' : ''),
+      ] },
+      { group: 'Máy và chi phí', rows: [
+        cell('Máy quan tâm', m ? m.name : '—'),
+        cell('Số máy tính trong bảng', pl ? pl.n : 1, 'máy', pl && pl.cap ? `Công suất khoảng ${kg(pl.cap)}/tháng mỗi máy` : (lim('M', s.M) > 0 ? 'Khách tự chọn' : 'Chưa rõ công suất')),
+        cell('Tổng tiền đầu tư', s.I > 0 ? s.I : 'Chưa có báo giá', s.I > 0 ? 'đ' : '', s.iAuto && quote() ? `Báo giá tham khảo ngày ${PRICE_LIST.dateText}: ${quote().v.name}${quote().acc.length ? ' + ' + quote().acc.map(k => ACC_LABEL[k]).join(', ') : ''}${quote().n > 1 ? ' × ' + quote().n + ' máy' : ''}. Chưa gồm khay, lắp đặt, vận chuyển, thuế` : ''),
+        cell('Chi phí vận hành tăng thêm', s.O > 0 ? s.O : 'Chưa nhập', s.O > 0 ? 'đ/tháng' : '', 'Điện, bảo trì, nhân công, khay'),
+        cell('Giá điện, giờ chạy, ngày chạy', `${nf.format(lim('P', s.P))} đ/kWh · ${lim('H', s.H)} giờ/ngày · ${lim('N', s.N)} ngày/tháng`, '', 'Dùng cho ước tính tiền điện'),
+      ] },
+      { group: 'Giả định tính toán', rows: [
+        cell('Mức đạt được so với số khách nhập', K, '%', `Mức ${scenName()}`),
+        cell('Thời gian tính lợi nhuận tích lũy', yrs, 'năm'),
+      ] },
+    ];
+
+    const results = [
+      cell('Giá trị mỗi kg hao hụt giữ lại được', Math.round(g), 'đ/kg', cost ? 'Theo giá mua, phần bán giảm giá theo mức chênh giá' : 'Theo giá bán'),
+      cell('Hao hụt giảm được theo số khách nhập', Math.round(planKg), 'kg/tháng'),
+      cell('Hao hụt giảm được theo mức đạt được', Math.round(planKg * kEff()), 'kg/tháng', `${K}% của số trên`),
+      cell('Lời nhờ giảm hao hụt', Math.round(r.loss), 'đ/tháng'),
+      cell('Lời nhờ bán được giá cao hơn', Math.round(r.price), 'đ/tháng'),
+      cell('Trừ chi phí vận hành', -Math.round(s.O), 'đ/tháng'),
+      cell('Lợi ròng mỗi tháng', Math.round(r.net), 'đ/tháng', money(r.net)),
+      cell('Lợi ròng mỗi năm', Math.round(r.net * 12), 'đ/năm', money(r.net * 12)),
+      cell('Thời gian hoàn vốn', r.payback ? +r.payback.toFixed(1) : (s.I > 0 ? 'Chưa hoàn vốn' : 'Chưa có báo giá'), r.payback ? 'tháng' : '', r.payback ? months(r.payback) : ''),
+      cell(`Lời tích lũy sau ${yrs} năm, trừ tiền máy`, s.I > 0 ? Math.round(r.net * yrs * 12 - s.I) : 'Chưa có báo giá', s.I > 0 ? 'đ' : ''),
+    ];
+    if (s.I > 0 && breakEvenKg(r)) results.push(cell(`Sản lượng cần để hoàn vốn trong ${CONFIG.paybackMax} tháng`, Math.round(breakEvenKg(r)), 'kg/tháng', `${kg(breakEvenKg(r))} mỗi tháng, so với hiện tại ${kg(s.A)}`));
+    if (!s.I && r.net > 0) results.push(cell(`Tiền máy tối đa để hoàn vốn trong ${CONFIG.paybackGood} tháng`, Math.round(r.net * CONFIG.paybackGood), 'đ', money(r.net * CONFIG.paybackGood)));
+
+    const ks = [50, 75, 100];
+    if (!ks.includes(K)) { ks.push(K); ks.sort((a, b) => a - b); }
+    const scen = {
+      head: ['Mức đạt được', 'Giảm hao hụt (đ/tháng)', 'Giá cao hơn (đ/tháng)', 'Lợi ròng (đ/tháng)', 'Lợi ròng (đ/năm)', 'Hoàn vốn (tháng)', `Tích lũy ${yrs} năm, trừ tiền máy (đ)`],
+      rows: ks.map(k => {
+        const c = calc(k / 100);
+        const name = k === 50 ? 'thận trọng' : k === 75 ? 'kỳ vọng' : k === 100 ? 'tối đa' : 'tự chọn';
+        return { cur: k === K, cells: [`${k}% (${name})`, Math.round(c.loss), Math.round(c.price), Math.round(c.net), Math.round(c.net * 12), c.payback ? +c.payback.toFixed(1) : (s.I > 0 ? 'Chưa hoàn vốn' : '—'), s.I > 0 ? Math.round(c.net * yrs * 12 - s.I) : '—'] };
+      }),
+    };
+
+    const marks = [0, 6, 12, 18, 24, 36, 48, 60, 72, 84, 96, 108, 120].filter(x => x <= yrs * 12);
+    marks.push(yrs * 12);
+    if (r.payback && r.payback <= yrs * 12) marks.push(Math.ceil(r.payback));
+    const flow = {
+      head: s.I > 0 ? ['Mốc thời gian (tháng)', 'Lời tích lũy (đ)', 'Sau khi trừ tiền đầu tư (đ)', 'Tình trạng'] : ['Mốc thời gian (tháng)', 'Lời tích lũy (đ)'],
+      rows: [...new Set(marks)].sort((a, b) => a - b).map(mo => {
+        const cum = Math.round(r.net * mo);
+        return s.I > 0 ? [mo, cum, cum - s.I, mo === 0 ? 'Bắt đầu' : (cum >= s.I ? 'Đã hoàn vốn' : 'Chưa hoàn vốn')] : [mo, cum];
+      }),
+    };
+
+    const checks = [];
+    const add = (label, status, detail) => checks.push({ label, status, detail });
+    add('Có lời ròng dương theo mức đang chọn', r.net > 0 ? 'ok' : 'bad', r.net > 0 ? `${money(r.net)} mỗi tháng` : 'Lợi ích chưa bù được chi phí');
+    add('Vẫn có lời khi chỉ đạt 50% (thận trọng)', lo.net > 0 ? 'ok' : 'bad', `${money(lo.net)} mỗi tháng`);
+    if (s.I > 0) {
+      let st = 'bad';
+      if (r.payback) st = r.payback <= CONFIG.paybackGood ? 'ok' : (r.payback <= CONFIG.paybackMax ? 'warn' : 'bad');
+      add(`Hoàn vốn trong ${CONFIG.paybackGood} tháng (mức đang chọn)`, st, r.payback ? months(r.payback) : 'Chưa hoàn vốn');
+      add(`Hoàn vốn trong ${CONFIG.paybackMax} tháng (mức thận trọng)`, lo.payback && lo.payback <= CONFIG.paybackMax ? 'ok' : 'warn', lo.payback ? months(lo.payback) : 'Chưa hoàn vốn ở mức này');
+    } else {
+      add('Có báo giá máy để tính hoàn vốn', 'warn', 'Chưa nhập tổng tiền đầu tư');
+    }
+    if (s.V > 0) add('Giá mua thấp hơn giá bán', s.V < s.B ? 'ok' : 'bad', s.V < s.B ? `Lãi gộp khoảng ${nf1.format((s.B - s.V) / s.B * 100)}%` : 'Cần kiểm tra lại hai số này');
+    else add('Đã nhập giá mua', 'warn', 'Chưa nhập: hàng giữ lại đang tính theo giá bán nên kết quả có thể cao hơn thực tế');
+    add('Đã tính chi phí vận hành', s.O > 0 ? 'ok' : 'warn', s.O > 0 ? `${money(s.O)} mỗi tháng` : 'Chưa nhập điện, bảo trì, nhân công');
+    if (s.C > 0 && (s.C - s.D) / s.C > 0.7) add('Mức giảm hao hụt khách ước tính', 'warn', `Giảm ${nf1.format((s.C - s.D) / s.C * 100)}% so với hiện tại, nên xác nhận bằng cấp đông thử`);
+    if (s.hasE && r.price > 0 && r.price / (r.loss + r.price) > 0.4) add('Lợi ích không phụ thuộc nhiều vào giá bán cao hơn', 'warn', `${nf1.format(r.price / (r.loss + r.price) * 100)}% lợi ích đến từ giả định bán được giá cao hơn`);
+    if (pl && pl.cap) add('Công suất máy đáp ứng sản lượng', pl.short || (lim('M', s.M) === 0 && pl.need > 1) ? 'warn' : 'ok', pl.short || pl.need > 1 ? `Cần khoảng ${pl.need} máy, tiền đầu tư nên tính cho cả cấu hình` : 'Một máy đủ công suất');
+
+    let verdict;
+    if (r.net <= 0) verdict = { level: 'bad', title: 'Chưa hiệu quả với số liệu hiện tại', text: 'Lợi ích chưa bù được chi phí. Nên kiểm tra lại mức hao hụt, hoặc cấp đông thử để lấy số thật trước khi quyết định.' };
+    else if (!s.I) verdict = { level: 'warn', title: 'Chưa đủ dữ liệu để kết luận hoàn vốn', text: `Cần báo giá máy. Theo số liệu này, tổng đầu tư nên không vượt khoảng ${money(r.net * CONFIG.paybackGood)} để hoàn vốn trong ${CONFIG.paybackGood} tháng.` };
+    else if (r.payback && r.payback <= CONFIG.paybackGood && lo.payback && lo.payback <= CONFIG.paybackMax) verdict = { level: 'ok', title: 'Khả quan, đáng cân nhắc đầu tư', text: `Hoàn vốn khoảng ${months(r.payback)}, và ngay cả ở mức thận trọng cũng hoàn vốn trong ${months(lo.payback)}. Nên cấp đông thử miễn phí để xác nhận mức hao hụt thực tế.` };
+    else if (r.payback && r.payback <= CONFIG.paybackGood) verdict = { level: 'warn', title: 'Khả quan nếu đạt kỳ vọng, nhưng nhạy với mức đạt được', text: 'Kết quả tốt ở mức đang chọn nhưng chưa vững ở mức thận trọng. Cần cấp đông thử để xác nhận mức hao hụt thực tế trước khi quyết định.' };
+    else if (r.payback && r.payback <= CONFIG.paybackMax) verdict = { level: 'warn', title: 'Cần cân nhắc', text: `Hoàn vốn khoảng ${months(r.payback)}. Nên xem lại tiền đầu tư, mức hao hụt, và cấp đông thử để có số thật.` };
+    else verdict = { level: 'bad', title: 'Chưa hấp dẫn với số liệu hiện tại', text: 'Thời gian hoàn vốn dài hoặc chưa hoàn vốn. Nên kiểm tra lại số liệu hoặc cấp đông thử trước khi quyết định.' };
+
+    return { inputs, results, scen, flow, checks, verdict, formula: R('formula').textContent, lines: R('plain') ? [...R('plain').querySelectorAll('li')].map(li => li.textContent) : [] };
+  }
+
+  const REPORT_CSS = `
+    @page { size: A4; margin: 12mm 12mm 14mm; }
+    * { box-sizing: border-box; }
+    html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    body { margin: 0; padding: 16px; background: #fff; color: #231815; font: 12px/1.5 "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
+    .sheet { max-width: 186mm; margin: 0 auto; }
+    .top { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-bottom: 10px; border-bottom: 3px solid #005BAC; }
+    .top img.k { height: 26px; width: auto; } .top img.i { height: 44px; width: auto; }
+    .strip { display: flex; height: 4px; } .strip i { flex: 1; display: block; }
+    h1 { margin: 14px 0 2px; font-size: 18px; line-height: 1.25; letter-spacing: -.01em; color: #005BAC; text-align: center; }
+    .sub { text-align: center; color: #776c66; font-size: 11px; margin-bottom: 12px; }
+    h2 { margin: 16px 0 6px; font-size: 13px; color: #fff; background: #005BAC; padding: 4px 10px; border-radius: 4px; break-after: avoid; }
+    h3 { margin: 10px 0 4px; font-size: 12px; color: #005BAC; break-after: avoid; }
+    table { width: 100%; border-collapse: collapse; margin-bottom: 4px; }
+    th, td { border: 1px solid #cfd4dc; padding: 4px 7px; text-align: left; vertical-align: top; }
+    th { background: #eef2f8; font-weight: 600; }
+    tr { break-inside: avoid; }
+    td.n, th.n { text-align: right; font-variant-numeric: tabular-nums; }
+    td.n { white-space: nowrap; }
+    table.kv { table-layout: fixed; }
+    table.grid { table-layout: fixed; font-size: 11px; } table.grid th, table.grid td { padding: 3px 5px; } table.grid th:first-child { width: 15%; }
+    td.u { color: #776c66; white-space: nowrap; }
+    td.note { color: #776c66; font-size: 11px; }
+    tr.cur td { background: #fff7d6; font-weight: 600; }
+    .cust { display: grid; grid-template-columns: 1fr 1fr; gap: 0; }
+    .cust div { border: 1px solid #cfd4dc; padding: 5px 8px; margin: -1px 0 0 -1px; min-height: 30px; }
+    .cust b { display: block; font-size: 10px; color: #776c66; font-weight: 600; }
+    .verdict { border: 2px solid; border-radius: 6px; padding: 8px 12px; margin: 6px 0; break-inside: avoid; }
+    .verdict.ok { border-color: #1F7A36; background: #eaf6ed; } .verdict.warn { border-color: #A15C00; background: #fff4e0; } .verdict.bad { border-color: #C4161C; background: #fdecec; }
+    .verdict b { display: block; font-size: 14px; margin-bottom: 2px; }
+    .tag { display: inline-block; min-width: 56px; text-align: center; padding: 1px 6px; border-radius: 10px; font-weight: 700; font-size: 11px; }
+    .tag.ok { background: #d5efdb; color: #1F7A36; } .tag.warn { background: #ffe6bd; color: #8a4f00; } .tag.bad { background: #f9d3d3; color: #C4161C; }
+    pre { margin: 0; padding: 8px 10px; background: #f4f5f7; border-radius: 4px; font: 10.5px/1.6 Consolas, "Courier New", monospace; white-space: pre-wrap; word-break: break-word; }
+    .small { font-size: 10.5px; color: #776c66; margin: 4px 0; }
+    .sign { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 16px; text-align: center; break-inside: avoid; }
+    .sign div { min-height: 70px; border-top: 1px solid #776c66; padding-top: 4px; font-size: 11px; }
+    .foot { margin-top: 14px; padding-top: 8px; border-top: 3px solid #005BAC; display: flex; justify-content: space-between; gap: 12px; font-size: 11px; color: #776c66; break-inside: avoid; }
+    .foot b { color: #231815; }
+    @media (max-width: 560px) { body { padding: 10px; font-size: 11px; } .cust { grid-template-columns: 1fr; } .top img.k { height: 20px; } .top img.i { height: 34px; } th, td { padding: 3px 5px; } .foot { flex-direction: column; } }
+  `;
+
+  function reportHtml(info) {
+    const d = reportData();
+    const today = new Date().toLocaleDateString('vi-VN');
+    const strip = ['#5DB443', '#E3262B', '#F5D400', '#5CC3DA', '#9A5BB5', '#F08A24', '#005BAC'].map(c => `<i style="background:${c}"></i>`).join('');
+    const kvTable = rows => `<table class="kv"><colgroup><col style="width:38%"><col style="width:25%"><col style="width:11%"><col style="width:26%"></colgroup>${rows.map(c => `<tr><td>${esc(c.label)}</td><td class="${typeof c.raw === 'number' ? 'n' : ''}"><b>${esc(shown(c.raw))}</b></td><td class="u">${esc(c.unit)}</td><td class="note">${esc(c.note)}</td></tr>`).join('')}</table>`;
+    const gridTable = (head, rows) => `<table class="grid"><tr>${head.map((h, i) => `<th class="${i ? 'n' : ''}">${esc(h)}</th>`).join('')}</tr>${rows.map(rw => {
+      const cs = Array.isArray(rw) ? rw : rw.cells;
+      return `<tr class="${rw.cur ? 'cur' : ''}">${cs.map((v, i) => `<td class="${i && typeof v === 'number' ? 'n' : ''}">${esc(shown(v))}</td>`).join('')}</tr>`;
+    }).join('')}</table>`;
+    const person = [['Công ty / đơn vị', info.company], ['Người liên hệ', info.contact], ['Số điện thoại / Zalo', info.phone], ['Người lập bảng (KOBASHI VN)', info.preparer]];
+
+    return `<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Bảng đánh giá lợi ích iERA</title><style>${REPORT_CSS}</style><\/head><body><div class="sheet">
+<div class="top"><img class="k" src="${LOGOS.kobashi}" alt="KOBASHI"><img class="i" src="${LOGOS.iera}" alt="iERA −65°C"></div>
+<div class="strip">${strip}</div>
+<h1>BẢNG ĐÁNH GIÁ LỢI ÍCH ĐẦU TƯ MÁY CẤP ĐÔNG iERA −65°C</h1>
+<div class="sub">Ngày lập: ${esc(today)} · Số liệu do khách hàng cung cấp, kết quả là ước tính, không phải cam kết</div>
+
+<h2>1. Thông tin khách hàng</h2>
+<div class="cust">${person.map(([k, v]) => `<div><b>${esc(k)}</b>${esc(v) || '&nbsp;'}</div>`).join('')}</div>
+
+<h2>2. Số liệu đầu vào</h2>
+${d.inputs.map(g => `<h3>${esc(g.group)}</h3>${kvTable(g.rows)}`).join('')}
+
+<h2>3. Kết quả tính toán</h2>
+${kvTable(d.results)}
+<h3>So sánh theo mức đạt được</h3>
+${gridTable(d.scen.head, d.scen.rows)}
+<div class="small">Dòng tô vàng là mức đang chọn. Mức đạt được cho biết thực tế đạt bao nhiêu phần trăm so với số hao hụt và giá bán đã nhập.</div>
+
+<h2>4. Lời tích lũy theo thời gian</h2>
+${gridTable(d.flow.head, d.flow.rows)}
+
+<h2>5. Đánh giá sơ bộ: có nên đầu tư không?</h2>
+<div class="verdict ${d.verdict.level}"><b>${esc(d.verdict.title)}</b>${esc(d.verdict.text)}</div>
+<table><tr><th>Tiêu chí</th><th style="width:1%">Kết quả</th><th>Chi tiết</th></tr>${d.checks.map(c => `<tr><td>${esc(c.label)}</td><td><span class="tag ${c.status}">${STATUS[c.status]}</span></td><td class="note">${esc(c.detail)}</td></tr>`).join('')}</table>
+<div class="small">Đánh giá dựa trên các ngưỡng tham khảo: hoàn vốn trong ${CONFIG.paybackGood} tháng là tốt, trong ${CONFIG.paybackMax} tháng là chấp nhận được. Quyết định đầu tư còn phụ thuộc kế hoạch kinh doanh của doanh nghiệp.</div>
+
+<h2>6. Cách tính và giả định</h2>
+<pre>${esc(d.formula)}</pre>
+<div class="small">Chưa tính: khấu hao, lãi vay, thuế, giá trị theo thời gian của đồng tiền. Cũng chưa tính các lợi ích khó đo như tiết kiệm nhân công, bán trái vụ, mở rộng thị trường xuất khẩu, tiền thuê cấp đông ngoài (nếu có). Kết quả thực tế được xác nhận bằng cấp đông thử trên sản phẩm của khách hàng.</div>
+
+<div class="sign"><div>Người lập bảng<br><span style="color:#776c66">(KOBASHI VN)</span></div><div>Khách hàng xác nhận số liệu<br><span style="color:#776c66">(ký, ghi rõ họ tên)</span></div></div>
+<div class="foot"><div><b>KOBASHI VIETNAM</b><br>${esc(CONFIG.email)}</div><div>Hotline / Zalo: <b>${esc(CONFIG.phone)}</b><br>${esc(CONFIG.hours)}</div></div>
+</div><\/body><\/html>`;
+  }
+
+  // File Excel (CSV): dòng "sep=;" để Excel luôn tách cột đúng bất kể cài đặt khu vực, BOM để hiển thị đúng tiếng Việt
+  function reportCsv(info) {
+    const d = reportData(), rows = [];
+    rows.push(['KOBASHI · iERA −65°C', 'BẢNG ĐÁNH GIÁ LỢI ÍCH ĐẦU TƯ MÁY CẤP ĐÔNG']);
+    rows.push(['Ngày lập', new Date().toLocaleDateString('vi-VN')]);
+    rows.push(['Công ty / đơn vị', info.company]); rows.push(['Người liên hệ', info.contact]);
+    rows.push(['Số điện thoại / Zalo', info.phone]); rows.push(['Người lập bảng (KOBASHI VN)', info.preparer]);
+    rows.push([]); rows.push(['SỐ LIỆU ĐẦU VÀO']); rows.push(['Nhóm', 'Thông số', 'Giá trị', 'Đơn vị', 'Ghi chú']);
+    d.inputs.forEach(g => g.rows.forEach(c => rows.push([g.group, c.label, csvNum(c.raw), c.unit, c.note])));
+    rows.push([]); rows.push(['KẾT QUẢ TÍNH TOÁN']); rows.push(['', 'Chỉ tiêu', 'Giá trị', 'Đơn vị', 'Ghi chú']);
+    d.results.forEach(c => rows.push(['', c.label, csvNum(c.raw), c.unit, c.note]));
+    rows.push([]); rows.push(['SO SÁNH THEO MỨC ĐẠT ĐƯỢC']); rows.push(d.scen.head);
+    d.scen.rows.forEach(rw => rows.push(rw.cells.map(csvNum)));
+    rows.push([]); rows.push(['LỜI TÍCH LŨY THEO THỜI GIAN']); rows.push(d.flow.head);
+    d.flow.rows.forEach(rw => rows.push(rw.map(csvNum)));
+    rows.push([]); rows.push(['ĐÁNH GIÁ SƠ BỘ']); rows.push(['Kết luận', d.verdict.title]); rows.push(['', d.verdict.text]);
+    rows.push(['Tiêu chí', 'Kết quả', 'Chi tiết']);
+    d.checks.forEach(c => rows.push([c.label, STATUS[c.status], c.detail]));
+    rows.push([]); rows.push(['Ghi chú', 'Số ước tính từ dữ liệu khách hàng nhập, không phải cam kết. Chưa tính khấu hao, lãi vay, thuế.']);
+    const q = v => '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"';
+    return '﻿' + 'sep=;\r\n' + rows.map(rw => rw.map(q).join(';')).join('\r\n');
+  }
+
+  const repModal = el('repModal'), repFrame = el('repFrame');
+  let repOpener = null, repTimer = null;
+  const repField = k => repModal.querySelector(`[name="rep-${k}"]`);
+  const repInfo = () => Object.fromEntries(['company', 'contact', 'phone', 'preparer'].map(k => [k, repField(k).value.trim()]));
+  const repRefresh = () => { repTimer = null; repFrame.srcdoc = reportHtml(repInfo()); };
+  function openReport() {
+    repOpener = document.activeElement;
+    const f = el('form');
+    // Gợi ý sẵn từ form nhận tư vấn nếu khách đã điền
+    [['company', f.company], ['contact', f.name], ['phone', f.phone]].forEach(([k, inp]) => { if (inp && !repField(k).value) repField(k).value = inp.value.trim(); });
+    repModal.hidden = false;
+    document.documentElement.style.overflow = 'hidden';
+    repRefresh();
+    el('repClose').focus();
+    track('iera_roi_report');
+  }
+  function closeReport() {
+    repModal.hidden = true;
+    document.documentElement.style.overflow = '';
+    if (repOpener && repOpener.focus) repOpener.focus();
+  }
+  function printReport() {
+    const run = () => { try { repFrame.contentWindow.focus(); repFrame.contentWindow.print(); } catch { toast('Chưa mở được hộp thoại in, bạn thử lại hoặc dùng nút tải Excel'); } };
+    track('iera_roi_report_print');
+    if (repTimer) { clearTimeout(repTimer); repRefresh(); repFrame.addEventListener('load', run, { once: true }); } else run();
+  }
+  el('exportRep').addEventListener('click', openReport);
+  el('repClose').addEventListener('click', closeReport);
+  el('repPrint').addEventListener('click', printReport);
+  el('repCsv').addEventListener('click', () => {
+    const blob = new Blob([reportCsv(repInfo())], { type: 'text/csv;charset=utf-8' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob); a.download = 'KOBASHI-iERA-bang-danh-gia.csv';
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+    track('iera_roi_report_csv'); toast('Đã tải file Excel (CSV)');
+  });
+  repModal.addEventListener('keydown', e => { if (e.key === 'Escape') closeReport(); });
+  repModal.addEventListener('input', () => { clearTimeout(repTimer); repTimer = setTimeout(repRefresh, 250); });
+
+  addEventListener('resize', () => { if (s.step === 5 && !narrow()) go(4); });
+  go(1);
+  root.dataset.up = '1';
+  el('boot').className = 'boot ok';
+})();
+</script>
+<script>
+/* Bảo vệ khởi động: nếu công cụ không chạy được thì tự xóa dữ liệu lưu cũ, thử lại một lần, rồi hiện thông báo lỗi rõ ràng */
+(function () {
+  var r = document.getElementById('iera-roi'), errs = [];
+  if (!r) return;
+  addEventListener('error', function (e) { errs.push((e.message || 'lỗi không rõ') + (e.lineno ? ' (dòng ' + e.lineno + ')' : '')); });
+  function check() {
+    if (r.dataset.up) return;
+    try { localStorage.removeItem('kobashi-iera-roi-v4'); } catch (x) {}
+    var again = false;
+    try { again = !sessionStorage.getItem('iera-roi-retry'); if (again) sessionStorage.setItem('iera-roi-retry', '1'); } catch (x) {}
+    if (again) { location.reload(); return; }
+    var b = r.querySelector('[data-el="boot"]');
+    if (b) { b.className = 'boot err'; b.textContent = 'Công cụ chưa khởi động được. Bạn thử tải lại trang (Ctrl + F5). Nếu vẫn lỗi, hãy chụp màn hình thông báo này gửi KOBASHI.' + (errs.length ? ' Chi tiết lỗi: ' + errs[errs.length - 1] : ''); }
+  }
+  if (document.readyState === 'complete') setTimeout(check, 800); else addEventListener('load', function () { setTimeout(check, 800); });
+})();
+</script>
