@@ -554,6 +554,14 @@ document.addEventListener("DOMContentLoaded", function () {
   const header = document.getElementById("switchHeader");
   if (!header) return;
 
+  // Header luôn dính ở trên cùng (CSS). Khi đã cuộn trang thì gắn .is-scrolled để header thấp lại nhẹ và có bóng đổ.
+  function updateScrolledState() {
+    header.classList.toggle("is-scrolled", (window.scrollY || window.pageYOffset || 0) > 8);
+  }
+  window.addEventListener("scroll", updateScrolledState, { passive: true });
+  window.addEventListener("load", updateScrolledState);
+  updateScrolledState();
+
   const isFixedHeaderPage =
     document.querySelector(".p-news") !== null ||
     document.querySelector(".p-iera") !== null;
