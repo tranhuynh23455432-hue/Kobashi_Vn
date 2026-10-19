@@ -628,7 +628,7 @@ img:is([sizes=auto i],[sizes^="auto," i]){contain-intrinsic-size:3000px 1500px}
 #iera-roi .box { display: flex; align-items: baseline; gap: 8px; background: var(--card); border: 1px solid var(--line); border-radius: var(--r-ctl); padding: 8px 14px; min-height: 56px; min-width: 0; transition: border-color .15s, box-shadow .15s; }
 #iera-roi .box:focus-within { border-color: var(--brand); box-shadow: 0 0 0 4px var(--ring); }
 #iera-roi .box input { width: 100%; font-family: var(--font-round); font-size: 26px; font-weight: 700; color: var(--fg); font-variant-numeric: tabular-nums; }
-#iera-roi .box input::placeholder { color: var(--fg3); font-weight: 500; }
+#iera-roi .box input::placeholder { color: var(--fg3); font-weight: 500; font-size: 16px; }
 #iera-roi .box .unit { color: var(--fg3t); font-size: 13px; font-weight: 600; white-space: nowrap; }
 #iera-roi .pm { width: 46px; height: 46px; border-radius: var(--r-ctl); border: 1px solid var(--line); background: var(--card); font-size: 22px; font-weight: 500; line-height: 1; color: var(--brand); display: grid; place-items: center; transition: background .15s, border-color .15s; }
 #iera-roi .pm:active { background: var(--tint-soft); }
@@ -725,6 +725,8 @@ img:is([sizes=auto i],[sizes^="auto," i]){contain-intrinsic-size:3000px 1500px}
 #iera-roi .optrow { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 44px; }
 #iera-roi .optrow span.t { flex: 1; min-width: 0; font-size: 15px; font-weight: 600; }
 #iera-roi .optrow span.t small { display: block; color: var(--fg3t); font-size: 12.5px; font-weight: 400; }
+#iera-roi .cell.ask { gap: 8px; }
+#iera-roi .ask-btn { width: 100%; }
 #iera-roi .qrows { display: grid; gap: 6px; background: var(--bg); border: 1px solid var(--sep); border-radius: var(--r-ctl); padding: 12px 14px; font-size: 14px; color: var(--fg2); }
 #iera-roi .qrows div { display: flex; justify-content: space-between; gap: 12px; }
 #iera-roi .qrows div b { font-variant-numeric: tabular-nums; white-space: nowrap; color: var(--fg); }
@@ -1003,17 +1005,35 @@ img:is([sizes=auto i],[sizes^="auto," i]){contain-intrinsic-size:3000px 1500px}
         <p class="warn" data-el="capWarn" hidden></p>
         <div class="group" data-el="quote" hidden>
           <div class="cell">
-            <div class="subhead">Báo giá tham khảo của KOBASHI<small data-el="quoteName"></small></div>
+            <div class="subhead">Cấu hình máy <span data-el="quoteName"></span><small>Chọn kiểu máy và phụ kiện cần dùng. Giá máy không hiển thị công khai, chuyên viên KOBASHI gửi báo giá chính xác theo đúng cấu hình của bạn.</small></div>
             <div class="chips" data-el="variants" hidden></div>
             <div data-el="opts"></div>
-            <div class="qrows" data-el="qrows"></div>
+            <p class="hint" data-el="optsNote" hidden>Bạn đang nhập giá trọn gói ở dưới nên phụ kiện không tính thêm.</p>
+          </div>
+          <div class="cell field" data-key="U">
+            <label class="label" for="iera-in-U">Giá máy theo báo giá của bạn<small>Không bắt buộc. Để trống, công cụ tự tính theo giá tham khảo của KOBASHI. Đã có báo giá thì nhập giá trọn gói cho mỗi máy.</small></label>
+            <div class="numrow">
+              <button type="button" class="pm" data-delta="-" aria-label="Giảm">−</button>
+              <div class="box"><input type="text" id="iera-in-U" inputmode="numeric" autocomplete="off" placeholder="Theo giá tham khảo"><span class="unit">đ / máy</span></div>
+              <button type="button" class="pm" data-delta="+" aria-label="Tăng">+</button>
+            </div>
+            <p class="readout" data-ro="U"></p>
+          </div>
+          <div class="cell ask">
+            <button type="button" class="btn btn-gray ask-btn" data-ask>Nhận báo giá chính xác cho cấu hình này</button>
             <p class="hint" data-el="qfoot"></p>
-            <button type="button" class="inline-btn" data-el="useQuote" hidden>Dùng giá tham khảo này làm tiền đầu tư</button>
+            <button type="button" class="inline-btn" data-el="useQuote" hidden>Tính tiền đầu tư theo cấu hình đã chọn</button>
+          </div>
+        </div>
+        <div class="group" data-el="adviceBox" hidden>
+          <div class="cell ask">
+            <div class="subhead">Chuyên viên KOBASHI chọn máy giúp bạn<small>Dựa trên sản phẩm và sản lượng bạn vừa nhập, KOBASHI đề xuất model, số máy và gửi báo giá phù hợp. Bạn vẫn xem được kết quả ước tính ở bên cạnh.</small></div>
+            <button type="button" class="btn btn-primary ask-btn" data-ask>Nhờ KOBASHI tư vấn và báo giá</button>
           </div>
         </div>
         <div class="group">
           <div class="cell field" data-key="I">
-            <label class="label" for="iera-in-I">Tổng tiền đầu tư<small>Theo báo giá của KOBASHI, nên gồm vận chuyển, lắp đặt, VAT. Để trống nếu chưa có.</small></label>
+            <label class="label" for="iera-in-I">Tổng tiền đầu tư<small>(Tham khảo)Tự tính theo cấu hình máy ở trên. Nếu đã có tổng chi phí (gồm vận chuyển, lắp đặt, VAT) thì gõ thẳng vào đây.</small></label>
             <div class="numrow">
               <button type="button" class="pm" data-delta="-" aria-label="Giảm">−</button>
               <div class="box"><input type="text" id="iera-in-I" inputmode="numeric" autocomplete="off" placeholder="Chưa có"><span class="unit">đ</span></div>
@@ -1328,14 +1348,14 @@ img:is([sizes=auto i],[sizes^="auto," i]){contain-intrinsic-size:3000px 1500px}
     { id: 'eco7000',  name: 'ECO 7000',  tag: 'Nhà máy lớn', desc: 'Hầm liên tục, băng chuyền · công suất điện 60 kW × 2', kwh: 120, trays: null, cap: null, quoteName: 'KOB-hầm 7m', price: 22267450000, accessories: null, custom: true },
     { id: 'advice',   name: 'Chưa biết, nhờ tư vấn', tag: '', desc: 'Chuyên viên KOBASHI chọn máy theo sản lượng của bạn' },
   ];
-  const STEP = { A: 500, B: 5000, V: 5000, E: 1000, I: 50000000, O: 500000, K: 5, P: 100, H: 1, N: 1, M: 1, Y: 1, T: 5, R: 1 };
+  const STEP = { U: 50000000, A: 500, B: 5000, V: 5000, E: 1000, I: 50000000, O: 500000, K: 5, P: 100, H: 1, N: 1, M: 1, Y: 1, T: 5, R: 1 };
   const NUM_KEYS = Object.keys(STEP);
   // S = % hao hụt vẫn bán được (giảm giá), G = % bị bán rẻ hơn của phần đó, k = mức đạt được so với số khách nhập
   // Các giả định khách tự chỉnh được (mục "Giả định tính toán" ở bước 4):
   //   K = mức đạt được (%), P = giá điện (đ/kWh), H = giờ chạy/ngày, N = ngày chạy/tháng,
   //   M = số máy (0 = tự tính theo công suất), Y = số năm tính lời tích lũy
   // V = giá mua / giá vốn nguyên liệu (đ/kg). mode = cách tính hàng giữ lại được: 'cost' (đỡ phải mua thêm, theo giá mua) hoặc 'sell' (bán thêm, theo giá bán)
-  const DEFAULT = { ...productVals(productOf(PRESETS.seafood.def)), mode: 'cost', iAuto: true, variant: 'std', opts: { cart: false, rack: false, rail: false }, S: 30, G: 40, K: 75, P: CONFIG.kwhPrice, H: 8, N: 26, M: 0, Y: 5, T: CONFIG.kgPerTray, R: CONFIG.batchesPerDay, I: 0, O: 0, oAuto: true, model: 'eco2000', step: 1, edited: false };
+  const DEFAULT = { ...productVals(productOf(PRESETS.seafood.def)), mode: 'cost', iAuto: true, variant: 'std', opts: { cart: false, rack: false, rail: false }, S: 30, G: 40, K: 75, P: CONFIG.kwhPrice, H: 8, N: 26, M: 0, Y: 5, T: CONFIG.kgPerTray, R: CONFIG.batchesPerDay, I: 0, U: 0, O: 0, oAuto: true, model: 'eco2000', step: 1, edited: false };
   const KEY = 'kobashi-iera-roi-v4';
   // Giới hạn [nhỏ nhất, lớn nhất] của từng giả định. Gõ vượt mức lớn nhất sẽ bị chặn ngay, mức nhỏ nhất áp dụng khi tính và khi rời ô nhập.
   const LIMITS = { K: [10, 100], P: [0, 20000], H: [1, 24], N: [1, 31], M: [0, 100], Y: [1, 10], T: [0, 300], R: [0, 24] };
@@ -1426,10 +1446,17 @@ img:is([sizes=auto i],[sizes^="auto," i]){contain-intrinsic-size:3000px 1500px}
     const m = MODELS.find(x => x.id === s.model);
     if (!m || !(m.price || m.variants)) return null;
     const v = m.variants ? (m.variants.find(x => x.id === s.variant) || m.variants[0]) : { name: m.quoteName, price: m.price };
-    const n = plan(m).n, acc = Object.keys(m.accessories || {}).filter(k => s.opts[k]);
+    const n = plan(m).n;
+    // Khách nhập giá trọn gói mỗi máy (U) thì dùng giá đó, không cộng phụ kiện; để trống thì dùng giá tham khảo (không hiển thị)
+    if (s.U > 0) return { m, v, n, acc: [], accSum: 0, unit: s.U, total: n * s.U, ref: false };
+    const acc = Object.keys(m.accessories || {}).filter(k => s.opts[k]);
     const accSum = acc.reduce((sum, k) => sum + m.accessories[k], 0);
-    return { m, v, n, acc, accSum, unit: v.price + accSum, total: n * (v.price + accSum) };
+    return { m, v, n, acc, accSum, unit: v.price + accSum, total: n * (v.price + accSum), ref: true };
   }
+
+  // Tiền đầu tư đang lấy theo giá tham khảo của KOBASHI: không hiển thị con số cho khách, chỉ dùng để tính
+  const refHidden = () => { const q = quote(); return !!(s.iAuto && q && q.ref && s.I > 0); };
+  const investText = (short) => refHidden() ? 'theo giá tham khảo KOBASHI' : money(s.I, short);
 
   // ---------- Nhập liệu ----------
   NUM_KEYS.forEach(key => {
@@ -1441,6 +1468,7 @@ img:is([sizes=auto i],[sizes^="auto," i]){contain-intrinsic-size:3000px 1500px}
       s[key] = d ? (LIMITS[key] ? Math.min(LIMITS[key][1], +d) : +d) : 0;
       if (key === 'I') s.iAuto = false;
       if (key === 'O') s.oAuto = false;
+      if (key === 'U') s.iAuto = true;
       const txt = d ? nf.format(s[key]) : '';
       if (input.value !== txt) {
         input.value = txt;
@@ -1458,9 +1486,11 @@ img:is([sizes=auto i],[sizes^="auto," i]){contain-intrinsic-size:3000px 1500px}
     });
     cell.querySelectorAll('.pm').forEach(b => b.addEventListener('click', () => {
       const d = b.dataset.delta === '+' ? STEP[key] : -STEP[key];
-      s[key] = lim(key, Math.max(0, Math.round((s[key] + d) / STEP[key]) * STEP[key]));
+      const base = (key === 'I' && refHidden()) || (key === 'O' && s.oAuto) ? 0 : s[key];
+      s[key] = lim(key, Math.max(0, Math.round((base + d) / STEP[key]) * STEP[key]));
       if (key === 'I') s.iAuto = false;
       if (key === 'O') s.oAuto = false;
+      if (key === 'U') s.iAuto = true;
       touched(); render();
     }));
     cell.querySelectorAll('.chip').forEach(c => c.addEventListener('click', () => { s[key] = +c.dataset.set; touched(); render(); }));
@@ -1486,6 +1516,11 @@ img:is([sizes=auto i],[sizes^="auto," i]){contain-intrinsic-size:3000px 1500px}
   el('variants').addEventListener('click', e => { const b = e.target.closest('[data-variant]'); if (b) { s.variant = b.dataset.variant; render(); } });
   el('opts').addEventListener('change', e => { const c = e.target.closest('[data-opt]'); if (c) { s.opts[c.dataset.opt] = c.checked; render(); } });
   el('useQuote').addEventListener('click', () => { s.iAuto = true; render(); });
+  $$('[data-ask]').forEach(b => b.addEventListener('click', () => {
+    track('iera_roi_ask_quote', { model: s.model });
+    if (narrow()) { go(5); focusView(); }
+    setTimeout(() => el('lead').scrollIntoView({ behavior: 'smooth', block: 'center' }), 60);
+  }));
 
   el('models').innerHTML = MODELS.map(m => `
     <button type="button" class="model" role="radio" data-model="${m.id}">
@@ -1559,7 +1594,11 @@ img:is([sizes=auto i],[sizes^="auto," i]){contain-intrinsic-size:3000px 1500px}
     if (s.oAuto) s.O = est.cost; // tiền điện tự tính lại theo giá điện, giờ chạy, ngày chạy, số máy
     const r = calc();
     // Luôn cập nhật các ô khác (tiền đầu tư, chi phí vận hành có thể được tự tính lại), trừ ô khách đang gõ
-    NUM_KEYS.forEach(k => { const i = $('#iera-in-' + k); if (document.activeElement !== i) i.value = s[k] ? nf.format(s[k]) : ''; });
+    const hideI = refHidden();
+    // Tổng tiền đầu tư theo giá ẩn và chi phí vận hành tự ước tính: để trống cho khách tự nhập, vẫn dùng để tính
+    NUM_KEYS.forEach(k => { const i = $('#iera-in-' + k); if (document.activeElement !== i) i.value = s[k] && !(k === 'I' && hideI) && !(k === 'O' && s.oAuto) ? nf.format(s[k]) : ''; });
+    $('#iera-in-O').placeholder = s.oAuto ? 'Tự ước tính tiền điện' : '0';
+    $('#iera-in-I').placeholder = hideI ? 'Theo giá tham khảo KOBASHI' : 'Chưa có';
 
     const cur = Math.min(s.step, 4);
     $$('.pane').forEach(p => p.hidden = +p.dataset.step !== cur);
@@ -1616,9 +1655,10 @@ img:is([sizes=auto i],[sizes^="auto," i]){contain-intrinsic-size:3000px 1500px}
     const nLost = Math.round(s.D), nSaved = Math.max(0, Math.round(s.C) - nLost);
     [...dots.children].forEach((d, i) => { d.className = i < nLost ? 'lost' : i < nLost + nSaved ? 'saved' : ''; });
 
-    ro('I', s.I ? `Đọc là <b>${money(s.I)}</b>.${s.iAuto && qt ? ' Đang lấy theo báo giá tham khảo ở trên, bạn có thể gõ số khác.' : ''}` : 'Chưa có báo giá: kết quả sẽ cho biết máy giá bao nhiêu thì hoàn vốn trong 2 năm.');
+    ro('U', s.U > 0 ? `Đọc là <b>${money(s.U)}</b> mỗi máy${qt && qt.n > 1 ? `, × ${qt.n} máy = <b>${money(qt.total)}</b>` : ''}. Tổng tiền đầu tư bên dưới tính theo giá này.` : 'Đang để trống: công cụ tính theo giá tham khảo của KOBASHI cho cấu hình đã chọn.');
+    ro('I', hideI ? `Đang tính theo giá tham khảo của KOBASHI${qt && qt.n > 1 ? ` cho ${qt.n} máy` : ''} (không hiển thị công khai). Có báo giá riêng thì nhập giá máy ở trên hoặc gõ tổng tiền vào đây.` : s.I ? `Đọc là <b>${money(s.I)}</b>.${s.iAuto && qt ? ` Tính theo giá máy bạn nhập ở trên${qt.n > 1 ? ' × ' + qt.n + ' máy' : ''}.` : ''}` : 'Chưa có báo giá: kết quả sẽ cho biết máy giá bao nhiêu thì hoàn vốn trong 2 năm.');
     ro('O', s.oAuto
-      ? `Đang tự tính tiền điện: <b>${money(s.O)}</b> mỗi tháng, đã trừ vào phần lời. Đổi giá điện, giờ chạy, ngày chạy ở mục "Giả định tính toán" thì số này tự cập nhật.`
+      ? `Để trống: công cụ tự trừ tiền điện ước tính khoảng <b>${money(s.O)}</b> mỗi tháng. Bạn nhập chi phí thực tế (điện, bảo trì, nhân công) để kết quả sát hơn.`
       : (s.O ? `Bạn tự nhập: <b>${money(s.O)}</b> mỗi tháng, đã trừ vào phần lời. Giá điện, giờ chạy, ngày chạy không còn ảnh hưởng số này.` : 'Đang để 0: kết quả chưa trừ tiền điện, bảo trì, nhân công.'));
     el('estO').hidden = s.oAuto;
     el('estNote').hidden = !s.oAuto;
@@ -1679,7 +1719,7 @@ img:is([sizes=auto i],[sizes^="auto," i]){contain-intrinsic-size:3000px 1500px}
     if (s.I > 0) {
       R('cumK').textContent = `Sau ${yrsT} năm, đã trừ tiền máy`;
       R('cum').textContent = (cumGain - s.I >= 0 ? '+' : '') + money(cumGain - s.I, true);
-      R('cumW').textContent = `Lời tích lũy ${money(cumGain, true)} − tiền máy ${money(s.I, true)}. Chưa tính thuế, khấu hao, lãi vay.`;
+      R('cumW').textContent = `Lời tích lũy ${money(cumGain, true)} − tiền máy ${investText(true)}. Chưa tính thuế, khấu hao, lãi vay.`;
     } else {
       R('cumK').textContent = `Lời tích lũy sau ${yrsT} năm`;
       R('cum').textContent = money(cumGain, true);
@@ -1715,7 +1755,7 @@ img:is([sizes=auto i],[sizes^="auto," i]){contain-intrinsic-size:3000px 1500px}
   = ${nf.format(Math.round(r.net))} đ` + (s.I ? `
 
 Hoàn vốn = Tiền đầu tư ÷ Lợi mỗi tháng
-  = ${nf.format(s.I)} ÷ ${nf.format(Math.round(r.net))}
+  = ${refHidden() ? 'tiền máy theo giá tham khảo KOBASHI' : nf.format(s.I)} ÷ ${nf.format(Math.round(r.net))}
   ≈ ${r.payback ? nf1.format(r.payback) + ' tháng' : 'không tính được'}` : '');
 
     drawChart(r);
@@ -1724,25 +1764,24 @@ Hoàn vốn = Tiền đầu tư ÷ Lợi mỗi tháng
 
   // ---------- Báo giá tham khảo (bước 4) ----------
   function renderQuote(qt) {
+    const mdl = MODELS.find(x => x.id === s.model);
+    el('adviceBox').hidden = !(mdl && mdl.id === 'advice');
+    // Giữ khối cấu hình khi khách đã nhập giá riêng, kể cả với máy không có bảng giá
     el('quote').hidden = !qt;
     if (!qt) return;
     const m = qt.m, optsEl = el('opts');
-    el('quoteName').textContent = `Theo bảng giá bán trực tiếp ngày ${PRICE_LIST.dateText}, đơn vị đồng`;
+    el('quoteName').textContent = m.name;
     const varEl = el('variants');
     varEl.hidden = !m.variants;
-    if (m.variants) varEl.innerHTML = m.variants.map(v => `<button type="button" class="chip" data-variant="${v.id}" aria-pressed="${v.id === qt.v.id}">${v.name}</button>`).join('');
+    if (m.variants) varEl.innerHTML = m.variants.map(v => `<button type="button" class="chip" data-variant="${v.id}" aria-pressed="${v.id === qt.v.id}">${v.name.replace(/^KOB-/, 'ECO ')}</button>`).join('');
     if (optsEl.dataset.for !== m.id) {
       optsEl.dataset.for = m.id;
-      optsEl.innerHTML = Object.keys(m.accessories || {}).map(k => `<label class="optrow"><span class="t">${ACC_LABEL[k]}<small>${vnd(m.accessories[k])}, tính riêng</small></span><span class="switch"><input type="checkbox" data-opt="${k}" role="switch"><span></span></span></label>`).join('');
+      optsEl.innerHTML = Object.keys(m.accessories || {}).map(k => `<label class="optrow"><span class="t">${ACC_LABEL[k]}<small>Phụ kiện, tính theo báo giá</small></span><span class="switch"><input type="checkbox" data-opt="${k}" role="switch"><span></span></span></label>`).join('');
     }
-    optsEl.querySelectorAll('[data-opt]').forEach(c => { c.checked = !!s.opts[c.dataset.opt]; });
-    const rows = [`<div><span>${qt.v.name}</span><b>${vnd(qt.v.price)}</b></div>`];
-    qt.acc.forEach(k => rows.push(`<div><span>${ACC_LABEL[k]}</span><b>${vnd(m.accessories[k])}</b></div>`));
-    if (qt.n > 1) rows.push(`<div><span>Số máy</span><b>× ${qt.n}</b></div>`);
-    rows.push(`<div class="tot"><span>Tổng tham khảo</span><b>${vnd(qt.total)}</b></div>`);
-    el('qrows').innerHTML = rows.join('');
-    const expired = priceExpired();
-    el('qfoot').innerHTML = `Quy đổi tỷ giá 1 JPY ≈ ${PRICE_LIST.jpyVnd} VND, hiệu lực ${PRICE_LIST.validDays} ngày kể từ ${PRICE_LIST.dateText}${expired ? '. <b>Bảng giá này đã quá hiệu lực, hãy liên hệ KOBASHI để có giá mới</b>' : ''}. Chưa gồm khay nhôm lớn và bộ khay chuyên dụng chống dính, chi phí lắp đặt thiết bị, thi công điện và các hạng mục khác, chi phí vận chuyển, thuế và phí nhập khẩu.${m.custom ? ' Hầm liên tục có thể thiết kế theo đơn hàng riêng.' : ''} Giá thực tế theo báo giá của KOBASHI tại thời điểm mua.`;
+    optsEl.querySelectorAll('[data-opt]').forEach(c => { c.checked = !!s.opts[c.dataset.opt]; c.disabled = s.U > 0; });
+    optsEl.style.opacity = s.U > 0 ? '.5' : '';
+    el('optsNote').hidden = !(s.U > 0 && Object.keys(m.accessories || {}).length);
+    el('qfoot').textContent = `Giá tham khảo dùng để ước tính, chưa gồm khay, lắp đặt, thi công điện, vận chuyển, thuế và phí nhập khẩu. Giá chính thức theo báo giá của KOBASHI tại thời điểm mua.${m.custom ? ' Hầm liên tục có thể thiết kế theo đơn hàng riêng.' : ''}`;
     el('useQuote').hidden = s.iAuto;
   }
 
@@ -1821,7 +1860,7 @@ Hoàn vốn = Tiền đầu tư ÷ Lợi mỗi tháng
       `Sản lượng: ${nf.format(s.A)} kg/tháng · Giá bán: ${nf.format(s.B)} đ/kg` + (s.V ? ` · Giá mua: ${nf.format(s.V)} đ/kg (${useCost() ? 'hàng giữ lại tính theo giá mua' : 'hàng giữ lại tính theo giá bán'})` : ''),
       `Hao hụt: ${nf1.format(s.C)}% → ${nf1.format(s.D)}% khi dùng iERA` + (s.S ? ` (trong đó ${s.S}% bán giảm giá ${s.G}%)` : ''),
       s.hasE ? `Bán thêm nhờ chất lượng: ${nf.format(s.E)} đ/kg` : null,
-      `Máy: ${m ? m.name : '—'}${s.I ? ' · Đầu tư: ' + nf.format(s.I) + ' đ' : ''}`,
+      `Máy: ${m ? m.name : '—'}${s.I ? ' · Đầu tư: ' + (refHidden() ? 'theo giá tham khảo KOBASHI' : nf.format(s.I) + ' đ') : ''}`,
       `Mức đạt được: ${scenName()} (${lim('K', s.K)}%)`,
       s.O ? `Đã trừ chi phí vận hành: ${nf.format(s.O)} đ/tháng` : 'Chưa trừ chi phí vận hành (điện, bảo trì, nhân công)',
       '',
@@ -1910,7 +1949,7 @@ Hoàn vốn = Tiền đầu tư ÷ Lợi mỗi tháng
       { group: 'Máy và chi phí', rows: [
         cell('Máy quan tâm', m ? m.name : '—'),
         cell('Số máy tính trong bảng', pl ? pl.n : 1, 'máy', pl && pl.cap ? `Công suất khoảng ${kg(pl.cap)}/tháng mỗi máy` : (lim('M', s.M) > 0 ? 'Khách tự chọn' : 'Chưa rõ công suất')),
-        cell('Tổng tiền đầu tư', s.I > 0 ? s.I : 'Chưa có báo giá', s.I > 0 ? 'đ' : '', s.iAuto && quote() ? `Báo giá tham khảo ngày ${PRICE_LIST.dateText}: ${quote().v.name}${quote().acc.length ? ' + ' + quote().acc.map(k => ACC_LABEL[k]).join(', ') : ''}${quote().n > 1 ? ' × ' + quote().n + ' máy' : ''}. Chưa gồm khay, lắp đặt, vận chuyển, thuế` : ''),
+        cell('Tổng tiền đầu tư', refHidden() ? 'Theo giá tham khảo KOBASHI' : (s.I > 0 ? s.I : 'Chưa có báo giá'), refHidden() || !(s.I > 0) ? '' : 'đ', refHidden() ? `${quote().v.name.replace(/^KOB-/, 'ECO ')}${quote().acc.length ? ' + ' + quote().acc.map(k => ACC_LABEL[k]).join(', ') : ''}${quote().n > 1 ? ' × ' + quote().n + ' máy' : ''}. Chuyên viên KOBASHI gửi báo giá chính thức theo cấu hình` : (s.iAuto && quote() ? `Giá máy khách nhập${quote().n > 1 ? ' × ' + quote().n + ' máy' : ''}` : '')),
         cell('Chi phí vận hành tăng thêm', s.O > 0 ? s.O : 'Chưa nhập', s.O > 0 ? 'đ/tháng' : '', s.oAuto ? 'Tiền điện ước tính theo giá điện, giờ chạy, ngày chạy; chưa gồm bảo trì, nhân công' : 'Khách nhập: điện, bảo trì, nhân công, khay'),
         cell('Giá điện, giờ chạy, ngày chạy', `${nf.format(lim('P', s.P))} đ/kWh · ${lim('H', s.H)} giờ/ngày · ${lim('N', s.N)} ngày/tháng`, '', 'Dùng cho ước tính tiền điện'),
       ] },
@@ -1951,7 +1990,8 @@ Hoàn vốn = Tiền đầu tư ÷ Lợi mỗi tháng
     if (r.payback && r.payback <= yrs * 12) marks.push(Math.ceil(r.payback));
     const flow = {
       head: s.I > 0 ? ['Mốc thời gian (tháng)', 'Lời tích lũy (đ)', 'Sau khi trừ tiền đầu tư (đ)', 'Tình trạng'] : ['Mốc thời gian (tháng)', 'Lời tích lũy (đ)'],
-      rows: [...new Set(marks)].sort((a, b) => a - b).map(mo => {
+      // Đang dùng giá tham khảo ẩn: bỏ mốc 0 tháng (dòng đó chính là −tiền máy)
+      rows: [...new Set(marks)].filter(mo => !(mo === 0 && refHidden())).sort((a, b) => a - b).map(mo => {
         const cum = Math.round(r.net * mo);
         return s.I > 0 ? [mo, cum, cum - s.I, mo === 0 ? 'Bắt đầu' : (cum >= s.I ? 'Đã hoàn vốn' : 'Chưa hoàn vốn')] : [mo, cum];
       }),
